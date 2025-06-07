@@ -61,9 +61,7 @@ export default function Dashboard() {
 
       const user = session.user
       setUserName(
-        (user.user_metadata as { full_name?: string })?.full_name ??
-          user.email ??
-          'User'
+        (user.user_metadata as { full_name?: string })?.full_name ?? user.email ?? 'User'
       )
       setUserId(user.id)
 
@@ -82,7 +80,23 @@ export default function Dashboard() {
     }
 
     fetchUserAndJobs()
+
+    // Listen for auth changes to redirect if logged out
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session) {
+        router.push('/')
+      }
+    })
+
+    return () => {
+      listener.subscription.unsubscribe()
+    }
   }, [router, supabase])
+
+  async function handleLogout() {
+    await supabase.auth.signOut()
+    router.push('/')
+  }
 
   async function handleAddJob(e: React.FormEvent) {
     e.preventDefault()
@@ -178,7 +192,12 @@ export default function Dashboard() {
 
   return (
     <div className="p-6 max-w-3xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">Hi, {userName}</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold">Hi, {userName}</h1>
+        <Button variant="outline" onClick={handleLogout}>
+          Logout
+        </Button>
+      </div>
 
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-semibold">Intern Applications</h2>
