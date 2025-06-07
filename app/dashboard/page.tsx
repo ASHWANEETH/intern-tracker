@@ -1,12 +1,14 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabaseClient'
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -16,42 +18,54 @@ type Job = {
   company_name: string
   role: string
   status: string
-  applied_on?: string
+  applied_on?: string | null
+  user_id: string
+  created_at?: string
 }
 
 export default function Dashboard() {
   const supabase = createClient()
+  const router = useRouter()
 
+  const [userName, setUserName] = useState<string>('User')
+  const [userId, setUserId] = useState<string | null>(null)
   const [jobs, setJobs] = useState<Job[]>([])
-  const [loading, setLoading] = useState(false)
-  const [userName, setUserName] = useState<string | null>(null)
+  const [loading, setLoading] = useState(true)
 
-  // Modal state
+  // Modal state for new job
   const [modalOpen, setModalOpen] = useState(false)
-  const [editingJob, setEditingJob] = useState<Job | null>(null)
-
-  // Form state
   const [companyName, setCompanyName] = useState('')
   const [role, setRole] = useState('')
   const [status, setStatus] = useState('')
   const [appliedOn, setAppliedOn] = useState('')
 
-  // Fetch user and jobs on mount
-  useEffect(() => {
-    const fetchUserAndJobs = async () => {
-      setLoading(true)
-      const {
-        data: { user },
-        error: userError,
-      } = await supabase.auth.getUser()
+  // Edit modal state
+  const [editModalOpen, setEditModalOpen] = useState(false)
+  const [editJobId, setEditJobId] = useState<string | null>(null)
+  const [editCompanyName, setEditCompanyName] = useState('')
+  const [editRole, setEditRole] = useState('')
+  const [editStatus, setEditStatus] = useState('')
+  const [editAppliedOn, setEditAppliedOn] = useState('')
 
-      if (userError || !user) {
-        setLoading(false)
-        // Handle user not logged in: redirect or show message
+  // Fetch user session and jobs
+  useEffect(() => {
+    async function fetchUserAndJobs() {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession()
+
+      if (!session) {
+        router.push('/') // redirect if not logged in
         return
       }
 
-      setUserName(user.user_metadata?.full_name || user.email || 'User')
+      const user = session.user
+      setUserName(
+        (user.user_metadata as { full_name?: string })?.full_name ??
+          user.email ??
+          'User'
+      )
+      setUserId(user.id)
 
       const { data, error } = await supabase
         .from('job_applications')
@@ -60,165 +74,208 @@ export default function Dashboard() {
         .order('created_at', { ascending: false })
 
       if (error) {
-        console.error('Fetch error:', error)
-      } else {
-        setJobs(data || [])
+        console.error('Error fetching jobs:', error.message)
       }
+
+      setJobs(data ?? [])
       setLoading(false)
     }
 
     fetchUserAndJobs()
-  }, [supabase])
+  }, [router, supabase])
 
-  // Open modal for new job
-  function openNewJobModal() {
-    setEditingJob(null)
+  async function handleAddJob(e: React.FormEvent) {
+    e.preventDefault()
+
+    if (!companyName || !role || !status) {
+      alert('Please fill all required fields')
+      return
+    }
+
+    if (!userId) {
+      alert('User ID missing, please reload')
+      return
+    }
+
+    const { data, error } = await supabase.from('job_applications').insert({
+      company_name: companyName,
+      role,
+      status,
+      applied_on: appliedOn || null,
+      user_id: userId,
+    })
+
+    if (error) {
+      alert('Error adding job: ' + error.message)
+      return
+    }
+
+    setJobs((prev) => [...(data as unknown as Job[]), ...prev])
+
     setCompanyName('')
     setRole('')
     setStatus('')
     setAppliedOn('')
-    setModalOpen(true)
+    setModalOpen(false)
   }
 
-  // Open modal for edit job
-  function openEditJobModal(job: Job) {
-    setEditingJob(job)
-    setCompanyName(job.company_name)
-    setRole(job.role)
-    setStatus(job.status)
-    setAppliedOn(job.applied_on || '')
-    setModalOpen(true)
+  function openEditModal(job: Job) {
+    setEditJobId(job.id)
+    setEditCompanyName(job.company_name)
+    setEditRole(job.role)
+    setEditStatus(job.status)
+    setEditAppliedOn(job.applied_on ?? '')
+    setEditModalOpen(true)
   }
 
-  // Submit new or updated job
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleEditJob(e: React.FormEvent) {
     e.preventDefault()
-    setLoading(true)
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-    if (!user) return
 
-    if (editingJob) {
-      // Update existing job
-      const { error } = await supabase
-        .from('job_applications')
-        .update({
-          company_name: companyName,
-          role,
-          status,
-          applied_on: appliedOn || null,
-        })
-        .eq('id', editingJob.id)
-        .eq('user_id', user.id)
-
-      if (error) {
-        alert('Update failed: ' + error.message)
-      } else {
-        setJobs((prev) =>
-          prev.map((j) =>
-            j.id === editingJob.id
-              ? { ...j, company_name: companyName, role, status, applied_on: appliedOn }
-              : j
-          )
-        )
-        setModalOpen(false)
-      }
-    } else {
-      // Insert new job
-      const { error, data } = await supabase.from('job_applications').insert({
-        user_id: user.id,
-        company_name: companyName,
-        role,
-        status,
-        applied_on: appliedOn || null,
-      })
-
-      if (error) {
-        alert('Insert failed: ' + error.message)
-      } else if (data && data.length > 0) {
-        setJobs((prev) => [data[0], ...prev])
-        setModalOpen(false)
-      }
+    if (!editJobId) {
+      alert('No job selected for edit')
+      return
     }
-    setLoading(false)
+
+    if (!editCompanyName || !editRole || !editStatus) {
+      alert('Please fill all required fields')
+      return
+    }
+
+    const { data, error } = await supabase
+      .from('job_applications')
+      .update({
+        company_name: editCompanyName,
+        role: editRole,
+        status: editStatus,
+        applied_on: editAppliedOn || null,
+      })
+      .eq('id', editJobId)
+
+    if (error) {
+      alert('Error updating job: ' + error.message)
+      return
+    }
+
+    // Update local jobs list
+    setJobs((prev) =>
+      prev.map((job) =>
+        job.id === editJobId
+          ? {
+              ...job,
+              company_name: editCompanyName,
+              role: editRole,
+              status: editStatus,
+              applied_on: editAppliedOn || null,
+            }
+          : job
+      )
+    )
+
+    setEditModalOpen(false)
   }
+
+  if (loading) return <p className="p-6">Loading...</p>
 
   return (
     <div className="p-6 max-w-3xl mx-auto">
       <h1 className="text-3xl font-bold mb-6">Hi, {userName}</h1>
+
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-semibold">Intern Applications</h2>
-        <Button onClick={openNewJobModal}>+ Add New Application</Button>
+
+        <Dialog open={modalOpen} onOpenChange={setModalOpen}>
+          <DialogTrigger asChild>
+            <Button>Add New Application</Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>Add Job Application</DialogTitle>
+            </DialogHeader>
+            <form onSubmit={handleAddJob} className="flex flex-col gap-4 mt-4">
+              <Input
+                placeholder="Company Name"
+                value={companyName}
+                onChange={(e) => setCompanyName(e.target.value)}
+                required
+              />
+              <Input
+                placeholder="Role"
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
+                required
+              />
+              <Input
+                placeholder="Status (e.g., Applied, Interview)"
+                value={status}
+                onChange={(e) => setStatus(e.target.value)}
+                required
+              />
+              <Input
+                type="date"
+                placeholder="Applied On (optional)"
+                value={appliedOn}
+                onChange={(e) => setAppliedOn(e.target.value)}
+              />
+              <Button type="submit">Submit</Button>
+            </form>
+          </DialogContent>
+        </Dialog>
       </div>
 
-      {loading && <p>Loading...</p>}
-
-      {!loading && jobs.length === 0 && <p>No job applications found.</p>}
-
-      <ul className="space-y-3">
-        {jobs.map((job) => (
-          <li
-            key={job.id}
-            className="p-4 border rounded shadow-sm flex justify-between items-center"
-          >
-            <div>
-              <strong>{job.company_name}</strong> — {job.role} <em>({job.status})</em>{' '}
-              {job.applied_on && (
-                <span className="text-sm text-gray-500"> | Applied on: {job.applied_on}</span>
-              )}
-            </div>
-            <Button variant="outline" size="sm" onClick={() => openEditJobModal(job)}>
-              Edit
-            </Button>
-          </li>
-        ))}
+      <ul className="space-y-4">
+        {jobs.length === 0 ? (
+          <p>No applications yet.</p>
+        ) : (
+          jobs.map((job) => (
+            <li
+              key={job.id}
+              className="p-4 border rounded shadow-sm flex justify-between items-center"
+            >
+              <div>
+                <strong>{job.company_name}</strong> — {job.role}{' '}
+                <em>({job.status})</em>{' '}
+                {job.applied_on && <span>- Applied on {job.applied_on}</span>}
+              </div>
+              <Button size="sm" variant="outline" onClick={() => openEditModal(job)}>
+                Edit
+              </Button>
+            </li>
+          ))
+        )}
       </ul>
 
-      {/* Modal for Add/Edit */}
-      <Dialog open={modalOpen} onOpenChange={setModalOpen}>
+      {/* Edit Job Modal */}
+      <Dialog open={editModalOpen} onOpenChange={setEditModalOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>{editingJob ? 'Edit Application' : 'New Application'}</DialogTitle>
+            <DialogTitle>Edit Job Application</DialogTitle>
           </DialogHeader>
-
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <form onSubmit={handleEditJob} className="flex flex-col gap-4 mt-4">
             <Input
-              type="text"
               placeholder="Company Name"
-              value={companyName}
-              onChange={(e) => setCompanyName(e.target.value)}
+              value={editCompanyName}
+              onChange={(e) => setEditCompanyName(e.target.value)}
               required
             />
             <Input
-              type="text"
               placeholder="Role"
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
+              value={editRole}
+              onChange={(e) => setEditRole(e.target.value)}
               required
             />
             <Input
-              type="text"
-              placeholder="Status (e.g. Applied, Interviewed)"
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
+              placeholder="Status (e.g., Applied, Interview)"
+              value={editStatus}
+              onChange={(e) => setEditStatus(e.target.value)}
               required
             />
             <Input
               type="date"
-              placeholder="Applied On"
-              value={appliedOn}
-              onChange={(e) => setAppliedOn(e.target.value)}
+              placeholder="Applied On (optional)"
+              value={editAppliedOn}
+              onChange={(e) => setEditAppliedOn(e.target.value)}
             />
-
-            <div className="flex justify-end gap-2 mt-4">
-              <Button type="button" variant="outline" onClick={() => setModalOpen(false)}>
-                Cancel
-              </Button>
-              <Button type="submit" disabled={loading}>
-                {loading ? 'Saving...' : 'Submit'}
-              </Button>
-            </div>
+            <Button type="submit">Save Changes</Button>
           </form>
         </DialogContent>
       </Dialog>
