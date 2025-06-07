@@ -55,8 +55,8 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-white flex flex-col items-center justify-between text-center px-6 py-5">
-      <header className="w-full max-w-6xl mx-auto flex justify-between items-center px-3">
+    <div className="min-h-screen bg-white flex flex-col items-center justify-between text-center px-4 py-5 sm:px-6 lg:px-8">
+      <header className="w-full max-w-6xl mx-auto flex justify-between items-center px-2 sm:px-3">
         <div className="flex items-center gap-3">
           <Image
             src="/logo.svg"
@@ -64,17 +64,20 @@ export default function Home() {
             width={50}
             height={50}
             priority
+            className="sm:w-12 sm:h-12 w-10 h-10"
           />
-          <h1 className={`text-xl tracking-tight text-gray-800`}>
+          <h1 className="text-xl sm:text-2xl tracking-tight text-gray-800">
             Intern Tracker
           </h1>
         </div>
 
         {user ? (
-          <div className="flex items-center gap-4">
-            <span className="text-sm font-medium text-gray-700">Hi, {user.full_name ?? user.email}</span>
-            <Button onClick={() => router.push('/dashboard')}>Dashboard</Button>
-            <Button variant="outline" onClick={handleLogout}>
+          <div className="flex items-center gap-3 sm:gap-4 text-sm sm:text-base">
+            <span className="font-medium text-gray-700 whitespace-nowrap">Hi, {user.full_name ?? user.email}</span>
+            <Button onClick={() => router.push('/dashboard')} size="sm">
+              Dashboard
+            </Button>
+            <Button variant="outline" onClick={handleLogout} size="sm">
               Logout
             </Button>
           </div>
@@ -83,34 +86,39 @@ export default function Home() {
         )}
       </header>
 
-          <Image
-            src="/main.png" // Replace with your image path
-            alt="Yoo bro the image didn't load !! wait"
-            width={600}           // Adjust size as needed
-            height={400}
-            className="mt-6"
-            priority
-          />
+      <Image
+        src="/main.png"
+        alt="Yoo bro the image didn't load !! wait"
+        width={700}
+        height={500}
+        priority
+        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 700px"
+        className="my-5 w-full max-w-4xl h-auto object-contain"
+      />
 
-      <main className="flex-1 flex flex-col justify-center items-center gap-6">
-        <h2 className="text-4xl font-bold max-w-xl leading-tight">
+      <main className="flex-1 flex flex-col items-center gap-6 px-2 sm:px-0">
+        <h2 className=" text-3xl sm:text-4xl font-bold max-w-xl leading-tight">
           Track your internship applications with ease.
         </h2>
-        <p className="text-gray-600 max-w-md">
+        <p className="text-gray-600 max-w-md px-3 sm:px-0">
           Intern Tracker helps students stay organized, reduce stress, and land the perfect role.
         </p>
 
         {user ? (
           <>
             <span className="text-lg font-medium">Hi, {user.full_name ?? user.email} !</span>
-            <Button onClick={() => router.push('/dashboard')}>Let&apos;s gooo !</Button>
+            <Button onClick={() => router.push('/dashboard')}>
+              Let&apos;s gooo !
+            </Button>
           </>
         ) : (
           <AuthModal />
         )}
       </main>
 
-      <footer className="text-sm text-gray-400">© {new Date().getFullYear()} Intern Tracker</footer>
+      <footer className="text-sm text-gray-400 mt-8 mb-4">
+        © {new Date().getFullYear()} Intern Tracker
+      </footer>
     </div>
   )
 }
