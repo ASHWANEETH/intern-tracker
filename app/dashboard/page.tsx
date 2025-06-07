@@ -25,10 +25,11 @@ type Job = {
   company_name: string
   role: string
   ctc: string
-  requirements: string
+  requirements?: string | null
   status: string
-  interview_date?: string | null
+  last_date_to_apply?: string | null
   applied_date?: string | null
+  exam_date?: string | null
   created_at?: string
   user_id: string
 }
@@ -55,20 +56,21 @@ export default function Dashboard() {
   const [ctc, setCtc] = useState('')
   const [requirements, setRequirements] = useState('')
   const [status, setStatus] = useState('to-apply')
-  const [interviewDate, setInterviewDate] = useState('')
-  const [editJobId, setEditJobId] = useState<string | null>(null)
+  const [lastDateToApply, setLastDateToApply] = useState('')
   const [appliedDate, setAppliedDate] = useState('')
-
+  const [examDate, setExamDate] = useState('')
+  const [editJobId, setEditJobId] = useState<string | null>(null)
 
   const handleEditClick = (job: Job) => {
     setEditJobId(job.id)
     setCompanyName(job.company_name)
     setRole(job.role)
     setCtc(job.ctc)
-    setRequirements(job.requirements)
+    setRequirements(job.requirements || '')
     setStatus(job.status)
-    setInterviewDate(job.interview_date || '')
+    setLastDateToApply(job.last_date_to_apply || '')
     setAppliedDate(job.applied_date || '')
+    setExamDate(job.exam_date || '')
     setModalOpen(true)
   }
 
@@ -81,15 +83,16 @@ export default function Dashboard() {
         company_name: companyName,
         role,
         ctc,
-        requirements,
+        requirements: requirements || null,
         status,
-        interview_date: interviewDate || null,
+        last_date_to_apply: lastDateToApply || null,
         applied_date: appliedDate || null,
+        exam_date: examDate || null,
       }).eq('id', editJobId)
 
       if (!error) {
         setJobs(prev => prev.map(job => job.id === editJobId
-          ? { ...job, company_name: companyName, role, ctc, requirements, status, interview_date: interviewDate }
+          ? { ...job, company_name: companyName, role, ctc, requirements, status, last_date_to_apply: lastDateToApply, applied_date: appliedDate, exam_date: examDate }
           : job
         ))
       }
@@ -98,10 +101,11 @@ export default function Dashboard() {
         company_name: companyName,
         role,
         ctc,
-        requirements,
+        requirements: requirements || null,
         status,
-        interview_date: interviewDate || null,
+        last_date_to_apply: lastDateToApply || null,
         applied_date: appliedDate || null,
+        exam_date: examDate || null,
         user_id: user.id,
       }).select()
 
@@ -111,12 +115,15 @@ export default function Dashboard() {
       }
     }
 
+    // Reset form state
     setCompanyName('')
     setRole('')
     setCtc('')
     setRequirements('')
     setStatus('to-apply')
-    setInterviewDate('')
+    setLastDateToApply('')
+    setAppliedDate('')
+    setExamDate('')
     setEditJobId(null)
     setModalOpen(false)
   }
@@ -192,7 +199,9 @@ export default function Dashboard() {
                 setCtc('')
                 setRequirements('')
                 setStatus('to-apply')
-                setInterviewDate('')
+                setLastDateToApply('')
+                setAppliedDate('')
+                setExamDate('')
                 setModalOpen(true)
               }}
             >
@@ -203,80 +212,14 @@ export default function Dashboard() {
             <DialogHeader>
               <DialogTitle>{editJobId ? 'Edit Job Application' : 'Add Job Application'}</DialogTitle>
             </DialogHeader>
-              <form onSubmit={handleAddOrUpdateJob} className="flex flex-col gap-4 mt-4">
-                <Input placeholder="Company Name" value={companyName} onChange={e => setCompanyName(e.target.value)} required />
-                <Input placeholder="Role" value={role} onChange={e => setRole(e.target.value)} required />
-                <Input placeholder="CTC / Stipend" value={ctc} onChange={e => setCtc(e.target.value)} required />
-                <Input placeholder="Job Requirements" value={requirements} onChange={e => setRequirements(e.target.value)} required />
+            <form onSubmit={handleAddOrUpdateJob} className="flex flex-col gap-4 mt-4">
+              <Input placeholder="Company Name" value={companyName} onChange={e => setCompanyName(e.target.value)} required />
+              <Input placeholder="Role" value={role} onChange={e => setRole(e.target.value)} required />
+              <Input placeholder="CTC / Stipend" value={ctc} onChange={e => setCtc(e.target.value)} required />
+              <Input placeholder="Job Requirements" value={requirements} onChange={e => setRequirements(e.target.value)} />
 
-                <Select value={status} onValueChange={setStatus}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="to-apply">To Apply</SelectItem>
-                    <SelectItem value="applied">Applied</SelectItem>
-                    <SelectItem value="waiting">Waiting</SelectItem>
-                    <SelectItem value="rejected">Rejected</SelectItem>
-                    <SelectItem value="approved">Approved</SelectItem>
-                  </SelectContent>
-                </Select>
-
-                {status === "to-apply" ? (
-                  <>
-                    <label className="font-medium text-gray-700">Last Date to Apply</label>
-                    <Input
-                      type="date"
-                      value={interviewDate}
-                      onChange={e => setInterviewDate(e.target.value)}
-                      placeholder="Select last date to apply"
-                      required
-                    />
-                  </>
-                ) : (
-                  <>
-                    <label className="font-medium text-gray-700">Applied Date</label>
-                    <Input
-                      type="date"
-                      value={appliedDate}
-                      onChange={e => setAppliedDate(e.target.value)}
-                      placeholder="Select applied date"
-                      required
-                    />
-
-                    <label className="font-medium text-gray-700 mt-2">Exam / Interview Date</label>
-                    <Input
-                      type="date"
-                      value={interviewDate}
-                      onChange={e => setInterviewDate(e.target.value)}
-                      placeholder="Select exam/interview date"
-                    />
-                  </>
-                )}
-
-
-                <Button type="submit" className="mt-2">{editJobId ? 'Update' : 'Submit'}</Button>
-              </form>
-
-
-          </DialogContent>
-        </Dialog>
-      </div>
-
-      <div className="flex flex-col gap-6">
-        {jobs.map(job => (
-          <div
-            key={job.id}
-            className="border border-gray-200 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 bg-white w-full"
-          >
-            <div className="flex justify-between items-center mb-3">
-              <h3 className="text-2xl font-semibold text-indigo-700 truncate max-w-[65%]">{job.company_name}</h3>
-              <Select value={job.status} onValueChange={(val) => handleStatusChange(job.id, val)}>
-                <SelectTrigger
-                  className={`h-8 w-28 flex items-center justify-center rounded-md ${
-                    statusColors[job.status] ?? 'bg-gray-300 text-gray-800'
-                  }`}
-                >
+              <Select value={status} onValueChange={setStatus}>
+                <SelectTrigger>
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -287,27 +230,114 @@ export default function Dashboard() {
                   <SelectItem value="approved">Approved</SelectItem>
                 </SelectContent>
               </Select>
-            </div>
-            <p className="text-lg font-medium text-gray-900">{job.role}</p>
-            <p className="text-sm text-gray-600 mt-1">{job.ctc}</p>
-            <p className="text-sm text-gray-700 mt-3 italic">{job.requirements}</p>
 
-            <div className="mt-4 text-sm text-gray-500 space-y-1">
-              {(job.status === 'applied' || job.status === 'waiting' || job.status === 'approved') ? (
+              {status === "to-apply" ? (
                 <>
-                  <p>Applied on: {job.applied_date ? new Date(job.applied_date).toLocaleDateString() : (job.created_at ? new Date(job.created_at).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }) : '-')}</p>
-                  {job.interview_date && (
-                    <p>Interview Date: {new Date(job.interview_date).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
-                  )}
+                  <label className="font-medium text-gray-700">Last Date to Apply</label>
+                  <Input
+                    type="date"
+                    value={lastDateToApply}
+                    onChange={e => setLastDateToApply(e.target.value)}
+                    placeholder="Select last date to apply"
+                    required
+                  />
                 </>
               ) : (
-                <p>Last Date to Apply: {job.interview_date ? new Date(job.interview_date).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }) : '-'}</p>
+                <>
+                  <label className="font-medium text-gray-700">Applied Date</label>
+                  <Input
+                    type="date"
+                    value={appliedDate}
+                    onChange={e => setAppliedDate(e.target.value)}
+                    placeholder="Select applied date"
+                  />
+
+                  <label className="font-medium text-gray-700 mt-2">Exam / Interview Date</label>
+                  <Input
+                    type="date"
+                    value={examDate}
+                    onChange={e => setExamDate(e.target.value)}
+                    placeholder="Select exam/interview date"
+                  />
+                </>
+              )}
+
+              <Button type="submit" className="mt-2">{editJobId ? 'Update' : 'Submit'}</Button>
+            </form>
+          </DialogContent>
+        </Dialog>
+      </div>
+
+      <div className="flex flex-col gap-6">
+        {jobs.map(job => (
+          <div
+            key={job.id}
+            className="border border-gray-200 rounded-2xl p-6 shadow-lg hover:shadow-indigo-200 hover:border-indigo-200 transition cursor-pointer"
+          >
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-semibold text-gray-900">{job.company_name}</h3>
+              <Select
+                value={job.status}
+                onValueChange={value => handleStatusChange(job.id, value)}
+              >
+                <SelectTrigger
+                  className={`px-3 py-1 rounded-full text-sm font-semibold cursor-pointer transition-colors duration-200 ease-in-out ${
+                    statusColors[job.status] || 'bg-gray-300 text-gray-800'
+                  }`}
+                >
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="max-w-xs">
+                  <SelectItem value="to-apply" className="hover:bg-yellow-100">To Apply</SelectItem>
+                  <SelectItem value="applied" className="hover:bg-blue-100">Applied</SelectItem>
+                  <SelectItem value="waiting" className="hover:bg-purple-100">Waiting</SelectItem>
+                  <SelectItem value="rejected" className="hover:bg-red-100">Rejected</SelectItem>
+                  <SelectItem value="approved" className="hover:bg-green-100">Approved</SelectItem>
+                </SelectContent>
+              </Select>
+
+            </div>
+            <p className="text-gray-700">{job.role}</p>
+            <p className="text-gray-700 font-semibold">CTC / Stipend: {job.ctc}</p>
+            {job.requirements && <p className="mt-2 text-gray-600">{job.requirements}</p>}
+
+            <div className="mt-4 text-sm text-gray-500 space-y-1">
+              {job.status === 'to-apply' ? (
+                <p>
+                  Last Date to Apply:{' '}
+                  {job.last_date_to_apply
+                    ? new Date(job.last_date_to_apply).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })
+                    : '-'}
+                </p>
+              ) : (
+                <>
+                  <p>
+                    Applied on:{' '}
+                    {job.applied_date
+                      ? new Date(job.applied_date).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })
+                      : job.created_at
+                      ? new Date(job.created_at).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })
+                      : '-'}
+                  </p>
+                  <p>
+                    Exam / Interview Date:{' '}
+                    {job.exam_date
+                      ? new Date(job.exam_date).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })
+                      : '-'}
+                  </p>
+                </>
               )}
             </div>
 
-            <div className="flex gap-3 mt-6">
-              <Button size="sm" variant="secondary" onClick={() => handleEditClick(job)}>Edit</Button>
-              <Button size="sm" variant="destructive" onClick={() => handleDelete(job.id)}>Remove</Button>
+            <div className="flex gap-4 mt-4">
+              <Button size="sm" onClick={() => handleEditClick(job)}>Edit</Button>
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={() => handleDelete(job.id)}
+              >
+                Delete
+              </Button>
             </div>
           </div>
         ))}
