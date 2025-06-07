@@ -107,7 +107,7 @@ export default function Home() {
         {user ? (
           <div className="flex items-center gap-3 sm:gap-4 text-sm sm:text-base">
             <span className="font-medium text-gray-700 whitespace-nowrap hidden sm:inline">
-              Hi, {user.full_name ?? user.email}
+              Hello {user.full_name ?? user.email} !
             </span>
             <Button onClick={() => router.push('/dashboard')} size="sm">
               Dashboard
@@ -146,7 +146,7 @@ export default function Home() {
 
         {user ? (
           <>
-            <span className="text-lg font-medium">Hi, {user.full_name ?? user.email} !</span>
+            <span className="text-lg font-medium">Hey {user.full_name ?? user.email} !</span>
             <Button onClick={() => router.push('/dashboard')}>
               Let&apos;s gooo !
             </Button>
