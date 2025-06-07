@@ -20,22 +20,31 @@ export default function AuthModal() {
   const [open, setOpen] = useState(false)
   const [isSignup, setIsSignup] = useState(false)
   const [loading, setLoading] = useState(false)
+
   const [name, setName] = useState('')
+  const [phone, setPhone] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+
   const [error, setError] = useState<string | null>(null)
 
   async function handleSignup() {
+    if (password !== confirmPassword) {
+      setError('Passwords do not match')
+      return
+    }
+
     setLoading(true)
     setError(null)
 
-    // Signup with email + password
     const { data, error: signUpError } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: {
           full_name: name,
+          phone: phone || null,
         },
       },
     })
@@ -77,6 +86,7 @@ export default function AuthModal() {
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault()
+
     if (isSignup) {
       handleSignup()
     } else {
@@ -96,15 +106,24 @@ export default function AuthModal() {
 
         <form onSubmit={onSubmit} className="flex flex-col gap-4">
           {isSignup && (
-            <Input
-              type="text"
-              placeholder="Full Name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-              autoComplete="name"
-            />
+            <>
+              <Input
+                type="text"
+                placeholder="Full Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                autoComplete="name"
+              />
+              <Input
+                type="tel"
+                placeholder="Phone Number (optional)"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+              />
+            </>
           )}
+
           <Input
             type="email"
             placeholder="Email"
@@ -122,7 +141,18 @@ export default function AuthModal() {
             autoComplete={isSignup ? 'new-password' : 'current-password'}
           />
 
-          {error && <p className="text-red-500 text-sm">{error}</p>}
+          {isSignup && (
+            <Input
+              type="password"
+              placeholder="Confirm Password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+              autoComplete="new-password"
+            />
+          )}
+
+          {error && <p className="text-sm text-red-500">{error}</p>}
 
           <Button type="submit" disabled={loading}>
             {loading ? 'Please wait...' : isSignup ? 'Sign Up' : 'Log In'}
