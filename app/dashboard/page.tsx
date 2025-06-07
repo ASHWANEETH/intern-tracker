@@ -89,7 +89,12 @@ export default function Dashboard() {
       alert('Error logging out: ' + error.message)
       return
     }
-    window.location.href = '/'
+    // Clear user state and reload to ensure fresh session state
+    setUserId(null)
+    setUserName('User')
+    setJobs([])
+    // Use reload to prevent automatic login after logout
+    window.location.reload()
   }
 
   async function handleAddJob(e: React.FormEvent) {
