@@ -88,7 +88,7 @@ export default function Home() {
             alt="Yoo bro the image didn't load !! wait"
             width={600}           // Adjust size as needed
             height={400}
-            className="my-6"
+            className="mt-6"
             priority
           />
 
