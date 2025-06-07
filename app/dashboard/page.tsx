@@ -141,7 +141,7 @@ export default function Dashboard() {
       return
     }
 
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('job_applications')
       .update({
         company_name: editCompanyName,
