@@ -173,7 +173,7 @@ export default function Home() {
           onClick={() => setShowAboutModal(true)}
           className="underline hover:text-gray-600"
         >
-          About
+          About Us
         </button>
       </footer>
 
@@ -220,13 +220,13 @@ export default function Home() {
         </p>
       </Modal>
 
-      <Modal open={showAboutModal} onClose={() => setShowAboutModal(false)} title="About Intern Tracker">
+      <Modal open={showAboutModal} onClose={() => setShowAboutModal(false)} title="About Us❌  Me✔️">
         <p>
           Hi, I&apos;m just one ambitious human (not a robot… yet 🤖) behind Intern Tracker.<br /><br />
           I built this because keeping track of internships on sticky notes, Excel sheets, and mental Post-its was driving me bonkers.<br /><br />
           So I thought — &quot;Why not build something that doesn’t crash, judge me, or disappear when I close the tab?&quot;<br /><br />
 
-          Thus, Intern Tracker was born 💥<br /><br />
+          Thus, Intern Tracker was born 💥<br /><br /><br />
           My goals?<br /><br />
 
           Help students stay organized<br /><br />
