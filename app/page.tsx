@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabaseClient'
 import AuthModal from '@/components/AuthModal'
 import { Button } from '@/components/ui/button'
+import Image from 'next/image'
 
 const supabase = createClient()
 
@@ -54,13 +55,24 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-white flex flex-col items-center justify-between text-center px-6 py-12">
-      <header className="w-full max-w-5xl flex justify-between items-center">
-        <h1 className="text-3xl font-semibold">Intern Tracker</h1>
+    <div className="min-h-screen bg-white flex flex-col items-center justify-between text-center px-6 py-5">
+      <header className="w-full max-w-6xl mx-auto flex justify-between items-center px-3">
+        <div className="flex items-center gap-3">
+          <Image
+            src="/logo.svg"
+            alt="Intern Tracker Logo"
+            width={50}
+            height={50}
+            priority
+          />
+          <h1 className={`text-xl tracking-tight text-gray-800`}>
+            Intern Tracker
+          </h1>
+        </div>
 
         {user ? (
           <div className="flex items-center gap-4">
-            <span className="text-lg font-medium">Hi, {user.full_name ?? user.email}</span>
+            <span className="text-sm font-medium text-gray-700">Hi, {user.full_name ?? user.email}</span>
             <Button onClick={() => router.push('/dashboard')}>Dashboard</Button>
             <Button variant="outline" onClick={handleLogout}>
               Logout
@@ -70,6 +82,15 @@ export default function Home() {
           <AuthModal />
         )}
       </header>
+
+          <Image
+            src="/main.png" // Replace with your image path
+            alt="Yoo bro the image didn't load !! wait"
+            width={600}           // Adjust size as needed
+            height={400}
+            className="my-6"
+            priority
+          />
 
       <main className="flex-1 flex flex-col justify-center items-center gap-6">
         <h2 className="text-4xl font-bold max-w-xl leading-tight">
@@ -81,8 +102,8 @@ export default function Home() {
 
         {user ? (
           <>
-            <span className="text-lg font-medium">Hi, {user.full_name ?? user.email}</span>
-            <Button onClick={() => router.push('/dashboard')}>Go to Dashboard</Button>
+            <span className="text-lg font-medium">Hi, {user.full_name ?? user.email} !</span>
+            <Button onClick={() => router.push('/dashboard')}>Let&apos;s gooo !</Button>
           </>
         ) : (
           <AuthModal />

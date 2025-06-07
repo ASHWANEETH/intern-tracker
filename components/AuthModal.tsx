@@ -109,7 +109,7 @@ export default function AuthModal() {
             <>
               <Input
                 type="text"
-                placeholder="Full Name"
+                placeholder="*Full Name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
@@ -117,24 +117,28 @@ export default function AuthModal() {
               />
               <Input
                 type="tel"
-                placeholder="Phone Number (optional)"
+                placeholder="Phone Number"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
               />
+              <small className="mt-1 ml-2 text-xs text-gray-500">
+                  *Verification mail will be sent to this email to verify.
+              </small>
             </>
           )}
-
+          
           <Input
             type="email"
-            placeholder="Email"
+            placeholder="*Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
             autoComplete="email"
           />
+          
           <Input
             type="password"
-            placeholder="Password"
+            placeholder="*Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
@@ -144,7 +148,7 @@ export default function AuthModal() {
           {isSignup && (
             <Input
               type="password"
-              placeholder="Confirm Password"
+              placeholder="*Confirm Password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
@@ -152,7 +156,7 @@ export default function AuthModal() {
             />
           )}
 
-          {error && <p className="text-sm text-red-500">{error}</p>}
+          {error && <p className="text-sm ml-2 text-red-500">{error} !</p>}
 
           <Button type="submit" disabled={loading}>
             {loading ? 'Please wait...' : isSignup ? 'Sign Up' : 'Log In'}
