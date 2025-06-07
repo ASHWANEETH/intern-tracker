@@ -94,8 +94,8 @@ export default function Home() {
           <Image
             src="/logo.svg"
             alt="Intern Tracker Logo"
-            width={50}
-            height={50}
+            width={40}
+            height={40}
             priority
             className="sm:w-12 sm:h-12 w-10 h-10"
           />
@@ -119,6 +119,7 @@ export default function Home() {
         ) : (
           <>
             <div className="hidden sm:block">
+              Hey Buddy ! &nbsp;
               <AuthModal />
             </div>
           </>
@@ -151,10 +152,51 @@ export default function Home() {
             </Button>
           </>
         ) : (
+          <>
           <AuthModal />
+          Let&apos;s gooooo !!
+          </>
         )}
       </main>
 
+      
+      <section className="w-full py-16 px-4 bg-muted rounded-xl text-center mt-7">
+        <h3 className="text-2xl font-semibold mb-3">How We Help You ?</h3>
+        <ul className="text-gray-700 space-y-2 text-base">
+          <li>✅ Effortless tracking of all your internship applications</li>
+          <li>📅 Keep tabs on deadlines, interviews, and follow-ups</li>
+          <li>📈 Analytics to help you understand your application trends</li>
+          <li>🔒 Secure login and data storage with Supabase</li>
+          <li>💬 Friendly reminders and a dashboard built just for students</li>
+        </ul>
+      </section>
+      
+      <section className="w-full max-w-xl text-center my-8 px-4">
+        <h3 className="text-xl font-semibold mb-2">Ping Us Anytime !</h3>
+        <p className="text-gray-600">
+          If something breaks, tell us! We’ll fix it faster than a chai break. ☕
+        </p>
+        <p className="text-blue-600 mt-1 font-medium">
+          ✉️ &nbsp; <a href="mailto:ashwaneeth@gmail.com" className="underline">ashwaneeth@gmail.com</a>
+        </p>
+        <p className="text-sm text-gray-500 mt-4">
+          Got a few extra seconds? Have a laugh (or a cry) reading our&nbsp;<br />
+          <button className="underline text-blue-500" onClick={() => setShowAboutModal(true)}>About Us</button>,&nbsp;
+          <button className="underline text-blue-500" onClick={() => setShowPrivacyModal(true)}>Privacy Policy</button>, and&nbsp;
+          <button className="underline text-blue-500" onClick={() => setShowTermsModal(true)}>Terms</button>.
+        </p>
+      </section>
+      
+      <section id="quotes" className="py-16 px-4 bg-muted rounded-xl text-center">
+        <h2 className="text-3xl font-bold mb-6">Student Motivation Corner 🎓😄</h2>
+        <ul className="space-y-4 text-lg text-muted-foreground">
+          <li>📚 &quot;If you’re going to procrastinate, at least do it with confidence.&quot;</li>
+          <li>☕ &quot;Coffee: because adulting is hard and studying is harder.&quot;</li>
+          <li>📝 &quot;Study tip: Stand up. Stretch. Take a walk. Go to the airport. Get on a plane. Never return.&quot;</li>
+          <li>📖 &quot;I’m not lazy, I’m just in energy-saving mode for finals.&quot;</li>
+          <li>🎯 &quot;Some people graduate with honors, I am just honored to graduate.&quot;</li>
+        </ul>
+      </section>
       <footer className="text-sm text-gray-400 mt-8 mb-4 flex flex-col sm:flex-row justify-center items-center gap-3">
         <span>© {new Date().getFullYear()} Intern Tracker</span>
         <button

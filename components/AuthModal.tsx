@@ -122,7 +122,7 @@ export default function AuthModal() {
                 onChange={(e) => setPhone(e.target.value)}
               />
               <small className="mt-1 ml-2 text-xs text-gray-500">
-                  *Verification mail will be sent to this email to verify.
+                  Verification mail will be sent to this email to verify.
               </small>
             </>
           )}
