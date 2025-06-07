@@ -180,64 +180,64 @@ export default function Home() {
       {/* Footer Modals */}
       <Modal open={showPrivacyModal} onClose={() => setShowPrivacyModal(false)} title="Privacy Policy">
         <p>
-          Welcome to Intern Tracker, where your data is safer than your snacks in a locked tiffin box.<br />
+          Welcome to Intern Tracker, where your data is safer than your snacks in a locked tiffin box.<br /><br />
 
           What We Collect:<br />
-          Just the basics — your name, email, phone number, and how many times you open the app like a curious squirrel.<br />
+          Just the basics — your name, email, phone number, and how many times you open the app like a curious squirrel.<br /><br />
 
           How We Use It:<br />
-          We use your info to make things smoother, like butter on toast. No spam, no weird surprises. Pinky promise.<br />
+          We use your info to make things smoother, like butter on toast. No spam, no weird surprises. Pinky promise.<br /><br />
 
           Who Sees It:<br />
-          Only us (and maybe our super-trusted tech buddies like Supabase — but they&apos;re cool, we checked).<br />
+          Only us (and maybe our super-trusted tech buddies like Supabase — but they&apos;re cool, we checked).<br /><br />
 
           Security Stuff:<br />
-          We guard your info like it’s the last slice of pizza at a party. 🔒🍕<br />
+          We guard your info like it’s the last slice of pizza at a party. 🔒🍕<br /><br />
 
           You Control It:<br />
-          Want to vanish like a ninja? You can delete your account anytime. No drama, no tears.<br />
+          Want to vanish like a ninja? You can delete your account anytime. No drama, no tears.<br /><br />
 
         </p>
       </Modal>
 
       <Modal open={showTermsModal} onClose={() => setShowTermsModal(false)} title="Terms of Service">
         <p>
-          By using Intern Tracker, you agree to the following terms. Don’t worry, it’s not a trap — just friendly rules:<br />
+          By using Intern Tracker, you agree to the following terms. Don’t worry, it’s not a trap — just friendly rules:<br /><br />
 
           Play Nice:<br />
-          No funny business. Use the app as intended: track internships, not world domination.<br />
+          No funny business. Use the app as intended: track internships, not world domination.<br /><br />
 
           Your Stuff:<br />
-          You own your data. We just borrow it to help you stay organized. Like a helpful roommate who doesn’t eat your fries.<br />
+          You own your data. We just borrow it to help you stay organized. Like a helpful roommate who doesn’t eat your fries.<br /><br />
           No Bots Allowed:<br />
-          Real humans only. If you’re a robot, please go back to the Matrix.<br />
+          Real humans only. If you’re a robot, please go back to the Matrix.<br /><br />
 
           Bugs & Glitches:<br />
-          If something breaks, tell us! We’ll fix it faster than a chai break.<br />
+          If something breaks, tell us! We’ll fix it faster than a chai break.<br /><br />
 
           We Can Change Things:<br />
-          We might tweak stuff here and there (like UI improvements or adding unicorn mode 🦄). We’ll try to let you know.   <br />     
+          We might tweak stuff here and there (like UI improvements or adding unicorn mode 🦄). We’ll try to let you know.   <br /><br />
         </p>
       </Modal>
 
       <Modal open={showAboutModal} onClose={() => setShowAboutModal(false)} title="About Intern Tracker">
         <p>
-          Hi, I&apos;m just one ambitious human (not a robot… yet 🤖) behind Intern Tracker.<br />
-          I built this because keeping track of internships on sticky notes, Excel sheets, and mental Post-its was driving me bonkers.<br />
-          So I thought — &quot;Why not build something that doesn’t crash, judge me, or disappear when I close the tab?&quot;<br />
+          Hi, I&apos;m just one ambitious human (not a robot… yet 🤖) behind Intern Tracker.<br /><br />
+          I built this because keeping track of internships on sticky notes, Excel sheets, and mental Post-its was driving me bonkers.<br /><br />
+          So I thought — &quot;Why not build something that doesn’t crash, judge me, or disappear when I close the tab?&quot;<br /><br />
 
-          Thus, Intern Tracker was born 💥<br />
-          My goals?<br />
+          Thus, Intern Tracker was born 💥<br /><br />
+          My goals?<br /><br />
 
-          Help students stay organized<br />
+          Help students stay organized<br /><br />
 
-          Look cool doing it<br />
+          Look cool doing it<br /><br />
 
-          Maybe impress one HR manager someday 👀<br />
+          Maybe impress one HR manager someday 👀<br /><br />
 
-          If it makes your life 1% easier, my job here is done.<br />
+          If it makes your life 1% easier, my job here is done.<br /><br />
 
-          Made with ☕, 💻, and way too many browser tabs.<br />
+          Made with ☕, 💻, and way too many browser tabs.<br /><br />
         </p>
       </Modal>
     </div>
