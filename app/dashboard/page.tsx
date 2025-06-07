@@ -27,19 +27,21 @@ export default function Dashboard() {
   const supabase = createClient()
   const router = useRouter()
 
-  const [userName, setUserName] = useState<string>('User')
-  const [userId, setUserId] = useState<string | null>(null)
+  const [user, setUser] = useState<{
+    id: string
+    email: string
+    full_name?: string
+  } | null>(null)
+
   const [jobs, setJobs] = useState<Job[]>([])
   const [loading, setLoading] = useState(true)
 
-  // Modal state for new job
   const [modalOpen, setModalOpen] = useState(false)
   const [companyName, setCompanyName] = useState('')
   const [role, setRole] = useState('')
   const [status, setStatus] = useState('')
   const [appliedOn, setAppliedOn] = useState('')
 
-  // Edit modal state
   const [editModalOpen, setEditModalOpen] = useState(false)
   const [editJobId, setEditJobId] = useState<string | null>(null)
   const [editCompanyName, setEditCompanyName] = useState('')
@@ -48,65 +50,79 @@ export default function Dashboard() {
   const [editAppliedOn, setEditAppliedOn] = useState('')
 
   useEffect(() => {
-    async function fetchUserAndJobs() {
+    const getSessionAndFetchJobs = async () => {
       const {
         data: { session },
+        error,
       } = await supabase.auth.getSession()
 
-      if (!session) {
+      if (error || !session?.user) {
         router.push('/')
         return
       }
 
-      const user = session.user
-      setUserName(
-        (user.user_metadata as { full_name?: string })?.full_name ??
-          user.email ??
-          'User'
-      )
-      setUserId(user.id)
+      const currentUser = session.user
+      setUser({
+        id: currentUser.id,
+        email: currentUser.email ?? '',
+        full_name: (currentUser.user_metadata as { full_name?: string })?.full_name,
+      })
 
-      const { data, error } = await supabase
+      const { data: jobsData, error: jobError } = await supabase
         .from('job_applications')
         .select('*')
-        .eq('user_id', user.id)
+        .eq('user_id', currentUser.id)
         .order('created_at', { ascending: false })
 
-      if (error) {
-        console.error('Error fetching jobs:', error.message)
+      if (jobError) {
+        console.error('Job fetch error:', jobError.message)
       }
 
-      setJobs(data ?? [])
+      setJobs(jobsData ?? [])
       setLoading(false)
     }
 
-    fetchUserAndJobs()
-  }, [router, supabase])
+    getSessionAndFetchJobs()
 
-  async function handleLogout() {
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session) {
+        setUser(null)
+        router.push('/')
+      } else {
+        setUser({
+          id: session.user.id,
+          email: session.user.email ?? '',
+          full_name: (session.user.user_metadata as { full_name?: string })?.full_name,
+        })
+      }
+    })
+
+    return () => {
+      listener.subscription.unsubscribe()
+    }
+  }, [supabase, router])
+
+  const handleLogout = async () => {
     const { error } = await supabase.auth.signOut()
     if (error) {
-      alert('Error logging out: ' + error.message)
+      alert('Logout failed: ' + error.message)
       return
     }
-    // Clear user state and reload to ensure fresh session state
-    setUserId(null)
-    setUserName('User')
+    setUser(null)
     setJobs([])
-    // Use reload to prevent automatic login after logout
-    window.location.reload()
+    router.push('/')
   }
 
-  async function handleAddJob(e: React.FormEvent) {
+  const handleAddJob = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (!companyName || !role || !status) {
-      alert('Please fill all required fields')
+    if (!user?.id) {
+      alert('User ID missing. Try reloading.')
       return
     }
 
-    if (!userId) {
-      alert('User ID missing, please reload')
+    if (!companyName || !role || !status) {
+      alert('Please fill all fields')
       return
     }
 
@@ -115,7 +131,7 @@ export default function Dashboard() {
       role,
       status,
       applied_on: appliedOn || null,
-      user_id: userId,
+      user_id: user.id,
     })
 
     if (error) {
@@ -124,7 +140,6 @@ export default function Dashboard() {
     }
 
     setJobs((prev) => [...(data as unknown as Job[]), ...prev])
-
     setCompanyName('')
     setRole('')
     setStatus('')
@@ -132,7 +147,7 @@ export default function Dashboard() {
     setModalOpen(false)
   }
 
-  function openEditModal(job: Job) {
+  const openEditModal = (job: Job) => {
     setEditJobId(job.id)
     setEditCompanyName(job.company_name)
     setEditRole(job.role)
@@ -141,18 +156,10 @@ export default function Dashboard() {
     setEditModalOpen(true)
   }
 
-  async function handleEditJob(e: React.FormEvent) {
+  const handleEditJob = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (!editJobId) {
-      alert('No job selected for edit')
-      return
-    }
-
-    if (!editCompanyName || !editRole || !editStatus) {
-      alert('Please fill all required fields')
-      return
-    }
+    if (!editJobId) return
 
     const { error } = await supabase
       .from('job_applications')
@@ -191,7 +198,7 @@ export default function Dashboard() {
   return (
     <div className="p-6 max-w-3xl mx-auto">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Hi, {userName}</h1>
+        <h1 className="text-3xl font-bold">Hi, {user?.full_name ?? user?.email}</h1>
         <Button variant="destructive" onClick={handleLogout}>
           Logout
         </Button>
@@ -229,7 +236,6 @@ export default function Dashboard() {
               />
               <Input
                 type="date"
-                placeholder="Applied On (optional)"
                 value={appliedOn}
                 onChange={(e) => setAppliedOn(e.target.value)}
               />
@@ -265,7 +271,6 @@ export default function Dashboard() {
         )}
       </ul>
 
-      {/* Edit Modal */}
       <Dialog open={editModalOpen} onOpenChange={setEditModalOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>
@@ -292,11 +297,10 @@ export default function Dashboard() {
             />
             <Input
               type="date"
-              placeholder="Applied On (optional)"
               value={editAppliedOn}
               onChange={(e) => setEditAppliedOn(e.target.value)}
             />
-            <Button type="submit">Update</Button>
+            <Button type="submit">Save Changes</Button>
           </form>
         </DialogContent>
       </Dialog>

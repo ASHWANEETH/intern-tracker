@@ -6,21 +6,20 @@ import { createClient } from '@/lib/supabaseClient'
 import AuthModal from '@/components/AuthModal'
 import { Button } from '@/components/ui/button'
 
+const supabase = createClient()
+
 export default function Home() {
-  const supabase = createClient()
   const router = useRouter()
   const [user, setUser] = useState<{ id: string; email: string; full_name?: string } | null>(null)
 
   useEffect(() => {
-    async function getSession() {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession()
-      if (session) {
+    const getSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (session?.user) {
         setUser({
           id: session.user.id,
           email: session.user.email ?? '',
-          full_name: (session.user.user_metadata as { full_name?: string })?.full_name,
+          full_name: session.user.user_metadata?.full_name,
         })
       } else {
         setUser(null)
@@ -29,20 +28,29 @@ export default function Home() {
 
     getSession()
 
-    // Listen for auth changes (login/logout)
-    const { data: listener } = supabase.auth.onAuthStateChange(() => {
-      getSession()
+    const {
+      data: { subscription }
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session?.user) {
+        setUser({
+          id: session.user.id,
+          email: session.user.email ?? '',
+          full_name: session.user.user_metadata?.full_name,
+        })
+      } else {
+        setUser(null)
+      }
     })
 
     return () => {
-      listener.subscription.unsubscribe()
+      subscription.unsubscribe()
     }
-  }, [supabase])
+  }, [])
 
-  async function handleLogout() {
+  const handleLogout = async () => {
     await supabase.auth.signOut()
     setUser(null)
-    router.push('/')
+    router.refresh()
   }
 
   return (
