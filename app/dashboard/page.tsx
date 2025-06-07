@@ -47,7 +47,6 @@ export default function Dashboard() {
   const [editStatus, setEditStatus] = useState('')
   const [editAppliedOn, setEditAppliedOn] = useState('')
 
-  // Fetch user session and jobs
   useEffect(() => {
     async function fetchUserAndJobs() {
       const {
@@ -55,13 +54,15 @@ export default function Dashboard() {
       } = await supabase.auth.getSession()
 
       if (!session) {
-        router.push('/') // redirect if not logged in
+        router.push('/')
         return
       }
 
       const user = session.user
       setUserName(
-        (user.user_metadata as { full_name?: string })?.full_name ?? user.email ?? 'User'
+        (user.user_metadata as { full_name?: string })?.full_name ??
+          user.email ??
+          'User'
       )
       setUserId(user.id)
 
@@ -80,22 +81,15 @@ export default function Dashboard() {
     }
 
     fetchUserAndJobs()
-
-    // Listen for auth changes to redirect if logged out
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (!session) {
-        router.push('/')
-      }
-    })
-
-    return () => {
-      listener.subscription.unsubscribe()
-    }
   }, [router, supabase])
 
   async function handleLogout() {
-    await supabase.auth.signOut()
-    router.push('/')
+    const { error } = await supabase.auth.signOut()
+    if (error) {
+      alert('Error logging out: ' + error.message)
+      return
+    }
+    window.location.href = '/'
   }
 
   async function handleAddJob(e: React.FormEvent) {
@@ -170,7 +164,6 @@ export default function Dashboard() {
       return
     }
 
-    // Update local jobs list
     setJobs((prev) =>
       prev.map((job) =>
         job.id === editJobId
@@ -194,7 +187,7 @@ export default function Dashboard() {
     <div className="p-6 max-w-3xl mx-auto">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Hi, {userName}</h1>
-        <Button variant="outline" onClick={handleLogout}>
+        <Button variant="destructive" onClick={handleLogout}>
           Logout
         </Button>
       </div>
@@ -253,9 +246,13 @@ export default function Dashboard() {
               <div>
                 <strong>{job.company_name}</strong> — {job.role}{' '}
                 <em>({job.status})</em>{' '}
-                {job.applied_on && <span>- Applied on {job.applied_on}</span>}
+                {job.applied_on && (
+                  <span className="text-sm text-gray-500">
+                    Applied on {new Date(job.applied_on).toLocaleDateString()}
+                  </span>
+                )}
               </div>
-              <Button size="sm" variant="outline" onClick={() => openEditModal(job)}>
+              <Button variant="outline" size="sm" onClick={() => openEditModal(job)}>
                 Edit
               </Button>
             </li>
@@ -263,7 +260,7 @@ export default function Dashboard() {
         )}
       </ul>
 
-      {/* Edit Job Modal */}
+      {/* Edit Modal */}
       <Dialog open={editModalOpen} onOpenChange={setEditModalOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>
@@ -283,7 +280,7 @@ export default function Dashboard() {
               required
             />
             <Input
-              placeholder="Status (e.g., Applied, Interview)"
+              placeholder="Status"
               value={editStatus}
               onChange={(e) => setEditStatus(e.target.value)}
               required
@@ -294,7 +291,7 @@ export default function Dashboard() {
               value={editAppliedOn}
               onChange={(e) => setEditAppliedOn(e.target.value)}
             />
-            <Button type="submit">Save Changes</Button>
+            <Button type="submit">Update</Button>
           </form>
         </DialogContent>
       </Dialog>

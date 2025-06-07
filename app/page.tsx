@@ -1,49 +1,43 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+// import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabaseClient'
 import AuthModal from '@/components/AuthModal'
-import { Button } from '@/components/ui/button'
+import Link from 'next/link'
 
 export default function Home() {
   const supabase = createClient()
-  const router = useRouter()
-  const [user, setUser] = useState<{ id: string; email: string; full_name?: string } | null>(null)
+  // const router = useRouter()
+
+  const [user, setUser] = useState<null | { id: string; email: string; fullName: string }>(null)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     async function getSession() {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession()
+      const { data: { session } } = await supabase.auth.getSession()
       if (session) {
+        const userMeta = session.user.user_metadata as { full_name?: string }
         setUser({
           id: session.user.id,
           email: session.user.email ?? '',
-          full_name: (session.user.user_metadata as { full_name?: string })?.full_name,
+          fullName: userMeta?.full_name ?? session.user.email ?? 'User',
         })
       } else {
         setUser(null)
       }
+      setLoading(false)
     }
-
     getSession()
-
-    // Listen for auth changes (login/logout)
-    const { data: listener } = supabase.auth.onAuthStateChange(() => {
-      getSession()
-    })
-
-    return () => {
-      listener.subscription.unsubscribe()
-    }
   }, [supabase])
 
   async function handleLogout() {
     await supabase.auth.signOut()
-    setUser(null)
-    router.push('/')
+    // full page reload to clear cached session and state
+    window.location.href = '/'
   }
+
+  if (loading) return <p>Loading...</p>
 
   return (
     <div className="min-h-screen bg-white flex flex-col items-center justify-between text-center px-6 py-12">
@@ -52,11 +46,13 @@ export default function Home() {
 
         {user ? (
           <div className="flex items-center gap-4">
-            <span className="text-lg font-medium">Hi, {user.full_name ?? user.email}</span>
-            <Button onClick={() => router.push('/dashboard')}>Dashboard</Button>
-            <Button variant="outline" onClick={handleLogout}>
+            <span>Hi, {user.fullName}</span>
+            <Link href="/dashboard">
+              <button className="btn">Dashboard</button>
+            </Link>
+            <button onClick={handleLogout} className="btn btn-logout">
               Logout
-            </Button>
+            </button>
           </div>
         ) : (
           <AuthModal />
@@ -70,18 +66,12 @@ export default function Home() {
         <p className="text-gray-600 max-w-md">
           Intern Tracker helps students stay organized, reduce stress, and land the perfect role.
         </p>
-
-        {user ? (
-          <>
-            <span className="text-lg font-medium">Hi, {user.full_name ?? user.email}</span>
-            <Button onClick={() => router.push('/dashboard')}>Go to Dashboard</Button>
-          </>
-        ) : (
-          <AuthModal />
-        )}
+        {!user && <AuthModal />}
       </main>
 
-      <footer className="text-sm text-gray-400">© {new Date().getFullYear()} Intern Tracker</footer>
+      <footer className="text-sm text-gray-400">
+        © {new Date().getFullYear()} Intern Tracker
+      </footer>
     </div>
   )
 }
