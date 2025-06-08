@@ -1,9 +1,9 @@
-import { Fredoka } from 'next/font/google'
+import { Fredoka } from "next/font/google";
 
 const fredoka = Fredoka({
-  subsets: ['latin'],
-  weight: ['500', '600'], // choose your preferred weights
-})
+  subsets: ["latin"],
+  weight: ["500", "600"], // choose your preferred weights
+});
 
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";

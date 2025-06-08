@@ -1,40 +1,40 @@
-'use client'
+"use client";
 
-import React from 'react'
+import React from "react";
 
 type Props = {
-  user: { full_name?: string; email?: string }
-  jobs: { status: string }[]
-}
+  user: { full_name?: string; email?: string };
+  jobs: { status: string }[];
+};
 
 const statusColors: Record<string, string> = {
-  'to-apply': '#f97316', // orange
-  applied: '#22c55e',     // green
-  waiting: '#eab308',     // yellow
-  rejected: '#ef4444',    // red
-  approved: '#3b82f6',    // blue
-}
+  "to-apply": "#f97316", // orange
+  applied: "#22c55e", // green
+  waiting: "#eab308", // yellow
+  rejected: "#ef4444", // red
+  approved: "#3b82f6", // blue
+};
 
 export default function DashboardGreeting({ user, jobs }: Props) {
-  const name = user?.full_name ?? user?.email ?? 'there'
+  const name = user?.full_name ?? user?.email ?? "there";
 
-  const hour = new Date().getHours()
+  const hour = new Date().getHours();
   const greeting =
-    hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening'
+    hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
 
   const statusCounts = jobs.reduce((acc: Record<string, number>, job) => {
-    acc[job.status] = (acc[job.status] || 0) + 1
-    return acc
-  }, {})
+    acc[job.status] = (acc[job.status] || 0) + 1;
+    return acc;
+  }, {});
 
-  const total = Object.values(statusCounts).reduce((a, b) => a + b, 0)
+  const total = Object.values(statusCounts).reduce((a, b) => a + b, 0);
 
   function polarToCartesian(x: number, y: number, r: number, angle: number) {
-    const rad = ((angle - 90) * Math.PI) / 180
+    const rad = ((angle - 90) * Math.PI) / 180;
     return {
       x: x + r * Math.cos(rad),
       y: y + r * Math.sin(rad),
-    }
+    };
   }
 
   function describeArc(
@@ -44,15 +44,15 @@ export default function DashboardGreeting({ user, jobs }: Props) {
     startAngle: number,
     endAngle: number
   ) {
-    const start = polarToCartesian(x, y, r, endAngle)
-    const end = polarToCartesian(x, y, r, startAngle)
-    const largeArcFlag = endAngle - startAngle <= 180 ? '0' : '1'
+    const start = polarToCartesian(x, y, r, endAngle);
+    const end = polarToCartesian(x, y, r, startAngle);
+    const largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
 
     return [
-      'M',
+      "M",
       start.x,
       start.y,
-      'A',
+      "A",
       r,
       r,
       0,
@@ -60,21 +60,21 @@ export default function DashboardGreeting({ user, jobs }: Props) {
       0,
       end.x,
       end.y,
-      'L',
+      "L",
       x,
       y,
-      'Z',
-    ].join(' ')
+      "Z",
+    ].join(" ");
   }
 
-  let startAngle = 0
+  let startAngle = 0;
   const arcs = Object.entries(statusCounts).map(([status, count]) => {
-    const angle = (count / total) * 360
-    const path = describeArc(50, 50, 40, startAngle, startAngle + angle)
-    const color = statusColors[status] || '#94a3b8' // slate fallback
-    startAngle += angle
-    return { status, count, path, color }
-  })
+    const angle = (count / total) * 360;
+    const path = describeArc(50, 50, 40, startAngle, startAngle + angle);
+    const color = statusColors[status] || "#94a3b8"; // slate fallback
+    startAngle += angle;
+    return { status, count, path, color };
+  });
 
   return (
     <section className="bg-indigo-50 p-6 rounded-lg max-w-3xl mx-auto">
@@ -124,5 +124,5 @@ export default function DashboardGreeting({ user, jobs }: Props) {
         </div>
       </div>
     </section>
-  )
+  );
 }

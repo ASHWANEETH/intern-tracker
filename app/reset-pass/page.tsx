@@ -1,64 +1,64 @@
-'use client'
+"use client";
 
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabaseClient'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabaseClient";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
+} from "@/components/ui/dialog";
 
 export default function ResetPassPage() {
-  const supabase = createClient()
-  const router = useRouter()
+  const supabase = createClient();
+  const router = useRouter();
 
-  const [open, setOpen] = useState(true)
-  const [newPassword, setNewPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState<string | null>(null)
-  const [loading, setLoading] = useState(false)
+  const [open, setOpen] = useState(true);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     // Automatically open modal if reset page hit
-    setOpen(true)
-  }, [])
+    setOpen(true);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError(null)
-    setSuccess(null)
+    e.preventDefault();
+    setError(null);
+    setSuccess(null);
 
     if (newPassword !== confirmPassword) {
-      setError('Passwords do not match.')
-      return
+      setError("Passwords do not match.");
+      return;
     }
 
     if (newPassword.length < 6) {
-      setError('Password must be at least 6 characters.')
-      return
+      setError("Password must be at least 6 characters.");
+      return;
     }
 
-    setLoading(true)
+    setLoading(true);
     const { error: updateError } = await supabase.auth.updateUser({
       password: newPassword,
-    })
+    });
 
-    setLoading(false)
+    setLoading(false);
 
     if (updateError) {
-      setError(updateError.message)
+      setError(updateError.message);
     } else {
-      setSuccess('Password updated! Redirecting...')
+      setSuccess("Password updated! Redirecting...");
       setTimeout(() => {
-        router.push('/')
-      }, 3000)
+        router.push("/");
+      }, 3000);
     }
-  }
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -87,10 +87,10 @@ export default function ResetPassPage() {
           {success && <p className="text-sm text-green-600">{success}</p>}
 
           <Button type="submit" disabled={loading}>
-            {loading ? 'Resetting...' : 'Reset Password'}
+            {loading ? "Resetting..." : "Reset Password"}
           </Button>
         </form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

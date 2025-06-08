@@ -1,47 +1,47 @@
-'use client'
+"use client";
 
-import React, { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabaseClient'
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabaseClient";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export default function AuthModal() {
-  const supabase = createClient()
-  const router = useRouter()
+  const supabase = createClient();
+  const router = useRouter();
 
-  const [open, setOpen] = useState(false)
-  const [isSignup, setIsSignup] = useState(false)
-  const [loading, setLoading] = useState(false)
+  const [open, setOpen] = useState(false);
+  const [isSignup, setIsSignup] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const [name, setName] = useState('')
-  const [phone, setPhone] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   // For Forgot Password
-  const [showForgotPassword, setShowForgotPassword] = useState(false)
-  const [forgotEmail, setForgotEmail] = useState('')
-  const [forgotLoading, setForgotLoading] = useState(false)
-  const [forgotMessage, setForgotMessage] = useState<string | null>(null)
-  const [error, setError] = useState<string | null>(null)
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [forgotLoading, setForgotLoading] = useState(false);
+  const [forgotMessage, setForgotMessage] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   async function handleSignup() {
     if (password !== confirmPassword) {
-      setError('Passwords do not match')
-      return
+      setError("Passwords do not match");
+      return;
     }
 
-    setLoading(true)
-    setError(null)
+    setLoading(true);
+    setError(null);
 
     const { data, error: signUpError } = await supabase.auth.signUp({
       email,
@@ -52,71 +52,76 @@ export default function AuthModal() {
           phone: phone || null,
         },
       },
-    })
+    });
 
-    setLoading(false)
+    setLoading(false);
 
     if (signUpError) {
-      setError(signUpError.message)
-      return
+      setError(signUpError.message);
+      return;
     }
 
     if (data.user) {
-      router.push('/dashboard')
-      setOpen(false)
+      router.push("/dashboard");
+      setOpen(false);
     }
   }
 
   async function handleLogin() {
-    setLoading(true)
-    setError(null)
+    setLoading(true);
+    setError(null);
 
-    const { data, error: signInError } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
+    const { data, error: signInError } = await supabase.auth.signInWithPassword(
+      {
+        email,
+        password,
+      }
+    );
 
-    setLoading(false)
+    setLoading(false);
 
     if (signInError) {
-      setError(signInError.message)
-      return
+      setError(signInError.message);
+      return;
     }
 
     if (data.user) {
-      router.push('/dashboard')
-      setOpen(false)
+      router.push("/dashboard");
+      setOpen(false);
     }
   }
 
   async function handleForgotPassword(e: React.FormEvent) {
-    e.preventDefault()
-    setForgotLoading(true)
-    setForgotMessage(null)
-    setError(null)
+    e.preventDefault();
+    setForgotLoading(true);
+    setForgotMessage(null);
+    setError(null);
 
-    const { error: resetError } = await supabase.auth.resetPasswordForEmail(forgotEmail, {
-      redirectTo: 'https://intern-tracker.vercel.app/reset-pass',
-    })
+    const { error: resetError } = await supabase.auth.resetPasswordForEmail(
+      forgotEmail,
+      {
+        redirectTo: "https://intern-tracker.vercel.app/reset-pass",
+      }
+    );
 
-    setForgotLoading(false)
+    setForgotLoading(false);
 
     if (resetError) {
-      setError(resetError.message)
+      setError(resetError.message);
     } else {
       setForgotMessage(
-        'If this email is registered, a password reset link has been sent.'
-      )
+        "If this email is registered, a password reset link has been sent."
+      );
     }
   }
 
   function onSubmit(e: React.FormEvent) {
-    e.preventDefault()
+    e.preventDefault();
 
     if (isSignup) {
-      handleSignup()
+      handleSignup();
     } else {
-      handleLogin()
+      handleLogin();
     }
   }
 
@@ -129,10 +134,10 @@ export default function AuthModal() {
         <DialogHeader>
           <DialogTitle>
             {showForgotPassword
-              ? 'Reset Password'
+              ? "Reset Password"
               : isSignup
-              ? 'Signup'
-              : 'Login'}
+              ? "Signup"
+              : "Login"}
           </DialogTitle>
         </DialogHeader>
 
@@ -153,21 +158,21 @@ export default function AuthModal() {
             )}
 
             <Button type="submit" disabled={forgotLoading}>
-              {forgotLoading ? 'Sending...' : 'Send Reset Link'}
+              {forgotLoading ? "Sending..." : "Send Reset Link"}
             </Button>
 
             <p className="mt-4 text-center text-sm">
-              Remember your password?{' '}
+              Remember your password?{" "}
               <button
                 type="button"
                 className="text-blue-600 underline hover:text-blue-800"
                 onClick={() => {
-                  setShowForgotPassword(false)
-                  setError(null)
-                  setForgotMessage(null)
+                  setShowForgotPassword(false);
+                  setError(null);
+                  setForgotMessage(null);
                 }}
               >
-                Go back to {isSignup ? 'Signup' : 'Login'}
+                Go back to {isSignup ? "Signup" : "Login"}
               </button>
             </p>
           </form>
@@ -210,7 +215,7 @@ export default function AuthModal() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              autoComplete={isSignup ? 'new-password' : 'current-password'}
+              autoComplete={isSignup ? "new-password" : "current-password"}
             />
 
             {isSignup && (
@@ -227,7 +232,7 @@ export default function AuthModal() {
             {error && <p className="text-sm ml-2 text-red-500">{error} !</p>}
 
             <Button type="submit" disabled={loading}>
-              {loading ? 'Please wait...' : isSignup ? 'Sign Up' : 'Log In'}
+              {loading ? "Please wait..." : isSignup ? "Sign Up" : "Log In"}
             </Button>
 
             {!isSignup && (
@@ -236,28 +241,27 @@ export default function AuthModal() {
                   type="button"
                   className="text-blue-600 underline hover:text-blue-800"
                   onClick={() => {
-                    setShowForgotPassword(true)
-                    setError(null)
+                    setShowForgotPassword(true);
+                    setError(null);
                   }}
                 >
                   Forgot password?
                 </button>
 
                 <p>
-                  Don&apos;t have an account?{' '}
+                  Don&apos;t have an account?{" "}
                   <button
                     type="button"
                     className="text-blue-600 underline hover:text-blue-800"
                     onClick={() => {
-                      setIsSignup(true)
-                      setError(null)
+                      setIsSignup(true);
+                      setError(null);
                     }}
                   >
                     Sign Up
                   </button>
                 </p>
               </div>
-
             )}
           </form>
         )}
@@ -265,13 +269,13 @@ export default function AuthModal() {
         {/** Signup toggle for when in signup mode */}
         {!showForgotPassword && isSignup && (
           <p className="mt-4 text-center text-sm">
-            Already have an account?{' '}
+            Already have an account?{" "}
             <button
               type="button"
               className="text-blue-600 underline hover:text-blue-800"
               onClick={() => {
-                setIsSignup(false)
-                setError(null)
+                setIsSignup(false);
+                setError(null);
               }}
             >
               Log In
@@ -280,5 +284,5 @@ export default function AuthModal() {
         )}
       </DialogContent>
     </Dialog>
-  )
+  );
 }
