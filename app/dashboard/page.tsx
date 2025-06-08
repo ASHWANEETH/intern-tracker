@@ -1,6 +1,7 @@
 'use client'
 
 import Image from 'next/image'
+import { FiEdit, FiCopy, FiTrash2,FiChevronDown, FiChevronUp } from 'react-icons/fi'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabaseClient'
@@ -20,8 +21,9 @@ import {
   SelectContent,
   SelectItem,
 } from '@/components/ui/select'
-import DashboardGreeting from '@/app/dashboard/DashboardGreet'
-import CompanyLogo from '@/app/dashboard/CompanyLogo'
+import DashboardGreeting from '@/components/DashboardGreet'
+import CompanyLogo from '@/components/CompanyLogo'
+import { ConfirmModal } from '@/components/ConfirmModal'
 
 type Job = {
   id: string
@@ -64,8 +66,28 @@ export default function Dashboard() {
   const [appliedDate, setAppliedDate] = useState('')
   const [examDate, setExamDate] = useState('')
   const [editJobId, setEditJobId] = useState<string | null>(null)
+  const [confirmModal, setConfirmModal] = useState<{
+    action: 'delete' | 'duplicate' | null
+    job: Job | null
+  }>({ action: null, job: null })
+  const [expandedJobId, setExpandedJobId] = useState<string | null>(null)
 
-  
+  const closeModal = () => setConfirmModal({ action: null, job: null })
+
+  const handleConfirm = () => {
+    if (!confirmModal.job) return
+    if (confirmModal.action === 'delete') {
+      handleDelete(confirmModal.job.id)
+    } else if (confirmModal.action === 'duplicate') {
+      handleDuplicate(confirmModal.job)
+    }
+    closeModal()
+  }
+
+    const toggleExpand = (id: string) => {
+    setExpandedJobId(prev => (prev === id ? null : id))
+  }
+
   const handleEditClick = (job: Job) => {
     setEditJobId(job.id)
     setCompanyName(job.company_name)
@@ -170,6 +192,37 @@ export default function Dashboard() {
     }
   }
 
+  async function handleDuplicate(jobToDuplicate: Job) {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { id, created_at, ...rest } = jobToDuplicate; // remove id and created_at so DB can assign new ones
+
+    // Prepare the new job object, you can reset status or dates if needed
+    const newJob = {
+      ...rest,
+      status: 'to-apply', // for example, reset status
+      created_at: new Date().toISOString(),
+    };
+
+    const { data, error } = await supabase
+      .from('job_applications')
+      .insert([newJob])
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    // Update your local state with the new job record from DB
+    setJobs(prevJobs => [data, ...prevJobs]);
+  } catch (error: unknown) {
+  if (error instanceof Error) {
+    console.error('Failed to duplicate job:', error.message);
+  } else {
+    console.error('Failed to duplicate job:', error);
+  }
+}
+}
+
   const handleStatusChange = async (jobId: string, newStatus: string) => {
     await supabase.from('job_applications').update({ status: newStatus }).eq('id', jobId)
     setJobs(prev =>
@@ -237,7 +290,7 @@ export default function Dashboard() {
                 setModalOpen(true)
               }}
             >
-              Add New Application
+              New Application
             </Button>
           </DialogTrigger>
           <DialogContent className="max-w-md">
@@ -301,14 +354,18 @@ export default function Dashboard() {
       </div>
 
       <div className="flex flex-col gap-6">
-        {jobs.map(job => (
+      {jobs.map(job => {
+        const isExpanded = expandedJobId === job.id
+        return (
           <div
             key={job.id}
-            className="border border-gray-200 rounded-2xl p-6 shadow-lg hover:shadow-indigo-200 hover:border-indigo-200 transition cursor-pointer"
+            onClick={() => toggleExpand(job.id)}
+            className="border border-gray-200 rounded-2xl p-6 shadow-lg hover:shadow-indigo-200 hover:border-indigo-200 transition cursor-pointer relative"
           >
+            {/* Header Row */}
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-2">
-               <CompanyLogo companyName={job.company_name} />
+                <CompanyLogo companyName={job.company_name} />
                 <h3 className="text-lg font-semibold text-gray-900">{job.company_name}</h3>
               </div>
               <Select
@@ -323,60 +380,82 @@ export default function Dashboard() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="max-w-xs">
-                  <SelectItem value="to-apply" className="hover:bg-yellow-100">To Apply</SelectItem>
-                  <SelectItem value="applied" className="hover:bg-blue-100">Applied</SelectItem>
-                  <SelectItem value="waiting" className="hover:bg-purple-100">Waiting</SelectItem>
-                  <SelectItem value="rejected" className="hover:bg-red-100">Rejected</SelectItem>
-                  <SelectItem value="approved" className="hover:bg-green-100">Approved</SelectItem>
+                  <SelectItem value="to-apply">To Apply</SelectItem>
+                  <SelectItem value="applied">Applied</SelectItem>
+                  <SelectItem value="waiting">Waiting</SelectItem>
+                  <SelectItem value="rejected">Rejected</SelectItem>
+                  <SelectItem value="approved">Approved</SelectItem>
                 </SelectContent>
               </Select>
-
             </div>
-            <p className="text-gray-700">{job.role}</p>
-            <p className="text-gray-700 font-semibold">CTC / Stipend: {job.ctc}</p>
-            {job.requirements && <p className="mt-2 text-gray-600">{job.requirements}</p>}
 
-            <div className="mt-4 text-sm text-gray-500 space-y-1">
-              {job.status === 'to-apply' ? (
+            {/* Summary */}
+            <p className="text-gray-700 mt-2 font-medium">{job.role}</p>
+            <p className="text-gray-700 font-semibold">CTC / Stipend: {job.ctc}</p>
+
+            {/* Expanded Info */}
+            {isExpanded && (
+              <div className="mt-4 text-sm text-gray-600 space-y-1">
+                {job.requirements && <p>{job.requirements}</p>}
                 <p>
-                  Last Date to Apply:{' '}
-                  {job.last_date_to_apply
-                    ? new Date(job.last_date_to_apply).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })
+                  Applied on:{' '}
+                  {job.applied_date
+                    ? new Date(job.applied_date).toLocaleDateString()
+                    : job.created_at
+                    ? new Date(job.created_at).toLocaleDateString()
                     : '-'}
                 </p>
-              ) : (
-                <>
+                <p>
+                  Exam / Interview Date:{' '}
+                  {job.exam_date ? new Date(job.exam_date).toLocaleDateString() : '-'}
+                </p>
+                {job.status === 'to-apply' && (
                   <p>
-                    Applied on:{' '}
-                    {job.applied_date
-                      ? new Date(job.applied_date).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })
-                      : job.created_at
-                      ? new Date(job.created_at).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })
+                    Last Date to Apply:{' '}
+                    {job.last_date_to_apply
+                      ? new Date(job.last_date_to_apply).toLocaleDateString()
                       : '-'}
                   </p>
-                  <p>
-                    Exam / Interview Date:{' '}
-                    {job.exam_date
-                      ? new Date(job.exam_date).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })
-                      : '-'}
-                  </p>
-                </>
-              )}
-            </div>
+                )}
+              </div>
+            )}
 
-            <div className="flex gap-4 mt-4">
-              <Button size="sm" onClick={() => handleEditClick(job)}>Edit</Button>
+            {/* Action Buttons */}
+            <div className="flex gap-2 mt-4">
+              <Button size="sm" onClick={() => handleEditClick(job)}>
+                <FiEdit className="w-4 h-4" />
+              </Button>
+              <Button size="sm" onClick={() => setConfirmModal({ action: 'duplicate', job })}>
+                <FiCopy className="w-4 h-4" />
+              </Button>
               <Button
-                variant="destructive"
                 size="sm"
-                onClick={() => handleDelete(job.id)}
+                variant="destructive"
+                onClick={() => setConfirmModal({ action: 'delete', job })}
               >
-                Delete
+                <FiTrash2 className="w-4 h-4" />
               </Button>
             </div>
+
+            {/* Toggle Dropdown Icon */}
+            <div
+              className="absolute bottom-4 right-4 text-gray-500 hover:text-gray-800 cursor-pointer"
+              onClick={() => toggleExpand(job.id)}
+            >
+              {isExpanded ? <FiChevronUp size={20} /> : <FiChevronDown size={20} />}
+            </div>
           </div>
-        ))}
-      </div>
+        )
+      })}
+
+      <ConfirmModal
+        open={!!confirmModal.job}
+        message={`Are you sure you want to ${confirmModal.action} the job at ${confirmModal.job?.company_name}?`}
+        onConfirm={handleConfirm}
+        onCancel={closeModal}
+      />
+    </div>
+
     </div>
   )
 }
