@@ -24,6 +24,8 @@ import {
 import DashboardGreeting from '@/components/DashboardGreet'
 import CompanyLogo from '@/components/CompanyLogo'
 import { ConfirmModal } from '@/components/ConfirmModal'
+import confetti from 'canvas-confetti'
+
 
 type Job = {
   id: string
@@ -73,6 +75,14 @@ export default function Dashboard() {
   const [expandedJobId, setExpandedJobId] = useState<string | null>(null)
 
   const closeModal = () => setConfirmModal({ action: null, job: null })
+
+    function launchConfetti() {
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
+      })
+    }
 
   const handleConfirm = () => {
     if (!confirmModal.job) return
@@ -228,6 +238,10 @@ export default function Dashboard() {
     setJobs(prev =>
       prev.map(job => (job.id === jobId ? { ...job, status: newStatus } : job))
     )
+
+     if (newStatus === 'approved') {
+    launchConfetti(); // Call your confetti function here
+  }
   }
   
   const handleDelete = async (jobId: string) => {
@@ -238,36 +252,27 @@ export default function Dashboard() {
   if (loading) return <p className="p-6">Loading...</p>
 
   return (
-    <div className="p-6 max-w-3xl mx-auto">
-      <div className="flex justify-between items-center mb-6">
+    <div className="p-4 max-w-3xl mx-auto">
+      <div className="w-full px-2 sm:px-4 pb-3 border-b">
+        <header className="max-w-6xl mx-auto flex justify-between items-center">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <Image
+              src="/logo.svg"
+              alt="Intern Tracker Logo"
+              width={28}
+              height={28}
+              priority
+              className="w-7 h-7 sm:w-8 sm:h-8"
+            />
+            <h1 className="text-lg sm:text-xl font-semibold text-gray-800">
+              Intern Tracker
+            </h1>
+          </div>
 
-         <header className="w-full max-w-6xl mx-auto px-2 sm:px-3 flex flex-col sm:flex-row items-center sm:justify-between gap-2 sm:gap-0">
-            <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-3">
-              <Image
-                src="/logo.svg"
-                alt="Intern Tracker Logo"
-                width={40}
-                height={40}
-                priority
-                className="sm:w-12 sm:h-12 w-10 h-10"
-              />
-              <h1 className="text-xl sm:text-2xl tracking-tight text-gray-800 text-center sm:text-left">
-                Intern Tracker
-              </h1>
-            </div>
-
-            {user ? (
-              <div className="flex items-center gap-3 sm:gap-4 text-sm sm:text-base">
-                <Button variant="outline" onClick={handleLogout} size="sm">
-                  Logout
-                </Button>
-              </div>
-            ) : (
-              <div className="hidden sm:block">
-                Hey Buddy ! &nbsp;
-              </div>
-            )}
-      </header>
+          <Button variant="outline" onClick={handleLogout} size="sm">
+            Logout
+          </Button>
+        </header>
       </div>
 
       {user && <DashboardGreeting user={user} jobs={jobs} />}
@@ -396,29 +401,32 @@ export default function Dashboard() {
             {/* Expanded Info */}
             {isExpanded && (
               <div className="mt-4 text-sm text-gray-600 space-y-1">
-                {job.requirements && <p>{job.requirements}</p>}
-                <p>
-                  Applied on:{' '}
-                  {job.applied_date
-                    ? new Date(job.applied_date).toLocaleDateString()
-                    : job.created_at
-                    ? new Date(job.created_at).toLocaleDateString()
-                    : '-'}
-                </p>
-                <p>
-                  Exam / Interview Date:{' '}
-                  {job.exam_date ? new Date(job.exam_date).toLocaleDateString() : '-'}
-                </p>
-                {job.status === 'to-apply' && (
+                {job.status === 'to-apply' ? (
                   <p>
                     Last Date to Apply:{' '}
                     {job.last_date_to_apply
                       ? new Date(job.last_date_to_apply).toLocaleDateString()
                       : '-'}
                   </p>
+                ) : (
+                  <>
+                    <p>
+                      Applied on:{' '}
+                      {job.applied_date
+                        ? new Date(job.applied_date).toLocaleDateString()
+                        : job.created_at
+                        ? new Date(job.created_at).toLocaleDateString()
+                        : '-'}
+                    </p>
+                    <p>
+                      Exam / Interview Date:{' '}
+                      {job.exam_date ? new Date(job.exam_date).toLocaleDateString() : '-'}
+                    </p>
+                  </>
                 )}
               </div>
             )}
+
 
             {/* Action Buttons */}
             <div className="flex gap-2 mt-4">

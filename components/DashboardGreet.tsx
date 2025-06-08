@@ -78,8 +78,8 @@ export default function DashboardGreeting({ user, jobs }: Props) {
 
   return (
     <section className="bg-indigo-50 p-6 rounded-lg max-w-3xl mx-auto">
-      <h2 className="text-xl font-semibold text-indigo-800 mb-2">
-        {greeting}, {name}
+      <h2 className="text-xl font-semibold text-black-800 mb-3">
+        &nbsp;{greeting}, {name} !
       </h2>
 
       <div className="flex items-center gap-6 flex-wrap">
