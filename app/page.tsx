@@ -129,7 +129,7 @@ export default function Home() {
       <Image
         src="/main.png"
         alt="Yoo bro the image didn't load !! wait"
-        width={700}
+        width={600}
         height={500}
         priority
         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 700px"
