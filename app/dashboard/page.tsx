@@ -25,6 +25,7 @@ import DashboardGreeting from '@/components/DashboardGreet'
 import CompanyLogo from '@/components/CompanyLogo'
 import { ConfirmModal } from '@/components/ConfirmModal'
 import confetti from 'canvas-confetti'
+import FooterWithModals from '@/components/Footer'
 
 
 type Job = {
@@ -463,6 +464,7 @@ export default function Dashboard() {
         onCancel={closeModal}
       />
     </div>
+    <FooterWithModals/>
 
     </div>
   )
