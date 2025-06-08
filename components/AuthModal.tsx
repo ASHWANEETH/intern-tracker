@@ -27,6 +27,11 @@ export default function AuthModal() {
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
 
+  // For Forgot Password
+  const [showForgotPassword, setShowForgotPassword] = useState(false)
+  const [forgotEmail, setForgotEmail] = useState('')
+  const [forgotLoading, setForgotLoading] = useState(false)
+  const [forgotMessage, setForgotMessage] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
 
   async function handleSignup() {
@@ -84,6 +89,27 @@ export default function AuthModal() {
     }
   }
 
+  async function handleForgotPassword(e: React.FormEvent) {
+    e.preventDefault()
+    setForgotLoading(true)
+    setForgotMessage(null)
+    setError(null)
+
+    const { error: resetError } = await supabase.auth.resetPasswordForEmail(forgotEmail, {
+      // redirectTo: 'https://yourdomain.com/reset-password-complete',
+    })
+
+    setForgotLoading(false)
+
+    if (resetError) {
+      setError(resetError.message)
+    } else {
+      setForgotMessage(
+        'If this email is registered, a password reset link has been sent.'
+      )
+    }
+  }
+
   function onSubmit(e: React.FormEvent) {
     e.preventDefault()
 
@@ -101,78 +127,157 @@ export default function AuthModal() {
       </DialogTrigger>
       <DialogContent className="backdrop-blur-sm max-w-md">
         <DialogHeader>
-          <DialogTitle>{isSignup ? 'Signup' : 'Login'}</DialogTitle>
+          <DialogTitle>
+            {showForgotPassword
+              ? 'Reset Password'
+              : isSignup
+              ? 'Signup'
+              : 'Login'}
+          </DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={onSubmit} className="flex flex-col gap-4">
-          {isSignup && (
-            <>
-              <Input
-                type="text"
-                placeholder="*Full Name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-                autoComplete="name"
-              />
-              <Input
-                type="tel"
-                placeholder="Phone Number"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-              />
-              <small className="mt-1 ml-2 text-xs text-gray-500">
-                  Verification mail will be sent to this email to verify.
-              </small>
-            </>
-          )}
-          
-          <Input
-            type="email"
-            placeholder="*Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            autoComplete="email"
-          />
-          
-          <Input
-            type="password"
-            placeholder="*Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            autoComplete={isSignup ? 'new-password' : 'current-password'}
-          />
+        {showForgotPassword ? (
+          <form onSubmit={handleForgotPassword} className="flex flex-col gap-4">
+            <Input
+              type="email"
+              placeholder="*Enter your email"
+              value={forgotEmail}
+              onChange={(e) => setForgotEmail(e.target.value)}
+              required
+              autoComplete="email"
+            />
 
-          {isSignup && (
+            {error && <p className="text-sm ml-2 text-red-500">{error} !</p>}
+            {forgotMessage && (
+              <p className="text-sm ml-2 text-green-600">{forgotMessage}</p>
+            )}
+
+            <Button type="submit" disabled={forgotLoading}>
+              {forgotLoading ? 'Sending...' : 'Send Reset Link'}
+            </Button>
+
+            <p className="mt-4 text-center text-sm">
+              Remember your password?{' '}
+              <button
+                type="button"
+                className="text-blue-600 underline hover:text-blue-800"
+                onClick={() => {
+                  setShowForgotPassword(false)
+                  setError(null)
+                  setForgotMessage(null)
+                }}
+              >
+                Go back to {isSignup ? 'Signup' : 'Login'}
+              </button>
+            </p>
+          </form>
+        ) : (
+          <form onSubmit={onSubmit} className="flex flex-col gap-4">
+            {isSignup && (
+              <>
+                <Input
+                  type="text"
+                  placeholder="*Full Name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                  autoComplete="name"
+                />
+                <Input
+                  type="tel"
+                  placeholder="Phone Number"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                />
+                <small className="mt-1 ml-2 text-xs text-gray-500">
+                  Verification mail will be sent to this email to verify.
+                </small>
+              </>
+            )}
+
+            <Input
+              type="email"
+              placeholder="*Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              autoComplete="email"
+            />
+
             <Input
               type="password"
-              placeholder="*Confirm Password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="*Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               required
-              autoComplete="new-password"
+              autoComplete={isSignup ? 'new-password' : 'current-password'}
             />
-          )}
 
-          {error && <p className="text-sm ml-2 text-red-500">{error} !</p>}
+            {isSignup && (
+              <Input
+                type="password"
+                placeholder="*Confirm Password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+                autoComplete="new-password"
+              />
+            )}
 
-          <Button type="submit" disabled={loading}>
-            {loading ? 'Please wait...' : isSignup ? 'Sign Up' : 'Log In'}
-          </Button>
-        </form>
+            {error && <p className="text-sm ml-2 text-red-500">{error} !</p>}
 
-        <p className="mt-4 text-center text-sm">
-          {isSignup ? 'Already have an account?' : "Don't have an account?"}{' '}
-          <button
-            type="button"
-            className="text-blue-600 underline hover:text-blue-800"
-            onClick={() => setIsSignup(!isSignup)}
-          >
-            {isSignup ? 'Log In' : 'Sign Up'}
-          </button>
-        </p>
+            <Button type="submit" disabled={loading}>
+              {loading ? 'Please wait...' : isSignup ? 'Sign Up' : 'Log In'}
+            </Button>
+
+            {!isSignup && (
+              <div className="mt-4 flex flex-col items-center gap-2 text-sm text-center">
+                <button
+                  type="button"
+                  className="text-blue-600 underline hover:text-blue-800"
+                  onClick={() => {
+                    setShowForgotPassword(true)
+                    setError(null)
+                  }}
+                >
+                  Forgot password?
+                </button>
+
+                <p>
+                  Don&apos;t have an account?{' '}
+                  <button
+                    type="button"
+                    className="text-blue-600 underline hover:text-blue-800"
+                    onClick={() => {
+                      setIsSignup(true)
+                      setError(null)
+                    }}
+                  >
+                    Sign Up
+                  </button>
+                </p>
+              </div>
+
+            )}
+          </form>
+        )}
+
+        {/** Signup toggle for when in signup mode */}
+        {!showForgotPassword && isSignup && (
+          <p className="mt-4 text-center text-sm">
+            Already have an account?{' '}
+            <button
+              type="button"
+              className="text-blue-600 underline hover:text-blue-800"
+              onClick={() => {
+                setIsSignup(false)
+                setError(null)
+              }}
+            >
+              Log In
+            </button>
+          </p>
+        )}
       </DialogContent>
     </Dialog>
   )
