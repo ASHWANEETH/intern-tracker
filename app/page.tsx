@@ -187,7 +187,7 @@ export default function Home() {
         </p>
       </section>
       
-      <section id="quotes" className="py-16 px-4 bg-muted rounded-xl text-center">
+      <section id="quotes" className="w-full py-16 px-4 bg-muted rounded-xl text-center">
         <h2 className="text-3xl font-bold mb-6">Student Motivation Corner 🎓😄</h2>
         <ul className="space-y-4 text-lg text-muted-foreground">
           <li>📚 &quot;If you’re going to procrastinate, at least do it with confidence.&quot;</li>
