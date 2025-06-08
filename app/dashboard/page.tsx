@@ -365,7 +365,6 @@ export default function Dashboard() {
         return (
           <div
             key={job.id}
-            onClick={() => toggleExpand(job.id)}
             className="border border-gray-200 rounded-2xl p-6 shadow-lg hover:shadow-indigo-200 hover:border-indigo-200 transition cursor-pointer relative"
           >
             {/* Header Row */}
