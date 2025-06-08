@@ -21,6 +21,7 @@ import {
   SelectItem,
 } from '@/components/ui/select'
 import DashboardGreeting from '@/app/dashboard/DashboardGreet'
+import CompanyLogo from '@/app/dashboard/CompanyLogo'
 
 type Job = {
   id: string
@@ -64,6 +65,7 @@ export default function Dashboard() {
   const [examDate, setExamDate] = useState('')
   const [editJobId, setEditJobId] = useState<string | null>(null)
 
+  
   const handleEditClick = (job: Job) => {
     setEditJobId(job.id)
     setCompanyName(job.company_name)
@@ -305,7 +307,10 @@ export default function Dashboard() {
             className="border border-gray-200 rounded-2xl p-6 shadow-lg hover:shadow-indigo-200 hover:border-indigo-200 transition cursor-pointer"
           >
             <div className="flex justify-between items-center">
-              <h3 className="text-lg font-semibold text-gray-900">{job.company_name}</h3>
+              <div className="flex items-center gap-2">
+               <CompanyLogo companyName={job.company_name} />
+                <h3 className="text-lg font-semibold text-gray-900">{job.company_name}</h3>
+              </div>
               <Select
                 value={job.status}
                 onValueChange={value => handleStatusChange(job.id, value)}
