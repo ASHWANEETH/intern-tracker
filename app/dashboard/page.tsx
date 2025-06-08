@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabaseClient'
@@ -19,6 +20,7 @@ import {
   SelectContent,
   SelectItem,
 } from '@/components/ui/select'
+import DashboardGreeting from '@/app/dashboard/DashboardGreet'
 
 type Job = {
   id: string
@@ -41,6 +43,7 @@ const statusColors: Record<string, string> = {
   rejected: 'bg-red-200 text-red-800',
   approved: 'bg-green-200 text-green-800',
 }
+
 
 export default function Dashboard() {
   const supabase = createClient()
@@ -171,7 +174,7 @@ export default function Dashboard() {
       prev.map(job => (job.id === jobId ? { ...job, status: newStatus } : job))
     )
   }
-
+  
   const handleDelete = async (jobId: string) => {
     await supabase.from('job_applications').delete().eq('id', jobId)
     setJobs(prev => prev.filter(job => job.id !== jobId))
@@ -182,13 +185,40 @@ export default function Dashboard() {
   return (
     <div className="p-6 max-w-3xl mx-auto">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-extrabold text-indigo-700 truncate max-w-[70%]">
-          Hi, {user?.full_name ?? user?.email}
-        </h1>
-        <Button variant="destructive" onClick={handleLogout}>Logout</Button>
+
+         <header className="w-full max-w-6xl mx-auto px-2 sm:px-3 flex flex-col sm:flex-row items-center sm:justify-between gap-2 sm:gap-0">
+            <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-3">
+              <Image
+                src="/logo.svg"
+                alt="Intern Tracker Logo"
+                width={40}
+                height={40}
+                priority
+                className="sm:w-12 sm:h-12 w-10 h-10"
+              />
+              <h1 className="text-xl sm:text-2xl tracking-tight text-gray-800 text-center sm:text-left">
+                Intern Tracker
+              </h1>
+            </div>
+
+            {user ? (
+              <div className="flex items-center gap-3 sm:gap-4 text-sm sm:text-base">
+                <Button variant="outline" onClick={handleLogout} size="sm">
+                  Logout
+                </Button>
+              </div>
+            ) : (
+              <div className="hidden sm:block">
+                Hey Buddy ! &nbsp;
+              </div>
+            )}
+      </header>
       </div>
 
-      <div className="flex justify-between items-center mb-6">
+      {user && <DashboardGreeting user={user} jobs={jobs} />}
+
+            
+      <div className="flex justify-between items-center my-6">
         <h2 className="text-2xl font-semibold text-gray-900">Intern Applications</h2>
         <Dialog open={modalOpen} onOpenChange={setModalOpen}>
           <DialogTrigger asChild>
