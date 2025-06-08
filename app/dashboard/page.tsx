@@ -74,6 +74,7 @@ export default function Dashboard() {
     job: Job | null
   }>({ action: null, job: null })
   const [expandedJobId, setExpandedJobId] = useState<string | null>(null)
+  const [logoRefreshKey, setLogoRefreshKey] = useState(0)
 
   const closeModal = () => setConfirmModal({ action: null, job: null })
 
@@ -164,6 +165,8 @@ export default function Dashboard() {
     setExamDate('')
     setEditJobId(null)
     setModalOpen(false)
+
+    setLogoRefreshKey(prev => prev + 1)
   }
 
   useEffect(() => {
@@ -370,7 +373,7 @@ export default function Dashboard() {
             {/* Header Row */}
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-2">
-                <CompanyLogo companyName={job.company_name} />
+                <CompanyLogo key={logoRefreshKey} companyName={job.company_name} />
                 <h3 className="text-lg font-semibold text-gray-900">{job.company_name}</h3>
               </div>
               <Select
