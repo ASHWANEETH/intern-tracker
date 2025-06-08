@@ -96,7 +96,7 @@ export default function AuthModal() {
     setError(null)
 
     const { error: resetError } = await supabase.auth.resetPasswordForEmail(forgotEmail, {
-      // redirectTo: 'https://yourdomain.com/reset-password-complete',
+      redirectTo: 'https://intern-tracker.vercel.app/reset-pass',
     })
 
     setForgotLoading(false)
