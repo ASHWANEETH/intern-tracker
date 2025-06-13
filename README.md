@@ -4,6 +4,8 @@
 _**Track Your Internship Applications with Ease!**_
 
 ![Last Commit](https://img.shields.io/github/last-commit/ASHWANEETH/intern-tracker?style=for-the-badge)
+
+
 ![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
 ![Supabase](https://img.shields.io/badge/Supabase-3FCF8E?style=for-the-badge&logo=supabase&logoColor=white)
