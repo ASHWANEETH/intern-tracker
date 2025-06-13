@@ -32,6 +32,7 @@ import CompanyLogo from "@/components/CompanyLogo";
 import { ConfirmModal } from "@/components/ConfirmModal";
 import confetti from "canvas-confetti";
 import FooterWithModals from "@/components/Footer";
+import Notes from '@/components/Notes'
 
 type Job = {
   id: string;
@@ -369,8 +370,15 @@ export default function Dashboard() {
                     onChange={(e) => setCtc(e.target.value)}
                     required
                   />
+                  <div className="bg-yellow-50 border border-yellow-300 text-yellow-800 text-sm rounded-xl px-3 py-1 shadow-sm">
+                    <p className="font-semibold mb-1">Tip for Formatting Notes</p>
+                    <ul className="list-disc list-inside space-y-1">
+                      <li>Separate with <span className="font-medium">commas</span> to make bullet points</li>
+                      <li>Use <span className="font-medium">~</span> to create a new sticky note</li>
+                    </ul>
+                  </div>
                   <Input
-                    placeholder="Job Requirements"
+                    placeholder="Notes"
                     value={requirements}
                     onChange={(e) => setRequirements(e.target.value)}
                   />
@@ -487,31 +495,33 @@ export default function Dashboard() {
                     <div className="mt-4 text-sm text-gray-600 space-y-1">
                       {job.status === "to-apply" ? (
                         <p>
-                          Last Date to Apply:{" "}
+                          Last Date to Apply:<strong>{" "}
                           {job.last_date_to_apply
                             ? new Date(
                                 job.last_date_to_apply
                               ).toLocaleDateString()
-                            : "-"}
+                            : "-"}</strong>
                         </p>
                       ) : (
                         <>
                           <p>
-                            Applied on:{" "}
+                            Applied on:<strong>{" "}
                             {job.applied_date
                               ? new Date(job.applied_date).toLocaleDateString()
                               : job.created_at
                               ? new Date(job.created_at).toLocaleDateString()
-                              : "-"}
+                              : "-"}</strong>
                           </p>
                           <p>
-                            Exam / Interview Date:{" "}
+                            Exam / Interview Date:<strong>{" "}
                             {job.exam_date
                               ? new Date(job.exam_date).toLocaleDateString()
-                              : "-"}
+                              : "-"}</strong>
                           </p>
                         </>
                       )}
+                      {/* Notes */}
+                      {job.requirements && <Notes requirements={job.requirements} />}
                     </div>
                   )}
 
