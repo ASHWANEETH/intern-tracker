@@ -33,6 +33,7 @@ import { ConfirmModal } from "@/components/ConfirmModal";
 import confetti from "canvas-confetti";
 import FooterWithModals from "@/components/Footer";
 import Notes from "@/components/Notes";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 type Job = {
   id: string;
@@ -84,6 +85,7 @@ export default function Dashboard() {
   }>({ action: null, job: null });
   const [expandedJobId, setExpandedJobId] = useState<string | null>(null);
   const [logoRefreshKey, setLogoRefreshKey] = useState(0);
+  const [showNotes, setShowNotes] = useState(false);
 
   const closeModal = () => setConfirmModal({ action: null, job: null });
 
@@ -320,7 +322,7 @@ export default function Dashboard() {
             </div>
             {user && <DashboardGreeting user={user} jobs={jobs} />}
 
-            <div className="flex justify-between items-center my-6 mx-3 pb-3">
+            <div className="flex justify-between items-center mt-6 mb -2 mx-3 pb-3">
               <h2 className="text-2xl font-semibold text-gray-900">
                 Intern Applications
               </h2>
@@ -543,9 +545,27 @@ export default function Dashboard() {
                           </p>
                         </>
                       )}
-                      {/* Notes */}
+                      {/* Toggle Notes */}
                       {job.requirements && (
-                        <Notes requirements={job.requirements} />
+                        <div>
+                          <button
+                            onClick={() => setShowNotes((prev) => !prev)}
+                            className="flex items-center gap-2 text-black font-medium text-sm hover:underline"
+                          >
+                            {showNotes ? "Notes" : "Notes"}
+                            {showNotes ? (
+                              <ChevronUp className="w-4 h-4" />
+                            ) : (
+                              <ChevronDown className="w-4 h-4" />
+                            )}
+                          </button>
+
+                          {showNotes && (
+                            <div className="mt-2">
+                              <Notes requirements={job.requirements} />
+                            </div>
+                          )}
+                        </div>
                       )}
                     </div>
                   )}

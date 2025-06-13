@@ -28,10 +28,9 @@ export default function DashboardGreeting({ user, jobs }: Props) {
   const [tab, setTab] = useState<"overview" | "deadlines">("overview");
   const [showAllDeadlines, setShowAllDeadlines] = useState(false);
 
-    useEffect(() => {
-      setShowAllDeadlines(false);
-    }, [tab]);
-
+  useEffect(() => {
+    setShowAllDeadlines(false);
+  }, [tab]);
 
   const deadlineJobs = [...jobs]
     .filter((job) => job.status === "to-apply" && job.last_date_to_apply)
