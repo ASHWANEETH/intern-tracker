@@ -463,7 +463,7 @@ export default function Dashboard() {
               return (
                 <div
                   key={job.id}
-                  className="border border-gray-200 rounded-2xl p-6 shadow-lg hover:shadow-indigo-200 hover:border-indigo-200 transition cursor-pointer relative"
+                  className="border border-gray-200 rounded-2xl px-6 py-3 shadow-lg hover:shadow-indigo-200 hover:border-indigo-200 transition cursor-pointer relative"
                 >
                   {/* Header Row */}
                   <div className="flex justify-between items-center">
