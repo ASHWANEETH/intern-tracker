@@ -153,8 +153,10 @@ export default function AuthModal() {
             />
 
             {error && <p className="text-sm ml-2 text-red-500">{error} !</p>}
-            {forgotMessage && (
+            {forgotMessage && (<>
               <p className="text-sm ml-2 text-green-600">{forgotMessage}</p>
+              <p className="text-sm ml-2 text-red-600">Not Found ? Check Spam Folder !</p>
+              </>
             )}
 
             <Button type="submit" disabled={forgotLoading}>
