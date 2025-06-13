@@ -1,36 +1,115 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
+# 🎯 INTERN TRACKER
 
-First, run the development server:
+_**Track Your Internship Applications with Ease!**_
+
+![Last Commit](https://img.shields.io/github/last-commit/ASHWANEETH/intern-tracker?style=for-the-badge)
+
+
+![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![Supabase](https://img.shields.io/badge/Supabase-3FCF8E?style=for-the-badge&logo=supabase&logoColor=white)
+![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)
+
+---
+
+## 🛠 Built With
+
+- **Next.js** – React framework for production  
+- **shadcn/ui** – UI components  
+- **Tailwind CSS** – Utility-first CSS framework  
+- **Supabase** – Backend-as-a-Service (auth + database)  
+- **Vercel** – Deployment and hosting
+
+---
+
+## 📚 Table of Contents
+
+- [Overview](#-overview)
+- [Installation](#️-installation)
+- [Folder Structure](#-folder-structure)
+- [Features](#-features)
+- [Contributing](#-contributing)
+- [License](#-license)
+
+---
+
+## 🚀 Overview
+
+Intern Tracker helps students monitor and manage their internship/job applications. The app allows for:
+
+- 🔍 Tracking multiple applications
+- 📅 Managing application deadlines and statuses
+- 🔐 Secure login/signup using Supabase
+- ⚡ Responsive design for desktop & mobile
+
+---
+
+## ⚙️ Installation
 
 ```bash
+# Clone the repository
+git clone https://github.com/ASHWANEETH/intern-tracker.git
+cd intern-tracker
+
+# Install dependencies
+npm install
+
+# Set up environment variables (refer to .env.example)
+cp .env.example .env.local
+
+# Run the development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📦 Folder Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```txt
+intern-tracker/
+├── app/
+├── components/
+│   ├── ui/
+│   ├── AuthModal.tsx
+│   └── ...
+├── lib/
+│   └── supabaseClient.ts
+├── public/
+├── styles/
+│   └── globals.css
+├── .env.local
+├── tailwind.config.ts
+└── next.config.js
+```
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## ✨ Features
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- 📋 Track applications with details like company, role, status, etc.
+- 🧠 Friendly UI for students with modals and humor elements
+- 🔐 Auth flow using Supabase (login/signup/reset)
+- 🌐 Deployed with Vercel for global performance
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 🤝 Contributing
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. 🍴 Fork the repo  
+2. 🚀 Create your feature branch (`git checkout -b feature/AmazingFeature`)  
+3. ✅ Commit your changes (`git commit -m 'Add some AmazingFeature'`)  
+4. 📤 Push to the branch (`git push origin feature/AmazingFeature`)  
+5. 📨 Open a Pull Request  
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## 📝 License
+
+This project is licensed.
+
+---
+
+## ⭐ Show Your Support
+
+If this project helped you or made you smile, please give it a star ⭐ and share it with fellow students!
