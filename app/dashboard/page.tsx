@@ -31,7 +31,7 @@ import DashboardGreeting from "@/components/DashboardGreet";
 import CompanyLogo from "@/components/CompanyLogo";
 import { ConfirmModal } from "@/components/ConfirmModal";
 import confetti from "canvas-confetti";
-import FooterWithModals from "@/components/Footer";
+// import FooterWithModals from "@/components/Footer";
 import Notes from "@/components/Notes";
 import { ChevronDown, ChevronUp } from "lucide-react";
 
@@ -616,8 +616,9 @@ export default function Dashboard() {
           </div>
         </div>
       </main>
-
-      <FooterWithModals />
+      <footer className="sticky bottom-0 z-40 w-full bg-white/70 backdrop-blur-md border-t text-center py-1 text-sm text-gray-600">
+        <span>© {new Date().getFullYear()} Intern Tracker</span>
+      </footer>
     </div>
   );
 }
