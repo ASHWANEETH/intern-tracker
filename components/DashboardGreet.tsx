@@ -99,7 +99,7 @@ export default function DashboardGreeting({ user, jobs }: Props) {
   });
 
   return (
-    <section className="bg-indigo-50 p-6 rounded-lg max-w-3xl mx-auto">
+    <section className="bg-indigo-50 p-3 rounded-lg max-w-3xl mx-auto">
       <h2 className="text-xl font-semibold text-black-800 mb-4">
         {greeting}, {name}!
       </h2>
