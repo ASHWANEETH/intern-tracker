@@ -157,8 +157,8 @@ export default function Home() {
         </p>
         <p className="text-blue-600 mt-1 font-medium">
           ✉️ &nbsp;{" "}
-          <a href="mailto:ashwaneeth@gmail.com" className="underline">
-            ashwaneeth@gmail.com
+          <a href="mailto:report.interntracker@gmail.com" className="underline">
+            report.interntracker@gmail.com
           </a>
         </p>
         <FooterWithModals
