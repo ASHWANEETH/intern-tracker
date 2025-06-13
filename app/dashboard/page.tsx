@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import {
   FiEdit,
   FiCopy,
@@ -34,6 +35,7 @@ import confetti from "canvas-confetti";
 // import FooterWithModals from "@/components/Footer";
 import Notes from "@/components/Notes";
 import { ChevronDown, ChevronUp } from "lucide-react";
+
 
 type Job = {
   id: string;
@@ -301,7 +303,7 @@ export default function Dashboard() {
           <div className="sticky top-0 pt-2 z-50 bg-white">
             <div className="w-full px-2 sm:px-4 pb-3">
               <header className="max-w-6xl mx-auto flex justify-between items-center">
-                <div className="flex items-center gap-2 sm:gap-3">
+                <Link href="/" className="flex items-center gap-2 sm:gap-3 cursor-pointer">
                   <Image
                     src="/logo.svg"
                     alt="Intern Tracker Logo"
@@ -313,7 +315,7 @@ export default function Dashboard() {
                   <h1 className="text-lg sm:text-xl font-semibold text-gray-800">
                     Intern Tracker
                   </h1>
-                </div>
+                </Link>
 
                 <Button variant="outline" onClick={handleLogout} size="sm">
                   Logout
