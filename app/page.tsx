@@ -65,7 +65,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-white flex flex-col items-center justify-between text-center px-4 py-5 sm:px-6 lg:px-8">
-      <header className="w-full max-w-6xl mx-auto px-2 sm:px-3 flex flex-col sm:flex-row items-center sm:justify-between gap-2 sm:gap-0">
+      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md py-2 px-2 sm:px-3 w-full max-w-6xl mx-auto flex flex-col sm:flex-row items-center sm:justify-between gap-2 sm:gap-0 transition-all">
         <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-3">
           <Image
             src="/logo.svg"
