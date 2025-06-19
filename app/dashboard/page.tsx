@@ -1,14 +1,10 @@
 "use client";
 
 import Image from "next/image";
+import { Job } from "@/app/types/job";
+
 import Link from "next/link";
-import {
-  FiEdit,
-  FiCopy,
-  FiTrash2,
-  FiChevronDown,
-  FiChevronUp,
-} from "react-icons/fi";
+
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabaseClient";
@@ -21,6 +17,8 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import JobTile from "@/components/JobTile";
+
 import {
   Select,
   SelectTrigger,
@@ -29,34 +27,9 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import DashboardGreeting from "@/components/DashboardGreet";
-import CompanyLogo from "@/components/CompanyLogo";
 import { ConfirmModal } from "@/components/ConfirmModal";
 import confetti from "canvas-confetti";
 // import FooterWithModals from "@/components/Footer";
-import Notes from "@/components/Notes";
-import { ChevronDown, ChevronUp } from "lucide-react";
-
-type Job = {
-  id: string;
-  company_name: string;
-  role: string;
-  ctc: string;
-  requirements?: string | null;
-  status: string;
-  last_date_to_apply?: string | null;
-  applied_date?: string | null;
-  exam_date?: string | null;
-  created_at?: string;
-  user_id: string;
-};
-
-const statusColors: Record<string, string> = {
-  "to-apply": "bg-gray-300 text-gray-800",
-  applied: "bg-blue-200 text-blue-800",
-  waiting: "bg-yellow-200 text-yellow-800",
-  rejected: "bg-red-200 text-red-800",
-  approved: "bg-green-200 text-green-800",
-};
 
 export default function Dashboard() {
   const supabase = createClient();
@@ -86,7 +59,6 @@ export default function Dashboard() {
   }>({ action: null, job: null });
   const [expandedJobId, setExpandedJobId] = useState<string | null>(null);
   const [logoRefreshKey, setLogoRefreshKey] = useState(0);
-  const [showNotes, setShowNotes] = useState(false);
 
   const closeModal = () => setConfirmModal({ action: null, job: null });
   const [showModal, setShowModal] = useState(false);
@@ -364,11 +336,31 @@ export default function Dashboard() {
                   onConfirm={handleConfirmlogout}
                   onCancel={handleCancel}
                 />
+                <ConfirmModal
+                  open={
+                    !!confirmModal.action && confirmModal.action !== "logout"
+                  }
+                  title={
+                    confirmModal.action === "delete"
+                      ? "Confirm Delete"
+                      : confirmModal.action === "duplicate"
+                      ? "Confirm Duplicate"
+                      : ""
+                  }
+                  message={
+                    confirmModal.action === "delete"
+                      ? "Are you sure you want to delete this application?"
+                      : confirmModal.action === "duplicate"
+                      ? "Do you want to duplicate this application?"
+                      : ""
+                  }
+                  onConfirm={handleConfirm}
+                  onCancel={closeModal}
+                />
               </header>
             </div>
-            <div className="border border-gray-200 shadow-lg rounded-2xl">
+
             {user && <DashboardGreeting user={user} jobs={jobs} />}
-            </div>
 
             <div className="flex justify-between items-center mt-6 mb -2 mx-3 pb-3">
               <h2 className="text-2xl font-semibold text-gray-900">
@@ -433,7 +425,7 @@ export default function Dashboard() {
                           bullet points
                         </li>
                         <li>
-                          Use <span className="font-medium">~</span> to create a
+                          Use <span className="font-medium">#</span> to create a
                           new sticky note
                         </li>
                       </ul>
@@ -502,165 +494,24 @@ export default function Dashboard() {
               </Dialog>
             </div>
           </div>
-
           <div className="flex flex-col gap-6 mx-2">
-            {jobs.map((job) => {
-              const isExpanded = expandedJobId === job.id;
-              return (
-                <div
-                  key={job.id}
-                  className="border border-gray-200 rounded-2xl px-5 py-4 shadow-lg hover:shadow-indigo-200 hover:border-indigo-200 transition cursor-pointer relative"
-                >
-                  {/* Header Row */}
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-2">
-                      <CompanyLogo
-                        key={logoRefreshKey}
-                        companyName={job.company_name}
-                      />
-                      <h3 className="text-lg font-semibold capitalize text-gray-900">
-                        {job.company_name}
-                      </h3>
-                    </div>
-                    <Select
-                      value={job.status}
-                      onValueChange={(value) =>
-                        handleStatusChange(job.id, value)
-                      }
-                    >
-                      <SelectTrigger
-                        className={`px-3 py-1 rounded-full text-sm font-semibold cursor-pointer transition-colors duration-200 ease-in-out ${
-                          statusColors[job.status] ||
-                          "bg-gray-300 text-gray-800"
-                        }`}
-                      >
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent className="max-w-xs">
-                        <SelectItem value="to-apply">To Apply</SelectItem>
-                        <SelectItem value="applied">Applied</SelectItem>
-                        <SelectItem value="waiting">Waiting</SelectItem>
-                        <SelectItem value="rejected">Rejected</SelectItem>
-                        <SelectItem value="approved">Approved</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  {/* Summary */}
-                  <p className="text-gray-700 mt-1 font-medium">{job.role}</p>
-                  <p className="text-gray-700">
-                    CTC/Stipend: <strong>{job.ctc}</strong>
-                  </p>
-
-                  {/* Expanded Info */}
-                  {isExpanded && (
-                    <div className="mt-3 text-sm text-gray-600 space-y-1">
-                      {job.status === "to-apply" ? (
-                        <p>
-                          Last Date to Apply:
-                          <strong>
-                            {" "}
-                            {job.last_date_to_apply
-                              ? new Date(
-                                  job.last_date_to_apply
-                                ).toLocaleDateString()
-                              : "-"}
-                          </strong>
-                        </p>
-                      ) : (
-                        <>
-                          <p>
-                            Applied on:
-                            <strong>
-                              {" "}
-                              {job.applied_date
-                                ? new Date(
-                                    job.applied_date
-                                  ).toLocaleDateString()
-                                : job.created_at
-                                ? new Date(job.created_at).toLocaleDateString()
-                                : "-"}
-                            </strong>
-                          </p>
-                          <p>
-                            Exam / Interview Date:
-                            <strong>
-                              {" "}
-                              {job.exam_date
-                                ? new Date(job.exam_date).toLocaleDateString()
-                                : "-"}
-                            </strong>
-                          </p>
-                        </>
-                      )}
-                      {/* Toggle Notes */}
-                      {job.requirements && (
-                        <div>
-                          <button
-                            onClick={() => setShowNotes((prev) => !prev)}
-                            className="flex items-center gap-1 text-black font-medium text-sm hover:underline"
-                          >
-                            {showNotes ? "Notes" : "Notes"}
-                            {showNotes ? (
-                              <ChevronUp className="w-4 h-4" />
-                            ) : (
-                              <ChevronDown className="w-4 h-4" />
-                            )}
-                          </button>
-
-                          {showNotes && (
-                            <div className="mt-2">
-                              <Notes requirements={job.requirements} />
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Action Buttons */}
-                  <div className="flex gap-2 mt-3">
-                    <Button size="sm" onClick={() => handleEditClick(job)}>
-                      <FiEdit className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      size="sm"
-                      onClick={() =>
-                        setConfirmModal({ action: "duplicate", job })
-                      }
-                    >
-                      <FiCopy className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="destructive"
-                      onClick={() => setConfirmModal({ action: "delete", job })}
-                    >
-                      <FiTrash2 className="w-4 h-4" />
-                    </Button>
-                  </div>
-
-                  {/* Toggle Dropdown Icon */}
-                  <div
-                    className="absolute bottom-4 right-4 text-gray-500 hover:text-gray-800 cursor-pointer"
-                    onClick={() => toggleExpand(job.id)}
-                  >
-                    {isExpanded ? (
-                      <FiChevronUp size={20} />
-                    ) : (
-                      <FiChevronDown size={20} />
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-
-            <ConfirmModal
-              open={!!confirmModal.job}
-              message={`Are you sure you want to ${confirmModal.action} the job at ${confirmModal.job?.company_name}?`}
-              onConfirm={handleConfirm}
-              onCancel={closeModal}
-            />
+            {jobs.map((job) => (
+              <JobTile
+                key={job.id}
+                job={job}
+                expandedJobId={expandedJobId}
+                onToggleExpand={toggleExpand}
+                onEditClick={handleEditClick}
+                onStatusChange={handleStatusChange}
+                onConfirmDelete={(job) =>
+                  setConfirmModal({ action: "delete", job })
+                }
+                onConfirmDuplicate={(job) =>
+                  setConfirmModal({ action: "duplicate", job })
+                }
+                logoRefreshKey={logoRefreshKey}
+              />
+            ))}
           </div>
         </div>
       </main>

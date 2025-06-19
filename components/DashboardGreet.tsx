@@ -30,9 +30,9 @@ export default function DashboardGreeting({ user, jobs }: Props) {
 
   useEffect(() => {
     setMounted(false);
-    const timer = setTimeout(() => setMounted(true), 100); // slight delay triggers animation
+    const timer = setTimeout(() => setMounted(true), 100);
     return () => clearTimeout(timer);
-  }, [jobs]); // when jobs change → trigger animation
+  }, [jobs]);
 
   useEffect(() => {
     setShowAllDeadlines(false);
@@ -55,7 +55,8 @@ export default function DashboardGreeting({ user, jobs }: Props) {
     return acc;
   }, {});
 
-  const maxCount = Math.max(...Object.values(statusCounts), 1); // avoid divide by zero
+  const maxCount = Math.max(...Object.values(statusCounts), 1);
+  const totalCount = Object.values(statusCounts).reduce((sum, v) => sum + v, 0);
 
   const bars = Object.entries(statusCounts).map(([status, count]) => {
     const color = statusColors[status] || "#94a3b8";
@@ -64,11 +65,19 @@ export default function DashboardGreeting({ user, jobs }: Props) {
   });
 
   return (
-    <section className="bg-indigo-50 p-3 rounded-lg max-w-3xl mx-auto">
+    <section
+      className="
+    max-w-3xl mx-auto p-4 
+    rounded-2xl border border-indigo-200 
+    shadow-xl 
+    bg-gradient-to-br from-indigo-100/90 to-indigo-50/80 
+    backdrop-blur-md
+  "
+    >
+      {" "}
       <h2 className="text-xl font-semibold text-black-800 mb-4">
         {greeting}, {name}!
       </h2>
-
       {/* Tabs */}
       <div className="flex gap-4 mb-4 relative">
         <button
@@ -98,82 +107,116 @@ export default function DashboardGreeting({ user, jobs }: Props) {
           )}
         </div>
       </div>
-
-      {/* Tab content */}
-      {tab === "overview" ? (
-        <div className="flex flex-col gap-2">
-          {bars.map(({ status, count, color, widthPercent }) => (
-            <div
-              key={status}
-              className="flex items-center gap-2 text-sm text-gray-700"
-            >
-              <span className="w-20 capitalize">{status}</span>
-              <div className="flex-1 bg-gray-200 rounded-full h-3 overflow-hidden relative">
-                <div
-                  className="h-3 rounded-full absolute left-0 top-0 transition-all duration-700"
-                  style={{
-                    width: mounted ? `${widthPercent}%` : "0%",
-                    backgroundColor: color,
-                  }}
-                ></div>
+      {/* Content */}
+      <div className="flex flex-col gap-4">
+        {tab === "overview" && (
+          <div className="flex flex-col gap-2 animate-fade-in">
+            {bars.map(({ status, count, color, widthPercent }) => (
+              <div
+                key={status}
+                className="flex items-center gap-2 text-sm text-gray-700"
+              >
+                <span className="w-20 capitalize">{status}</span>
+                <div className="flex-1 bg-gray-200 rounded-full h-3 overflow-hidden relative">
+                  <div
+                    className="h-3 rounded-full absolute left-0 top-0 transition-all duration-700"
+                    style={{
+                      width: mounted ? `${widthPercent}%` : "0%",
+                      backgroundColor: color,
+                    }}
+                  ></div>
+                </div>
+                <span className="w-6 text-right font-semibold text-gray-800">
+                  {count}
+                </span>
               </div>
-              <span className="w-6 text-right font-semibold text-gray-800">
-                {count}
-              </span>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div className="bg-white p-4 rounded-lg shadow-inner">
-          {deadlineJobs.length === 0 ? (
-            <p className="text-gray-500 text-sm">No upcoming deadlines 🎉</p>
-          ) : (
-            <>
-              <ul className="space-y-3 text-sm">
-                {deadlineJobs
-                  .slice(0, showAllDeadlines ? deadlineJobs.length : 2)
-                  .map((job, i) => (
-                    <li
-                      key={i}
-                      className="flex justify-between items-center border-b pb-2"
-                    >
-                      <div>
-                        <p className="font-semibold text-indigo-800">
-                          {job.role}
-                        </p>
-                        <p className="text-gray-600">{job.company_name}</p>
-                      </div>
-                      <p className="text-red-600 text-sm font-medium whitespace-nowrap">
-                        {new Date(job.last_date_to_apply!).toLocaleDateString(
-                          "en-GB",
-                          {
-                            day: "numeric",
-                            month: "long",
-                            year: "numeric",
-                          }
-                        )}
-                      </p>
-                    </li>
-                  ))}
-              </ul>
+            ))}
 
-              {deadlineJobs.length > 2 && (
-                <button
-                  onClick={() => setShowAllDeadlines(!showAllDeadlines)}
-                  className="mt-2 flex items-center gap-1 text-indigo-600 text-sm"
-                >
-                  {showAllDeadlines ? "Show less" : "Show more"}
-                  {showAllDeadlines ? (
-                    <ChevronUp size={16} />
-                  ) : (
-                    <ChevronDown size={16} />
-                  )}
-                </button>
-              )}
-            </>
-          )}
-        </div>
-      )}
+            {/* Total applications */}
+            <div className="mt-4 text-center text-gray-700 font-medium">
+              Total Applications:{" "}
+              <span className="font-semibold">{totalCount}</span>
+            </div>
+          </div>
+        )}
+
+        {tab === "deadlines" && (
+          <div className="bg-white p-4 rounded-lg shadow-inner animate-fade-in">
+            {deadlineJobs.length === 0 ? (
+              <p className="text-gray-500 text-sm">No upcoming deadlines 🎉</p>
+            ) : (
+              <>
+                <ul className="space-y-3 text-sm">
+                  {deadlineJobs
+                    .slice(0, showAllDeadlines ? deadlineJobs.length : 2)
+                    .map((job, i) => (
+                      <li
+                        key={i}
+                        className="flex justify-between items-center border-b pb-2"
+                      >
+                        <div>
+                          <p className="font-semibold text-indigo-800">
+                            {job.role}
+                          </p>
+                          <p className="text-gray-600">{job.company_name}</p>
+                        </div>
+                        <p className="text-sm font-medium whitespace-nowrap">
+                          <span className="text-black">
+                            {new Date(
+                              job.last_date_to_apply!
+                            ).toLocaleDateString("en-GB", {
+                              day: "numeric",
+                              month: "long",
+                              year: "numeric",
+                            })}
+                          </span>{" "}
+                          <span className="text-red-600">
+                            {(() => {
+                              const date = new Date(job.last_date_to_apply!);
+                              const now = new Date();
+                              now.setHours(0, 0, 0, 0);
+                              const dueDate = new Date(date);
+                              dueDate.setHours(0, 0, 0, 0);
+
+                              const diffDays = Math.ceil(
+                                (dueDate.getTime() - now.getTime()) /
+                                  (1000 * 60 * 60 * 24)
+                              );
+
+                              if (diffDays > 0) {
+                                return `(${diffDays} day${
+                                  diffDays > 1 ? "s" : ""
+                                } left)`;
+                              } else if (diffDays === 0) {
+                                return `(Today)`;
+                              } else {
+                                return `(Past Due)`;
+                              }
+                            })()}
+                          </span>
+                        </p>
+                      </li>
+                    ))}
+                </ul>
+
+                {deadlineJobs.length > 2 && (
+                  <button
+                    onClick={() => setShowAllDeadlines(!showAllDeadlines)}
+                    className="mt-2 flex items-center gap-1 text-indigo-600 text-sm"
+                  >
+                    {showAllDeadlines ? "Show less" : "Show more"}
+                    {showAllDeadlines ? (
+                      <ChevronUp size={16} />
+                    ) : (
+                      <ChevronDown size={16} />
+                    )}
+                  </button>
+                )}
+              </>
+            )}
+          </div>
+        )}
+      </div>
     </section>
   );
 }
