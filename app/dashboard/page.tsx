@@ -366,7 +366,9 @@ export default function Dashboard() {
                 />
               </header>
             </div>
+            <div className="border border-gray-200 shadow-lg rounded-2xl">
             {user && <DashboardGreeting user={user} jobs={jobs} />}
+            </div>
 
             <div className="flex justify-between items-center mt-6 mb -2 mx-3 pb-3">
               <h2 className="text-2xl font-semibold text-gray-900">

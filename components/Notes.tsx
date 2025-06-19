@@ -15,8 +15,8 @@ export default function Notes({ requirements }: NotesProps) {
   return (
     <div className="space-y-4">
       {requirements
-        .replace(/^~+/, "")
-        .split("~")
+        .replace(/^#+/, "")
+        .split("#")
         .map((noteBlock, blockIndex) => (
           <div
             key={blockIndex}

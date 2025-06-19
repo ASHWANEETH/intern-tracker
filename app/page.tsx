@@ -102,7 +102,7 @@ export default function Home() {
         )}
       </header>
 
-      <Image
+      {/* <Image
         src="/main.png"
         alt="Yoo bro the image didn't load !! wait"
         width={600}
@@ -110,7 +110,7 @@ export default function Home() {
         priority
         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 700px"
         className="my-5 w-full max-w-4xl h-auto object-contain"
-      />
+      /> */}
 
       <main className="flex-1 flex flex-col items-center gap-6 px-2 sm:px-0">
         <h2 className="text-3xl sm:text-4xl font-bold max-w-xl leading-tight">
