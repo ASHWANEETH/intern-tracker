@@ -1,7 +1,12 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp, Home } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { createClient } from "@/lib/supabaseClient";
+import { useRouter } from "next/navigation";
+import { ConfirmModal } from "@/components/ConfirmModal";
 
 type Props = {
   user: { full_name?: string; email?: string };
@@ -14,19 +19,35 @@ type Props = {
 };
 
 const statusColors: Record<string, string> = {
-  "to-apply": "#6b7280", // gray-500
-  applied: "#3b82f6", // blue-500
-  waiting: "#f59e0b", // amber-500
-  rejected: "#ef4444", // red-500
-  approved: "#22c55e", // green-500
+  "to-apply": "#6b7280",
+  applied: "#3b82f6",
+  waiting: "#f59e0b",
+  rejected: "#ef4444",
+  approved: "#22c55e",
 };
 
 export default function DashboardGreeting({ user, jobs }: Props) {
+  const supabase = createClient();
+  const router = useRouter();
+
   const name = user?.full_name ?? user?.email ?? "there";
 
   const [tab, setTab] = useState<"overview" | "deadlines">("overview");
   const [showAllDeadlines, setShowAllDeadlines] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [showBars, setShowBars] = useState(true);
+
+  const handleLogoutClick = () => setShowModal(true);
+  const handleCancel = () => setShowModal(false);
+
+  const handleConfirmlogout = async () => {
+    setShowModal(false);
+    const { error } = await supabase.auth.signOut();
+    if (!error) {
+      router.push("/");
+    }
+  };
 
   useEffect(() => {
     setMounted(false);
@@ -65,21 +86,44 @@ export default function DashboardGreeting({ user, jobs }: Props) {
   });
 
   return (
-    <section
+    <motion.section
+      key={tab}
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      transition={{ duration: 0.4, ease: "easeInOut" }}
       className="
-    max-w-3xl mx-auto p-4 
-    rounded-2xl border border-indigo-200 
-    shadow-xl 
-    bg-gradient-to-br from-indigo-100/90 to-indigo-50/80 
-    backdrop-blur-md
-  "
+        max-w-3xl mx-auto p-3 
+        rounded-2xl border border-indigo-200 
+        shadow-xl 
+        bg-gradient-to-br from-indigo-100/90 to-indigo-50/80 
+        backdrop-blur-md
+      "
     >
-      {" "}
-      <h2 className="text-xl font-semibold text-black-800 mb-4">
-        {greeting}, {name}!
-      </h2>
+      {/* Header with Home + Logout */}
+      <div className="flex justify-between items-center mb-2">
+        <h2 className="text-xl font-semibold text-black-800">
+          {greeting}, {name}!
+        </h2>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => router.push("/")}>
+            <Home className="w-4 h-4 mr-1" />
+          </Button>
+          <Button variant="outline" onClick={handleLogoutClick}>
+            Logout
+          </Button>
+          <ConfirmModal
+            open={showModal}
+            title="Confirm Logout"
+            message="Are you sure you want to logout?"
+            onConfirm={handleConfirmlogout}
+            onCancel={handleCancel}
+          />
+        </div>
+      </div>
+
       {/* Tabs */}
-      <div className="flex gap-4 mb-4 relative">
+      <div className="flex gap-4 mb-3 relative">
         <button
           className={`text-sm px-3 py-1 rounded-full ${
             tab === "overview"
@@ -88,7 +132,7 @@ export default function DashboardGreeting({ user, jobs }: Props) {
           }`}
           onClick={() => setTab("overview")}
         >
-          📊 Overview
+          Overview
         </button>
 
         <div className="relative">
@@ -100,123 +144,172 @@ export default function DashboardGreeting({ user, jobs }: Props) {
             }`}
             onClick={() => setTab("deadlines")}
           >
-            ⏳ Deadlines
+            Deadlines
           </button>
           {deadlineJobs.length > 0 && (
             <span className="absolute -top-0 -right-0 w-2 h-2 bg-red-500 rounded-full" />
           )}
         </div>
       </div>
-      {/* Content */}
-      <div className="flex flex-col gap-4">
-        {tab === "overview" && (
-          <div className="flex flex-col gap-2 animate-fade-in">
-            {bars.map(({ status, count, color, widthPercent }) => (
-              <div
-                key={status}
-                className="flex items-center gap-2 text-sm text-gray-700"
-              >
-                <span className="w-20 capitalize">{status}</span>
-                <div className="flex-1 bg-gray-200 rounded-full h-3 overflow-hidden relative">
-                  <div
-                    className="h-3 rounded-full absolute left-0 top-0 transition-all duration-700"
-                    style={{
-                      width: mounted ? `${widthPercent}%` : "0%",
-                      backgroundColor: color,
-                    }}
-                  ></div>
+
+      {/* Animated Content */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={tab}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.4, ease: "easeInOut" }}
+          layout
+          className="flex flex-col gap-4"
+        >
+          {tab === "overview" && (
+            <div className="animate-fade-in">
+              <div className="flex justify-between items-center mb-2">
+                <div className="text-center text-gray-700 font-medium ">
+                  Total Applications:{" "}
+                  <span className="font-semibold">{totalCount}</span>
                 </div>
-                <span className="w-6 text-right font-semibold text-gray-800">
-                  {count}
-                </span>
+                <button
+                  onClick={() => setShowBars((prev) => !prev)}
+                  className="text-gray-700 hover:text-black flex items-center gap-1 text-sm"
+                >
+                  {showBars ? (
+                    <>
+                      Hide <ChevronUp size={16} />
+                    </>
+                  ) : (
+                    <>
+                      Show <ChevronDown size={16} />
+                    </>
+                  )}
+                </button>
               </div>
-            ))}
 
-            {/* Total applications */}
-            <div className="mt-4 text-center text-gray-700 font-medium">
-              Total Applications:{" "}
-              <span className="font-semibold">{totalCount}</span>
-            </div>
-          </div>
-        )}
-
-        {tab === "deadlines" && (
-          <div className="bg-white p-4 rounded-lg shadow-inner animate-fade-in">
-            {deadlineJobs.length === 0 ? (
-              <p className="text-gray-500 text-sm">No upcoming deadlines 🎉</p>
-            ) : (
-              <>
-                <ul className="space-y-3 text-sm">
-                  {deadlineJobs
-                    .slice(0, showAllDeadlines ? deadlineJobs.length : 2)
-                    .map((job, i) => (
-                      <li
-                        key={i}
-                        className="flex justify-between items-center border-b pb-2"
-                      >
-                        <div>
-                          <p className="font-semibold text-indigo-800">
-                            {job.role}
-                          </p>
-                          <p className="text-gray-600">{job.company_name}</p>
-                        </div>
-                        <p className="text-sm font-medium whitespace-nowrap">
-                          <span className="text-black">
-                            {new Date(
-                              job.last_date_to_apply!
-                            ).toLocaleDateString("en-GB", {
-                              day: "numeric",
-                              month: "long",
-                              year: "numeric",
-                            })}
-                          </span>{" "}
-                          <span className="text-red-600">
-                            {(() => {
-                              const date = new Date(job.last_date_to_apply!);
-                              const now = new Date();
-                              now.setHours(0, 0, 0, 0);
-                              const dueDate = new Date(date);
-                              dueDate.setHours(0, 0, 0, 0);
-
-                              const diffDays = Math.ceil(
-                                (dueDate.getTime() - now.getTime()) /
-                                  (1000 * 60 * 60 * 24)
-                              );
-
-                              if (diffDays > 0) {
-                                return `(${diffDays} day${
-                                  diffDays > 1 ? "s" : ""
-                                } left)`;
-                              } else if (diffDays === 0) {
-                                return `(Today)`;
-                              } else {
-                                return `(Past Due)`;
-                              }
-                            })()}
-                          </span>
-                        </p>
-                      </li>
-                    ))}
-                </ul>
-
-                {deadlineJobs.length > 2 && (
-                  <button
-                    onClick={() => setShowAllDeadlines(!showAllDeadlines)}
-                    className="mt-2 flex items-center gap-1 text-indigo-600 text-sm"
+              {/* Smooth Transition of Bars */}
+              <motion.div
+                initial={false}
+                animate={{
+                  height: showBars ? "auto" : 0,
+                  opacity: showBars ? 1 : 0,
+                }}
+                transition={{ duration: 0.4, ease: "easeInOut" }}
+                className="overflow-hidden flex flex-col gap-1.5 mx-3"
+              >
+                {bars.map(({ status, count, color, widthPercent }) => (
+                  <div
+                    key={status}
+                    className="flex items-center gap-2 text-sm text-gray-700"
                   >
-                    {showAllDeadlines ? "Show less" : "Show more"}
-                    {showAllDeadlines ? (
-                      <ChevronUp size={16} />
-                    ) : (
-                      <ChevronDown size={16} />
-                    )}
-                  </button>
-                )}
-              </>
+                    <span className="w-20 capitalize">{status}</span>
+                    <div className="flex-1 bg-gray-200 rounded-full h-3 overflow-hidden relative">
+                      <div
+                        className="h-3 rounded-full absolute left-0 top-0 transition-all duration-700"
+                        style={{
+                          width: mounted ? `${widthPercent}%` : "0%",
+                          backgroundColor: color,
+                        }}
+                      ></div>
+                    </div>
+                    <span className="w-6 text-right font-semibold text-gray-800">
+                      {count}
+                    </span>
+                  </div>
+                ))}
+              </motion.div>
+            </div>
+          )}
+
+{/* DEADLINES TAB */}
+{tab === "deadlines" && (
+  <div className="bg-white p-4 rounded-lg shadow-inner">
+    {deadlineJobs.length === 0 ? (
+      <p className="text-gray-500 text-sm">
+        No upcoming deadlines 🎉
+      </p>
+    ) : (
+      <>
+        {/* Animated list of deadlines */}
+<motion.div
+  initial={false}
+  animate={{
+    height: showAllDeadlines ? "auto" : "7rem",
+    opacity: 1,
+  }}
+  transition={{ duration: 0.4, ease: "easeInOut" }}
+  style={{ overflow: "hidden", willChange: "height" }}
+>
+  <ul className="space-y-3 text-sm">
+    {deadlineJobs.map((job, i) => (
+      <li
+        key={i}
+        className="flex justify-between items-center border-b pb-2"
+      >
+        <div>
+          <p className="font-semibold text-indigo-800">{job.role}</p>
+          <p className="text-gray-600">{job.company_name}</p>
+        </div>
+        <p className="text-sm font-medium whitespace-nowrap">
+          <span className="text-black">
+            {new Date(
+              job.last_date_to_apply!
+            ).toLocaleDateString("en-GB", {
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+            })}
+          </span>{" "}
+          <span className="text-red-600">
+            {(() => {
+              const date = new Date(job.last_date_to_apply!);
+              const now = new Date();
+              now.setHours(0, 0, 0, 0);
+              const dueDate = new Date(date);
+              dueDate.setHours(0, 0, 0, 0);
+
+              const diffDays = Math.ceil(
+                (dueDate.getTime() - now.getTime()) /
+                  (1000 * 60 * 60 * 24)
+              );
+
+              if (diffDays > 0) {
+                return `(${diffDays} day${
+                  diffDays > 1 ? "s" : ""
+                } left)`;
+              } else if (diffDays === 0) {
+                return `(Today)`;
+              } else {
+                return `(Past Due)`;
+              }
+            })()}
+          </span>
+        </p>
+      </li>
+    ))}
+  </ul>
+</motion.div>
+
+        {/* Show more / less button */}
+        {deadlineJobs.length > 2 && (
+          <button
+            onClick={() => setShowAllDeadlines(!showAllDeadlines)}
+            className="mt-2 flex items-center gap-1 text-indigo-600 text-sm"
+          >
+            {showAllDeadlines ? "Show less" : "Show more"}
+            {showAllDeadlines ? (
+              <ChevronUp size={16} />
+            ) : (
+              <ChevronDown size={16} />
             )}
-          </div>
+          </button>
         )}
-      </div>
-    </section>
+      </>
+    )}
+  </div>
+)}
+
+        </motion.div>
+      </AnimatePresence>
+    </motion.section>
   );
 }

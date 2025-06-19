@@ -1,9 +1,21 @@
 "use client";
 
-import { FiEdit, FiCopy, FiTrash2, FiChevronDown, FiChevronUp } from "react-icons/fi";
+import {
+  FiEdit,
+  FiCopy,
+  FiTrash2,
+  FiChevronDown,
+  FiChevronUp,
+} from "react-icons/fi";
 import { Button } from "@/components/ui/button";
 import CompanyLogo from "@/components/CompanyLogo";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 import Notes from "@/components/Notes";
 import { useState } from "react";
 import { Job } from "@/app/types/job"; // assuming you have this type
@@ -14,6 +26,14 @@ const statusColors: Record<string, string> = {
   waiting: "bg-yellow-200 text-yellow-800",
   rejected: "bg-red-200 text-red-800",
   approved: "bg-green-200 text-green-800",
+};
+
+const statusGradients: Record<string, string> = {
+  "to-apply": "from-gray-100/90 to-gray-50/80 border-gray-200",
+  applied: "from-blue-100/90 to-blue-50/80 border-blue-200",
+  waiting: "from-yellow-100/90 to-yellow-50/80 border-yellow-200",
+  rejected: "from-red-100/90 to-red-50/80 border-red-200",
+  approved: "from-green-100/90 to-green-50/80 border-green-200",
 };
 
 type Props = {
@@ -40,8 +60,21 @@ export default function JobTile({
   const [showNotes, setShowNotes] = useState(false);
   const isExpanded = expandedJobId === job.id;
 
+  const gradientClasses =
+    statusGradients[job.status] ??
+    "from-gray-100/90 to-gray-50/80 border-gray-200";
+
   return (
-    <div className="border border-gray-200 rounded-2xl px-5 py-4 shadow-lg hover:shadow-indigo-200 hover:border-indigo-200 transition cursor-pointer relative">
+    <div
+      className={`
+        rounded-2xl px-5 py-4 
+        shadow-xl 
+        bg-gradient-to-br ${gradientClasses} 
+        backdrop-blur-md 
+        transition cursor-pointer relative
+      `}
+    >
+      {" "}
       {/* Header Row */}
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-2">
@@ -70,13 +103,11 @@ export default function JobTile({
           </SelectContent>
         </Select>
       </div>
-
       {/* Summary */}
       <p className="text-gray-700 mt-1 font-medium">{job.role}</p>
       <p className="text-gray-700">
         CTC/Stipend: <strong>{job.ctc}</strong>
       </p>
-
       {/* Expanded Info */}
       {isExpanded && (
         <div className="mt-3 text-sm text-gray-600 space-y-1">
@@ -139,7 +170,6 @@ export default function JobTile({
           )}
         </div>
       )}
-
       {/* Action Buttons */}
       <div className="flex gap-2 mt-3">
         <Button size="sm" onClick={() => onEditClick(job)}>
@@ -156,17 +186,12 @@ export default function JobTile({
           <FiTrash2 className="w-4 h-4" />
         </Button>
       </div>
-
       {/* Toggle Dropdown Icon */}
       <div
         className="absolute bottom-4 right-4 text-gray-500 hover:text-gray-800 cursor-pointer"
         onClick={() => onToggleExpand(job.id)}
       >
-        {isExpanded ? (
-          <FiChevronUp size={20} />
-        ) : (
-          <FiChevronDown size={20} />
-        )}
+        {isExpanded ? <FiChevronUp size={20} /> : <FiChevronDown size={20} />}
       </div>
     </div>
   );

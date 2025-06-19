@@ -1,10 +1,6 @@
 "use client";
 
-import Image from "next/image";
 import { Job } from "@/app/types/job";
-
-import Link from "next/link";
-
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabaseClient";
@@ -61,14 +57,6 @@ export default function Dashboard() {
   const [logoRefreshKey, setLogoRefreshKey] = useState(0);
 
   const closeModal = () => setConfirmModal({ action: null, job: null });
-  const [showModal, setShowModal] = useState(false);
-
-  const handleLogoutClick = () => setShowModal(true);
-  const handleCancel = () => setShowModal(false);
-  const handleConfirmlogout = () => {
-    setShowModal(false);
-    handleLogout();
-  };
 
   function launchConfetti() {
     confetti({
@@ -84,8 +72,6 @@ export default function Dashboard() {
       handleDelete(confirmModal.job.id);
     } else if (confirmModal.action === "duplicate") {
       handleDuplicate(confirmModal.job);
-    } else if (confirmModal.action === "logout") {
-      handleLogout();
     }
     closeModal();
   };
@@ -215,14 +201,6 @@ export default function Dashboard() {
     getSessionAndFetchJobs();
   }, [supabase, router]);
 
-  const handleLogout = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (!error) {
-      setUser(null);
-      router.push("/");
-    }
-  };
-
   async function handleDuplicate(jobToDuplicate: Job) {
     try {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -305,37 +283,10 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen flex flex-col">
       <main className="flex-grow">
-        <div className="p-4 max-w-3xl mx-auto">
+        <div className="px-4 max-w-3xl mx-auto">
           <div className="sticky top-0 pt-2 z-50 bg-white">
-            <div className="w-full px-2 sm:px-4 pb-3">
+            <div className="w-full px-2 sm:px-4 pb-2">
               <header className="max-w-6xl mx-auto flex justify-between items-center">
-                <Link
-                  href="/"
-                  className="flex items-center gap-2 sm:gap-3 cursor-pointer"
-                >
-                  <Image
-                    src="/logo.svg"
-                    alt="Intern Tracker Logo"
-                    width={28}
-                    height={28}
-                    priority
-                    className="w-7 h-7 sm:w-8 sm:h-8"
-                  />
-                  <h1 className="text-lg sm:text-xl font-semibold text-gray-800">
-                    Intern Tracker
-                  </h1>
-                </Link>
-
-                <Button variant="outline" onClick={handleLogoutClick}>
-                  Logout
-                </Button>
-                <ConfirmModal
-                  open={showModal}
-                  title="Confirm Logout"
-                  message="Are you sure you want to logout?"
-                  onConfirm={handleConfirmlogout}
-                  onCancel={handleCancel}
-                />
                 <ConfirmModal
                   open={
                     !!confirmModal.action && confirmModal.action !== "logout"
@@ -362,9 +313,9 @@ export default function Dashboard() {
 
             {user && <DashboardGreeting user={user} jobs={jobs} />}
 
-            <div className="flex justify-between items-center mt-6 mb -2 mx-3 pb-3">
+            <div className="flex justify-between items-center mt-4 mx-3 pb-3 ">
               <h2 className="text-2xl font-semibold text-gray-900">
-                Intern Applications
+                Applications
               </h2>
               <Dialog open={modalOpen} onOpenChange={setModalOpen}>
                 <DialogTrigger asChild>
