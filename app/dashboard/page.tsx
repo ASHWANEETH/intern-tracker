@@ -36,7 +36,6 @@ import confetti from "canvas-confetti";
 import Notes from "@/components/Notes";
 import { ChevronDown, ChevronUp } from "lucide-react";
 
-
 type Job = {
   id: string;
   company_name: string;
@@ -82,7 +81,7 @@ export default function Dashboard() {
   const [examDate, setExamDate] = useState("");
   const [editJobId, setEditJobId] = useState<string | null>(null);
   const [confirmModal, setConfirmModal] = useState<{
-    action: "delete" | "duplicate" | null;
+    action: "delete" | "duplicate" | "logout" | null;
     job: Job | null;
   }>({ action: null, job: null });
   const [expandedJobId, setExpandedJobId] = useState<string | null>(null);
@@ -90,6 +89,14 @@ export default function Dashboard() {
   const [showNotes, setShowNotes] = useState(false);
 
   const closeModal = () => setConfirmModal({ action: null, job: null });
+  const [showModal, setShowModal] = useState(false);
+
+  const handleLogoutClick = () => setShowModal(true);
+  const handleCancel = () => setShowModal(false);
+  const handleConfirmlogout = () => {
+    setShowModal(false);
+    handleLogout();
+  };
 
   function launchConfetti() {
     confetti({
@@ -105,6 +112,8 @@ export default function Dashboard() {
       handleDelete(confirmModal.job.id);
     } else if (confirmModal.action === "duplicate") {
       handleDuplicate(confirmModal.job);
+    } else if (confirmModal.action === "logout") {
+      handleLogout();
     }
     closeModal();
   };
@@ -294,7 +303,32 @@ export default function Dashboard() {
     setJobs((prev) => prev.filter((job) => job.id !== jobId));
   };
 
-  if (loading) return <p className="p-6">Loading...</p>;
+  if (loading)
+    return (
+      <div className="flex items-center justify-center p-6">
+        <svg
+          className="animate-spin h-6 w-6 text-blue-600 mr-2"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <circle
+            className="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            strokeWidth="4"
+          ></circle>
+          <path
+            className="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+          ></path>
+        </svg>
+        <span>Loading...</span>
+      </div>
+    );
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -303,7 +337,10 @@ export default function Dashboard() {
           <div className="sticky top-0 pt-2 z-50 bg-white">
             <div className="w-full px-2 sm:px-4 pb-3">
               <header className="max-w-6xl mx-auto flex justify-between items-center">
-                <Link href="/" className="flex items-center gap-2 sm:gap-3 cursor-pointer">
+                <Link
+                  href="/"
+                  className="flex items-center gap-2 sm:gap-3 cursor-pointer"
+                >
                   <Image
                     src="/logo.svg"
                     alt="Intern Tracker Logo"
@@ -317,9 +354,16 @@ export default function Dashboard() {
                   </h1>
                 </Link>
 
-                <Button variant="outline" onClick={handleLogout} size="sm">
+                <Button variant="outline" onClick={handleLogoutClick}>
                   Logout
                 </Button>
+                <ConfirmModal
+                  open={showModal}
+                  title="Confirm Logout"
+                  message="Are you sure you want to logout?"
+                  onConfirm={handleConfirmlogout}
+                  onCancel={handleCancel}
+                />
               </header>
             </div>
             {user && <DashboardGreeting user={user} jobs={jobs} />}
@@ -463,7 +507,7 @@ export default function Dashboard() {
               return (
                 <div
                   key={job.id}
-                  className="border border-gray-200 rounded-2xl px-6 py-3 shadow-lg hover:shadow-indigo-200 hover:border-indigo-200 transition cursor-pointer relative"
+                  className="border border-gray-200 rounded-2xl px-5 py-4 shadow-lg hover:shadow-indigo-200 hover:border-indigo-200 transition cursor-pointer relative"
                 >
                   {/* Header Row */}
                   <div className="flex justify-between items-center">
@@ -472,7 +516,7 @@ export default function Dashboard() {
                         key={logoRefreshKey}
                         companyName={job.company_name}
                       />
-                      <h3 className="text-lg font-semibold text-gray-900">
+                      <h3 className="text-lg font-semibold capitalize text-gray-900">
                         {job.company_name}
                       </h3>
                     </div>
@@ -501,14 +545,14 @@ export default function Dashboard() {
                   </div>
 
                   {/* Summary */}
-                  <p className="text-gray-700 mt-2 font-medium">{job.role}</p>
-                  <p className="text-gray-700 font-semibold">
-                    CTC / Stipend: {job.ctc}
+                  <p className="text-gray-700 mt-1 font-medium">{job.role}</p>
+                  <p className="text-gray-700">
+                    CTC/Stipend: <strong>{job.ctc}</strong>
                   </p>
 
                   {/* Expanded Info */}
                   {isExpanded && (
-                    <div className="mt-4 text-sm text-gray-600 space-y-1">
+                    <div className="mt-3 text-sm text-gray-600 space-y-1">
                       {job.status === "to-apply" ? (
                         <p>
                           Last Date to Apply:
@@ -552,7 +596,7 @@ export default function Dashboard() {
                         <div>
                           <button
                             onClick={() => setShowNotes((prev) => !prev)}
-                            className="flex items-center gap-2 text-black font-medium text-sm hover:underline"
+                            className="flex items-center gap-1 text-black font-medium text-sm hover:underline"
                           >
                             {showNotes ? "Notes" : "Notes"}
                             {showNotes ? (
@@ -573,7 +617,7 @@ export default function Dashboard() {
                   )}
 
                   {/* Action Buttons */}
-                  <div className="flex gap-2 mt-4">
+                  <div className="flex gap-2 mt-3">
                     <Button size="sm" onClick={() => handleEditClick(job)}>
                       <FiEdit className="w-4 h-4" />
                     </Button>
