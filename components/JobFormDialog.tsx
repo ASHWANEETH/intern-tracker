@@ -1,5 +1,7 @@
 "use client";
 
+import { jobRoles } from "@/app/types/jobRoles";
+
 import {
   Dialog,
   DialogTrigger,
@@ -16,6 +18,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
+import { useState, useEffect } from "react";
 
 interface JobFormDialogProps {
   modalOpen: boolean;
@@ -62,6 +65,56 @@ export default function JobFormDialog({
   examDate,
   setExamDate,
 }: JobFormDialogProps) {
+  interface CompanySuggestion {
+    name: string;
+    domain: string;
+  }
+
+  const [companySuggestions, setCompanySuggestions] = useState<
+    CompanySuggestion[]
+  >([]);
+
+  const [roleSuggestions, setRoleSuggestions] = useState<string[]>([]);
+
+  useEffect(() => {
+    const fetchCompanySuggestions = async () => {
+      if (companyName.length < 1) {
+        setCompanySuggestions([]);
+        return;
+      }
+
+      try {
+        const res = await fetch(
+          `https://autocomplete.clearbit.com/v1/companies/suggest?query=${companyName}`
+        );
+        const data = await res.json();
+        setCompanySuggestions(data); // array of {name, domain}
+      } catch (err) {
+        console.error("Error fetching company suggestions:", err);
+      }
+    };
+
+    const debounce = setTimeout(() => {
+      fetchCompanySuggestions();
+    }, 50);
+
+    return () => clearTimeout(debounce);
+  }, [companyName]);
+
+  useEffect(() => {
+    // Static "role" autocomplete — you can replace with API later if needed
+    const allRoles = jobRoles;
+
+    if (role.length < 1) {
+      setRoleSuggestions([]);
+    } else {
+      const filtered = allRoles.filter((r) =>
+        r.toLowerCase().includes(role.toLowerCase())
+      );
+      setRoleSuggestions(filtered);
+    }
+  }, [role]);
+
   return (
     <Dialog open={modalOpen} onOpenChange={setModalOpen}>
       <DialogTrigger asChild>
@@ -91,20 +144,61 @@ export default function JobFormDialog({
 
         <form
           onSubmit={handleAddOrUpdateJob}
-          className="flex flex-col gap-4 mt-4"
+          className="flex flex-col gap-4 mt-4 relative"
         >
-          <Input
-            placeholder="Company Name"
-            value={companyName}
-            onChange={(e) => setCompanyName(e.target.value)}
-            required
-          />
-          <Input
-            placeholder="Role"
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
-            required
-          />
+          {/* Company Name */}
+          <div className="relative">
+            <Input
+              placeholder="Company Name"
+              value={companyName}
+              onChange={(e) => setCompanyName(e.target.value)}
+              required
+            />
+            {companySuggestions.length > 0 && (
+              <div className="absolute z-20 bg-white border border-gray-200 rounded mt-1 w-full max-h-40 overflow-y-auto shadow-lg">
+                {companySuggestions.map((item, index) => (
+                  <div
+                    key={index}
+                    className="p-2 hover:bg-gray-100 cursor-pointer"
+                    onClick={() => {
+                      setCompanyName(item.name);
+                      setCompanySuggestions([]);
+                    }}
+                  >
+                    {item.name}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Role */}
+          <div className="relative">
+            <Input
+              placeholder="Role"
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+              required
+            />
+            {roleSuggestions.length > 0 && (
+              <div className="absolute z-20 bg-white border border-gray-200 rounded mt-1 w-full max-h-40 overflow-y-auto shadow-lg">
+                {roleSuggestions.map((item, index) => (
+                  <div
+                    key={index}
+                    className="p-2 hover:bg-gray-100 cursor-pointer"
+                    onClick={() => {
+                      setRole(item);
+                      setRoleSuggestions([]);
+                    }}
+                  >
+                    {item}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* CTC */}
           <Input
             placeholder="CTC / Stipend"
             value={ctc}
@@ -112,16 +206,17 @@ export default function JobFormDialog({
             required
           />
 
+          {/* Notes */}
           <div className="bg-yellow-50 border border-yellow-300 text-yellow-800 text-sm rounded-xl px-3 py-1 shadow-sm">
             <p className="font-semibold mb-1">Tip for Formatting Notes</p>
             <ul className="list-disc list-inside space-y-1">
               <li>
-                Separate with <span className="font-medium">commas</span> to make
-                bullet points
+                Separate with <span className="font-medium">commas</span> to
+                make bullet points
               </li>
               <li>
-                Use <span className="font-medium">#</span> to create a new sticky
-                note
+                Use <span className="font-medium">#</span> to create a new
+                sticky note
               </li>
             </ul>
           </div>
@@ -132,6 +227,7 @@ export default function JobFormDialog({
             onChange={(e) => setRequirements(e.target.value)}
           />
 
+          {/* Status */}
           <Select value={status} onValueChange={setStatus}>
             <SelectTrigger>
               <SelectValue placeholder="Status" />
@@ -145,6 +241,7 @@ export default function JobFormDialog({
             </SelectContent>
           </Select>
 
+          {/* Conditional Dates */}
           {status === "to-apply" ? (
             <>
               <label className="font-medium text-gray-700">
@@ -160,9 +257,7 @@ export default function JobFormDialog({
             </>
           ) : (
             <>
-              <label className="font-medium text-gray-700">
-                Applied Date
-              </label>
+              <label className="font-medium text-gray-700">Applied Date</label>
               <Input
                 type="date"
                 value={appliedDate}
@@ -182,6 +277,7 @@ export default function JobFormDialog({
             </>
           )}
 
+          {/* Submit Button */}
           <Button type="submit" className="mt-2">
             {editJobId ? "Update" : "Submit"}
           </Button>
