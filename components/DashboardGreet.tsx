@@ -67,9 +67,6 @@ export default function DashboardGreeting({ user, jobs }: Props) {
         new Date(b.last_date_to_apply!).getTime()
     );
 
-  const greetings = ["Hello", "Hi", "Hey"];
-  const greeting = greetings[Math.floor(Math.random() * greetings.length)];
-
   const statusCounts = jobs.reduce((acc: Record<string, number>, job) => {
     acc[job.status] = (acc[job.status] || 0) + 1;
     return acc;
@@ -102,7 +99,7 @@ export default function DashboardGreeting({ user, jobs }: Props) {
       {/* Header with Home + Logout */}
       <div className="flex justify-between items-center mb-2">
         <h2 className="text-xl font-semibold text-black-800">
-          {greeting}, {name}!
+          Hello {name}
         </h2>
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => router.push("/")}>
