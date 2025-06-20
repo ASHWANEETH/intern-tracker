@@ -96,7 +96,7 @@ export default function DashboardGreeting({ user, jobs }: Props) {
         max-w-3xl mx-auto p-3 
         rounded-2xl border border-indigo-200 
         shadow-xl 
-        bg-gradient-to-br from-indigo-100/90 to-indigo-50/80 
+        bg-gradient-to-br from-violet-100/90 to-violet-50/80
         backdrop-blur-md
       "
     >
