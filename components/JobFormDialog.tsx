@@ -144,7 +144,7 @@ export default function JobFormDialog({
 
         <form
           onSubmit={handleAddOrUpdateJob}
-          className="flex flex-col gap-4 mt-4 relative"
+          className="flex flex-col gap-3 relative"
         >
           {/* Company Name */}
           <div className="relative">
@@ -159,7 +159,7 @@ export default function JobFormDialog({
                 {companySuggestions.map((item, index) => (
                   <div
                     key={index}
-                    className="p-2 hover:bg-gray-100 cursor-pointer"
+                    className="p-1 hover:bg-gray-100 cursor-pointer"
                     onClick={() => {
                       setCompanyName(item.name);
                       setCompanySuggestions([]);
@@ -185,7 +185,7 @@ export default function JobFormDialog({
                 {roleSuggestions.map((item, index) => (
                   <div
                     key={index}
-                    className="p-2 hover:bg-gray-100 cursor-pointer"
+                    className="p-1 hover:bg-gray-100 cursor-pointer"
                     onClick={() => {
                       setRole(item);
                       setRoleSuggestions([]);
