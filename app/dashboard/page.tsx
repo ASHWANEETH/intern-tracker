@@ -285,31 +285,25 @@ export default function Dashboard() {
       <main className="flex-grow">
         <div className="px-4 max-w-3xl mx-auto">
           <div className="sticky top-0 pt-2 z-50 bg-white">
-            <div className="w-full px-2 sm:px-4 pb-2">
-              <header className="max-w-6xl mx-auto flex justify-between items-center">
-                <ConfirmModal
-                  open={
-                    !!confirmModal.action && confirmModal.action !== "logout"
-                  }
-                  title={
-                    confirmModal.action === "delete"
-                      ? "Confirm Delete"
-                      : confirmModal.action === "duplicate"
-                      ? "Confirm Duplicate"
-                      : ""
-                  }
-                  message={
-                    confirmModal.action === "delete"
-                      ? "Are you sure you want to delete this application?"
-                      : confirmModal.action === "duplicate"
-                      ? "Do you want to duplicate this application?"
-                      : ""
-                  }
-                  onConfirm={handleConfirm}
-                  onCancel={closeModal}
-                />
-              </header>
-            </div>
+            <ConfirmModal
+              open={!!confirmModal.action && confirmModal.action !== "logout"}
+              title={
+                confirmModal.action === "delete"
+                  ? "Confirm Delete"
+                  : confirmModal.action === "duplicate"
+                  ? "Confirm Duplicate"
+                  : ""
+              }
+              message={
+                confirmModal.action === "delete"
+                  ? "Are you sure you want to delete this application?"
+                  : confirmModal.action === "duplicate"
+                  ? "Do you want to duplicate this application?"
+                  : ""
+              }
+              onConfirm={handleConfirm}
+              onCancel={closeModal}
+            />
 
             {user && <DashboardGreeting user={user} jobs={jobs} />}
 
