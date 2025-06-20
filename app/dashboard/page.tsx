@@ -263,33 +263,38 @@ export default function Dashboard() {
       </div>
     );
 
-  return (
-    <div className="min-h-screen flex flex-col">
-      <ConfirmModal
-        open={!!confirmModal.action && confirmModal.action !== "logout"}
-        title={
-          confirmModal.action === "delete"
-            ? "Confirm Delete"
-            : confirmModal.action === "duplicate"
-            ? "Confirm Duplicate"
-            : ""
-        }
-        message={
-          confirmModal.action === "delete"
-            ? "Are you sure you want to delete this application?"
-            : confirmModal.action === "duplicate"
-            ? "Do you want to duplicate this application?"
-            : ""
-        }
-        onConfirm={handleConfirm}
-        onCancel={closeModal}
-      />
-      <main className="flex-grow">
-        <div className="px-4 max-w-3xl mx-auto">
-          <div className="sticky top-0 pt-2 z-50 bg-white">
-            {user && <DashboardGreeting user={user} jobs={jobs} />}
+return (
+  <div className="min-h-screen flex flex-col">
+    <ConfirmModal
+      open={!!confirmModal.action && confirmModal.action !== "logout"}
+      title={
+        confirmModal.action === "delete"
+          ? "Confirm Delete"
+          : confirmModal.action === "duplicate"
+          ? "Confirm Duplicate"
+          : ""
+      }
+      message={
+        confirmModal.action === "delete"
+          ? "Are you sure you want to delete this application?"
+          : confirmModal.action === "duplicate"
+          ? "Do you want to duplicate this application?"
+          : ""
+      }
+      onConfirm={handleConfirm}
+      onCancel={closeModal}
+    />
+    <main className="flex-grow">
+      <div className="px-4 max-w-6xl mx-auto py-6 flex flex-col md:flex-row md:items-start gap-6">
+        {/* Left: Dashboard Greet */}
+        <div className="w-full md:w-1/2 sticky top-4 self-start">
+          {user && <DashboardGreeting user={user} jobs={jobs} />}
+        </div>
 
-            <div className="flex justify-between items-center mt-4 mx-3 pb-3 ">
+        {/* Right: Applications + Dialog + Job Tiles */}
+        <div className="w-full md:w-1/2 flex flex-col gap-4">
+          <div className="sticky top-0 pt-2 z-50 bg-white">
+            <div className="flex justify-between items-center pb-3">
               <h2 className="text-2xl font-semibold text-gray-900">
                 Applications
               </h2>
@@ -317,7 +322,9 @@ export default function Dashboard() {
               />
             </div>
           </div>
-          <div className="flex flex-col gap-6 mx-2">
+
+          {/* Job Tiles */}
+          <div className="flex flex-col gap-6">
             {jobs.map((job) => (
               <JobTile
                 key={job.id}
@@ -337,10 +344,12 @@ export default function Dashboard() {
             ))}
           </div>
         </div>
-      </main>
-      <footer className="sticky bottom-0 z-40 w-full bg-white/70 backdrop-blur-md border-t text-center py-1 text-sm text-gray-600">
-        <span>© {new Date().getFullYear()} Intern Tracker</span>
-      </footer>
-    </div>
-  );
+      </div>
+    </main>
+    <footer className="sticky bottom-0 z-40 w-full bg-white/70 backdrop-blur-md border-t text-center py-1 text-sm text-gray-600">
+      <span>© {new Date().getFullYear()} Intern Tracker</span>
+    </footer>
+  </div>
+);
+
 }
