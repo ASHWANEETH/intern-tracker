@@ -18,7 +18,8 @@ import {
 } from "@/components/ui/select";
 import Notes from "@/components/Notes";
 import { useState } from "react";
-import { Job } from "@/app/types/job"; // assuming you have this type
+import { Job } from "@/app/types/job";
+import { AnimatePresence, motion } from "framer-motion"; // add this!
 
 const statusColors: Record<string, string> = {
   "to-apply": "bg-gray-300 text-gray-800",
@@ -65,7 +66,12 @@ export default function JobTile({
     "from-gray-100/90 to-gray-50/80 border-gray-200";
 
   return (
-    <div
+    <motion.div
+      layout
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.3 }}
       className={`
         rounded-2xl px-5 py-4 
         shadow-xl 
@@ -74,7 +80,6 @@ export default function JobTile({
         transition cursor-pointer relative
       `}
     >
-      {" "}
       {/* Header Row */}
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-2">
@@ -103,73 +108,89 @@ export default function JobTile({
           </SelectContent>
         </Select>
       </div>
+
       {/* Summary */}
       <p className="text-gray-700 mt-1 font-medium">{job.role}</p>
       <p className="text-gray-700">
         CTC/Stipend: <strong>{job.ctc}</strong>
       </p>
-      {/* Expanded Info */}
-      {isExpanded && (
-        <div className="mt-3 text-sm text-gray-600 space-y-1">
-          {job.status === "to-apply" ? (
-            <p>
-              Last Date to Apply:
-              <strong>
-                {" "}
-                {job.last_date_to_apply
-                  ? new Date(job.last_date_to_apply).toLocaleDateString()
-                  : "-"}
-              </strong>
-            </p>
-          ) : (
-            <>
+
+      {/* Expandable section */}
+      <AnimatePresence initial={false}>
+        {isExpanded && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2, ease: "easeInOut" }}
+            className="overflow-hidden mt-3 text-sm text-gray-600 space-y-1"
+          >
+            {job.status === "to-apply" ? (
               <p>
-                Applied on:
+                Last Date to Apply:{" "}
                 <strong>
-                  {" "}
-                  {job.applied_date
-                    ? new Date(job.applied_date).toLocaleDateString()
-                    : job.created_at
-                    ? new Date(job.created_at).toLocaleDateString()
+                  {job.last_date_to_apply
+                    ? new Date(job.last_date_to_apply).toLocaleDateString()
                     : "-"}
                 </strong>
               </p>
-              <p>
-                Exam / Interview Date:
-                <strong>
-                  {" "}
-                  {job.exam_date
-                    ? new Date(job.exam_date).toLocaleDateString()
-                    : "-"}
-                </strong>
-              </p>
-            </>
-          )}
+            ) : (
+              <>
+                <p>
+                  Applied on:{" "}
+                  <strong>
+                    {job.applied_date
+                      ? new Date(job.applied_date).toLocaleDateString()
+                      : job.created_at
+                      ? new Date(job.created_at).toLocaleDateString()
+                      : "-"}
+                  </strong>
+                </p>
+                <p>
+                  Exam / Interview Date:{" "}
+                  <strong>
+                    {job.exam_date
+                      ? new Date(job.exam_date).toLocaleDateString()
+                      : "-"}
+                  </strong>
+                </p>
+              </>
+            )}
 
-          {/* Toggle Notes */}
-          {job.requirements && (
-            <div>
-              <button
-                onClick={() => setShowNotes((prev) => !prev)}
-                className="flex items-center gap-1 text-black font-medium text-sm hover:underline"
-              >
-                {showNotes ? "Hide Notes" : "Notes"}
-                {showNotes ? (
-                  <FiChevronUp className="w-4 h-4" />
-                ) : (
-                  <FiChevronDown className="w-4 h-4" />
-                )}
-              </button>
+            {/* Notes */}
+            {job.requirements && (
+              <>
+                <button
+                  onClick={() => setShowNotes((prev) => !prev)}
+                  className="flex items-center gap-1 text-black font-medium text-sm hover:underline"
+                >
+                  {showNotes ? "Hide Notes" : "Notes"}
+                  {showNotes ? (
+                    <FiChevronUp className="w-4 h-4" />
+                  ) : (
+                    <FiChevronDown className="w-4 h-4" />
+                  )}
+                </button>
 
-              {showNotes && (
-                <div className="mt-2">
-                  <Notes requirements={job.requirements} />
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      )}
+                <AnimatePresence initial={false}>
+                  {showNotes && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3, ease: "easeInOut" }}
+                      className="mt-2 overflow-hidden"
+                    >
+                      <Notes requirements={job.requirements} />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Action Buttons */}
       <div className="flex gap-2 mt-3">
         <Button size="sm" onClick={() => onEditClick(job)}>
@@ -186,6 +207,7 @@ export default function JobTile({
           <FiTrash2 className="w-4 h-4" />
         </Button>
       </div>
+
       {/* Toggle Dropdown Icon */}
       <div
         className="absolute bottom-4 right-4 text-gray-500 hover:text-gray-800 cursor-pointer"
@@ -193,6 +215,6 @@ export default function JobTile({
       >
         {isExpanded ? <FiChevronUp size={20} /> : <FiChevronDown size={20} />}
       </div>
-    </div>
+    </motion.div>
   );
 }
