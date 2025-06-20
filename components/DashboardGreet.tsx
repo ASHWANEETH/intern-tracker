@@ -50,6 +50,21 @@ export default function DashboardGreeting({ user, jobs }: Props) {
   };
 
   useEffect(() => {
+  const checkDesktop = () => {
+    if (window.matchMedia("(min-width: 768px)").matches) {
+      setShowAllDeadlines(true);  // always expanded on desktop
+    } else {
+      setShowAllDeadlines(false); // mobile → collapsed by default
+    }
+  };
+
+  checkDesktop(); // on mount
+
+  window.addEventListener("resize", checkDesktop);
+  return () => window.removeEventListener("resize", checkDesktop);
+}, []);
+
+  useEffect(() => {
     setMounted(false);
     const timer = setTimeout(() => setMounted(true), 100);
     return () => clearTimeout(timer);
