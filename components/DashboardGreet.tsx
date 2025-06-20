@@ -67,7 +67,7 @@ export default function DashboardGreeting({ user, jobs }: Props) {
         new Date(b.last_date_to_apply!).getTime()
     );
 
-  const greetings = ["Hello", "Hi", "Hey", "What's up", "Welcome back!"];
+  const greetings = ["Hello", "Hi", "Hey"];
   const greeting = greetings[Math.floor(Math.random() * greetings.length)];
 
   const statusCounts = jobs.reduce((acc: Record<string, number>, job) => {
