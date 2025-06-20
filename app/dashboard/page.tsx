@@ -4,28 +4,11 @@ import { Job } from "@/app/types/job";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabaseClient";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import JobFormDialog from "@/components/JobFormDialog";
 import JobTile from "@/components/JobTile";
-
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
 import DashboardGreeting from "@/components/DashboardGreet";
 import { ConfirmModal } from "@/components/ConfirmModal";
 import confetti from "canvas-confetti";
-// import FooterWithModals from "@/components/Footer";
 
 export default function Dashboard() {
   const supabase = createClient();
@@ -282,161 +265,56 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <ConfirmModal
+        open={!!confirmModal.action && confirmModal.action !== "logout"}
+        title={
+          confirmModal.action === "delete"
+            ? "Confirm Delete"
+            : confirmModal.action === "duplicate"
+            ? "Confirm Duplicate"
+            : ""
+        }
+        message={
+          confirmModal.action === "delete"
+            ? "Are you sure you want to delete this application?"
+            : confirmModal.action === "duplicate"
+            ? "Do you want to duplicate this application?"
+            : ""
+        }
+        onConfirm={handleConfirm}
+        onCancel={closeModal}
+      />
       <main className="flex-grow">
         <div className="px-4 max-w-3xl mx-auto">
           <div className="sticky top-0 pt-2 z-50 bg-white">
-            <ConfirmModal
-              open={!!confirmModal.action && confirmModal.action !== "logout"}
-              title={
-                confirmModal.action === "delete"
-                  ? "Confirm Delete"
-                  : confirmModal.action === "duplicate"
-                  ? "Confirm Duplicate"
-                  : ""
-              }
-              message={
-                confirmModal.action === "delete"
-                  ? "Are you sure you want to delete this application?"
-                  : confirmModal.action === "duplicate"
-                  ? "Do you want to duplicate this application?"
-                  : ""
-              }
-              onConfirm={handleConfirm}
-              onCancel={closeModal}
-            />
-
             {user && <DashboardGreeting user={user} jobs={jobs} />}
 
             <div className="flex justify-between items-center mt-4 mx-3 pb-3 ">
               <h2 className="text-2xl font-semibold text-gray-900">
                 Applications
               </h2>
-              <Dialog open={modalOpen} onOpenChange={setModalOpen}>
-                <DialogTrigger asChild>
-                  <Button
-                    onClick={() => {
-                      setCompanyName("");
-                      setRole("");
-                      setCtc("");
-                      setRequirements("");
-                      setStatus("to-apply");
-                      setLastDateToApply("");
-                      setAppliedDate("");
-                      setExamDate("");
-                      setModalOpen(true);
-                    }}
-                  >
-                    New Application
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="max-w-md">
-                  <DialogHeader>
-                    <DialogTitle>
-                      {editJobId
-                        ? "Edit Job Application"
-                        : "Add Job Application"}
-                    </DialogTitle>
-                  </DialogHeader>
-                  <form
-                    onSubmit={handleAddOrUpdateJob}
-                    className="flex flex-col gap-4 mt-4"
-                  >
-                    <Input
-                      placeholder="Company Name"
-                      value={companyName}
-                      onChange={(e) => setCompanyName(e.target.value)}
-                      required
-                    />
-                    <Input
-                      placeholder="Role"
-                      value={role}
-                      onChange={(e) => setRole(e.target.value)}
-                      required
-                    />
-                    <Input
-                      placeholder="CTC / Stipend"
-                      value={ctc}
-                      onChange={(e) => setCtc(e.target.value)}
-                      required
-                    />
-                    <div className="bg-yellow-50 border border-yellow-300 text-yellow-800 text-sm rounded-xl px-3 py-1 shadow-sm">
-                      <p className="font-semibold mb-1">
-                        Tip for Formatting Notes
-                      </p>
-                      <ul className="list-disc list-inside space-y-1">
-                        <li>
-                          Separate with{" "}
-                          <span className="font-medium">commas</span> to make
-                          bullet points
-                        </li>
-                        <li>
-                          Use <span className="font-medium">#</span> to create a
-                          new sticky note
-                        </li>
-                      </ul>
-                    </div>
-                    <Input
-                      placeholder="Notes"
-                      value={requirements}
-                      onChange={(e) => setRequirements(e.target.value)}
-                    />
-
-                    <Select value={status} onValueChange={setStatus}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="to-apply">To Apply</SelectItem>
-                        <SelectItem value="applied">Applied</SelectItem>
-                        <SelectItem value="waiting">Waiting</SelectItem>
-                        <SelectItem value="rejected">Rejected</SelectItem>
-                        <SelectItem value="approved">Approved</SelectItem>
-                      </SelectContent>
-                    </Select>
-
-                    {status === "to-apply" ? (
-                      <>
-                        <label className="font-medium text-gray-700">
-                          Last Date to Apply
-                        </label>
-                        <Input
-                          type="date"
-                          value={lastDateToApply}
-                          onChange={(e) => setLastDateToApply(e.target.value)}
-                          placeholder="Select last date to apply"
-                          required
-                        />
-                      </>
-                    ) : (
-                      <>
-                        <label className="font-medium text-gray-700">
-                          Applied Date
-                        </label>
-                        <Input
-                          type="date"
-                          value={appliedDate}
-                          onChange={(e) => setAppliedDate(e.target.value)}
-                          placeholder="Select applied date"
-                        />
-
-                        <label className="font-medium text-gray-700 mt-2">
-                          Exam / Interview Date
-                        </label>
-                        <Input
-                          type="date"
-                          value={examDate}
-                          onChange={(e) => setExamDate(e.target.value)}
-                          placeholder="Select exam/interview date"
-                        />
-                      </>
-                    )}
-
-                    <Button type="submit" className="mt-2">
-                      {editJobId ? "Update" : "Submit"}
-                    </Button>
-                  </form>
-                </DialogContent>
-              </Dialog>
+              <JobFormDialog
+                modalOpen={modalOpen}
+                setModalOpen={setModalOpen}
+                handleAddOrUpdateJob={handleAddOrUpdateJob}
+                editJobId={editJobId}
+                companyName={companyName}
+                setCompanyName={setCompanyName}
+                role={role}
+                setRole={setRole}
+                ctc={ctc}
+                setCtc={setCtc}
+                requirements={requirements}
+                setRequirements={setRequirements}
+                status={status}
+                setStatus={setStatus}
+                lastDateToApply={lastDateToApply}
+                setLastDateToApply={setLastDateToApply}
+                appliedDate={appliedDate}
+                setAppliedDate={setAppliedDate}
+                examDate={examDate}
+                setExamDate={setExamDate}
+              />
             </div>
           </div>
           <div className="flex flex-col gap-6 mx-2">
