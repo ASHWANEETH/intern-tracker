@@ -83,24 +83,19 @@ export default function DashboardGreeting({ user, jobs }: Props) {
 
   return (
     <motion.section
-      key={tab}
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -10 }}
-      transition={{ duration: 0.4, ease: "easeInOut" }}
+      initial={{ opacity: 1 }}
+      animate={{ opacity: 1 }}
       className="
-        max-w-3xl mx-auto p-3 
-        rounded-2xl
-        shadow-xl 
-        bg-gradient-to-br from-violet-100/90 to-violet-50/80
-        backdrop-blur-md
-      "
+    max-w-3xl mx-auto p-3 
+    rounded-2xl
+    shadow-xl 
+    bg-gradient-to-br from-violet-100/90 to-violet-50/80
+    backdrop-blur-md
+"
     >
       {/* Header with Home + Logout */}
       <div className="flex justify-between items-center mb-2">
-        <h2 className="text-xl font-semibold text-black-800">
-          Hello {name}
-        </h2>
+        <h2 className="text-xl font-semibold text-black-800">Hello {name}</h2>
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => router.push("/")}>
             <Home className="w-4 h-4 mr-1" />
