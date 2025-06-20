@@ -67,9 +67,8 @@ export default function DashboardGreeting({ user, jobs }: Props) {
         new Date(b.last_date_to_apply!).getTime()
     );
 
-  const hour = new Date().getHours();
-  const greeting =
-    hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
+  const greetings = ["Hello", "Hi", "Hey", "What's up", "Welcome back!"];
+  const greeting = greetings[Math.floor(Math.random() * greetings.length)];
 
   const statusCounts = jobs.reduce((acc: Record<string, number>, job) => {
     acc[job.status] = (acc[job.status] || 0) + 1;
@@ -94,7 +93,7 @@ export default function DashboardGreeting({ user, jobs }: Props) {
       transition={{ duration: 0.4, ease: "easeInOut" }}
       className="
         max-w-3xl mx-auto p-3 
-        rounded-2xl border border-indigo-200 
+        rounded-2xl
         shadow-xl 
         bg-gradient-to-br from-violet-100/90 to-violet-50/80
         backdrop-blur-md
