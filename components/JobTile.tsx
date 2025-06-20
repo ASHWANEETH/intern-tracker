@@ -71,7 +71,7 @@ export default function JobTile({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.3 }}
+      transition={{ duration: 0.2, ease: "easeInOut" }}
       className={`
         rounded-2xl px-5 py-4 
         shadow-xl 
@@ -123,7 +123,7 @@ export default function JobTile({
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.2, ease: "easeInOut" }}
-            className="overflow-hidden mt-3 text-sm text-gray-600 space-y-1"
+            className="overflow-hidden mt-2 text-sm text-gray-600 space-y-1"
           >
             {job.status === "to-apply" ? (
               <p>
