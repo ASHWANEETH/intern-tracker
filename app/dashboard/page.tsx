@@ -284,43 +284,80 @@ return (
       onConfirm={handleConfirm}
       onCancel={closeModal}
     />
+
     <main className="flex-grow">
-      <div className="px-4 max-w-6xl mx-auto py-6 flex flex-col md:flex-row md:items-start gap-6">
-        {/* Left: Dashboard Greet */}
-        <div className="w-full md:w-1/2 sticky top-4 self-start">
+
+      {/* Sticky block for mobile */}
+      <div className="md:hidden sticky top-0 z-30 bg-white w-full">
+        <div className="px-4 pt-3 pb-2 flex flex-col gap-3">
+          {user && <DashboardGreeting user={user} jobs={jobs} />}
+          <div className="flex justify-between items-center">
+            <h2 className="text-2xl font-semibold text-gray-900 py-2">
+              Applications
+            </h2>
+            <JobFormDialog
+              modalOpen={modalOpen}
+              setModalOpen={setModalOpen}
+              handleAddOrUpdateJob={handleAddOrUpdateJob}
+              editJobId={editJobId}
+              companyName={companyName}
+              setCompanyName={setCompanyName}
+              role={role}
+              setRole={setRole}
+              ctc={ctc}
+              setCtc={setCtc}
+              requirements={requirements}
+              setRequirements={setRequirements}
+              status={status}
+              setStatus={setStatus}
+              lastDateToApply={lastDateToApply}
+              setLastDateToApply={setLastDateToApply}
+              appliedDate={appliedDate}
+              setAppliedDate={setAppliedDate}
+              examDate={examDate}
+              setExamDate={setExamDate}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Main content area */}
+      <div className="w-full flex flex-col md:flex-row md:items-start md:gap-6 md:px-8 px-4">
+
+        {/* Left: Dashboard Greet on desktop */}
+        <div className="hidden md:block md:w-1/3 sticky top-4 self-start z-30">
           {user && <DashboardGreeting user={user} jobs={jobs} />}
         </div>
 
-        {/* Right: Applications + Dialog + Job Tiles */}
-        <div className="w-full md:w-1/2 flex flex-col gap-4">
-          <div className="sticky top-0 pt-2 z-50 bg-white">
-            <div className="flex justify-between items-center pb-3">
-              <h2 className="text-2xl font-semibold text-gray-900">
-                Applications
-              </h2>
-              <JobFormDialog
-                modalOpen={modalOpen}
-                setModalOpen={setModalOpen}
-                handleAddOrUpdateJob={handleAddOrUpdateJob}
-                editJobId={editJobId}
-                companyName={companyName}
-                setCompanyName={setCompanyName}
-                role={role}
-                setRole={setRole}
-                ctc={ctc}
-                setCtc={setCtc}
-                requirements={requirements}
-                setRequirements={setRequirements}
-                status={status}
-                setStatus={setStatus}
-                lastDateToApply={lastDateToApply}
-                setLastDateToApply={setLastDateToApply}
-                appliedDate={appliedDate}
-                setAppliedDate={setAppliedDate}
-                examDate={examDate}
-                setExamDate={setExamDate}
-              />
-            </div>
+        {/* Right: Applications + Job Tiles */}
+        <div className="w-full md:w-2/3 flex flex-col gap-4 md:pt-0">
+
+          <div className="hidden md:flex justify-between items-center sticky top-0 pt-2 z-20 md:p-3 bg-white">
+            <h2 className="text-2xl font-semibold text-gray-900">
+              Applications
+            </h2>
+            <JobFormDialog
+              modalOpen={modalOpen}
+              setModalOpen={setModalOpen}
+              handleAddOrUpdateJob={handleAddOrUpdateJob}
+              editJobId={editJobId}
+              companyName={companyName}
+              setCompanyName={setCompanyName}
+              role={role}
+              setRole={setRole}
+              ctc={ctc}
+              setCtc={setCtc}
+              requirements={requirements}
+              setRequirements={setRequirements}
+              status={status}
+              setStatus={setStatus}
+              lastDateToApply={lastDateToApply}
+              setLastDateToApply={setLastDateToApply}
+              appliedDate={appliedDate}
+              setAppliedDate={setAppliedDate}
+              examDate={examDate}
+              setExamDate={setExamDate}
+            />
           </div>
 
           {/* Job Tiles */}
@@ -343,13 +380,17 @@ return (
               />
             ))}
           </div>
+
         </div>
       </div>
+
     </main>
+
     <footer className="sticky bottom-0 z-40 w-full bg-white/70 backdrop-blur-md border-t text-center py-1 text-sm text-gray-600">
       <span>© {new Date().getFullYear()} Intern Tracker</span>
     </footer>
   </div>
 );
+
 
 }

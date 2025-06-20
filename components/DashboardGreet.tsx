@@ -86,13 +86,12 @@ export default function DashboardGreeting({ user, jobs }: Props) {
       initial={{ opacity: 1 }}
       animate={{ opacity: 1 }}
       className="
-    max-w-3xl mx-auto p-3 
-    rounded-2xl
-    shadow-xl 
-    bg-gradient-to-br from-violet-100/90 to-violet-50/80
-    backdrop-blur-md
-"
-    >
+                  w-full md:max-w-3xl md:mx-auto p-3 
+                  rounded-2xl
+                  shadow-xl 
+                  bg-gradient-to-br from-violet-100/90 to-violet-50/80
+                  backdrop-blur-md
+                ">
       {/* Header with Home + Logout */}
       <div className="flex justify-between items-center mb-2">
         <h2 className="text-xl font-semibold text-black-800">Hello {name}</h2>

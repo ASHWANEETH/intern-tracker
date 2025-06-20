@@ -73,7 +73,8 @@ export default function JobTile({
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2, ease: "easeInOut" }}
       className={`
-        rounded-2xl px-5 py-4 
+        rounded-2xl px-5 py-4
+        md:mx-4 
         shadow-xl 
         bg-gradient-to-br ${gradientClasses} 
         backdrop-blur-md 
