@@ -97,7 +97,7 @@ export default function DashboardGreeting({ user, jobs }: Props) {
         <h2 className="text-xl font-semibold text-black-800">Hello {name}</h2>
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => router.push("/")}>
-            <Home className="w-4 h-4 mr-1" />
+            <Home className="w-4 h-4" />
           </Button>
           <Button variant="outline" onClick={handleLogoutClick}>
             Logout
