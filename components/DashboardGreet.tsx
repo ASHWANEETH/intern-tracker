@@ -81,18 +81,162 @@ export default function DashboardGreeting({ user, jobs }: Props) {
     return { status, count, color, widthPercent };
   });
 
+  const overviewContent = () => (
+    <div className="animate-fade-in">
+      <div className="flex justify-between items-center mb-2 min-h-[28px]">
+        <div className="text-center text-gray-700 font-medium">
+          Total Applications:{" "}
+          <span className="font-semibold">{totalCount}</span>
+        </div>
+        <button
+          onClick={() => setShowBars((prev) => !prev)}
+          className="text-gray-700 hover:text-black flex items-center gap-1 text-sm"
+        >
+          {showBars ? (
+            <>
+              Hide <ChevronUp size={16} />
+            </>
+          ) : (
+            <>
+              Show <ChevronDown size={16} />
+            </>
+          )}
+        </button>
+      </div>
+
+      <motion.div
+        initial={false}
+        animate={{
+          height: showBars ? "auto" : 0,
+          opacity: showBars ? 1 : 0,
+        }}
+        transition={{ duration: 0.4, ease: "easeInOut" }}
+        className="overflow-hidden flex flex-col gap-1.5 mx-3"
+      >
+        {bars.map(({ status, count, color, widthPercent }) => (
+          <div
+            key={status}
+            className="flex items-center gap-2 text-sm text-gray-700"
+          >
+            <span className="w-20 capitalize">{status}</span>
+            <div className="flex-1 bg-gray-200 rounded-full h-3 overflow-hidden relative">
+              <motion.div
+                initial={false}
+                animate={{
+                  width: mounted ? `${widthPercent}%` : "0%",
+                }}
+                transition={{ duration: 0.6, ease: "easeOut" }}
+                className="h-3 rounded-full absolute left-0 top-0"
+                style={{ backgroundColor: color }}
+              ></motion.div>
+            </div>
+            <span className="w-6 text-right font-semibold text-gray-800">
+              {count}
+            </span>
+          </div>
+        ))}
+      </motion.div>
+    </div>
+  );
+
+  const deadlinesContent = () => (
+    <div className="bg-white p-4 rounded-lg shadow-inner">
+      {deadlineJobs.length === 0 ? (
+        <p className="text-gray-500 text-sm">No upcoming deadlines 🎉</p>
+      ) : (
+        <>
+          <motion.div
+            initial={false}
+            animate={{
+              height: showAllDeadlines ? "auto" : "7rem",
+              opacity: 1,
+            }}
+            transition={{ duration: 0.4, ease: "easeInOut" }}
+            style={{ overflow: "hidden", willChange: "height" }}
+          >
+            <ul className="space-y-3 text-sm">
+              {deadlineJobs.map((job, i) => (
+                <li
+                  key={i}
+                  className="flex justify-between items-center border-b pb-2"
+                >
+                  <div>
+                    <p className="font-semibold text-indigo-800">{job.role}</p>
+                    <p className="text-gray-600">{job.company_name}</p>
+                  </div>
+                  <p className="text-sm font-medium whitespace-nowrap">
+                    <span className="text-black">
+                      {new Date(job.last_date_to_apply!).toLocaleDateString(
+                        "en-GB",
+                        {
+                          day: "numeric",
+                          month: "long",
+                          year: "numeric",
+                        }
+                      )}
+                    </span>{" "}
+                    <br />
+                    <span className="text-red-600">
+                      {(() => {
+                        const date = new Date(job.last_date_to_apply!);
+                        const now = new Date();
+                        now.setHours(0, 0, 0, 0);
+                        const dueDate = new Date(date);
+                        dueDate.setHours(0, 0, 0, 0);
+
+                        const diffDays = Math.ceil(
+                          (dueDate.getTime() - now.getTime()) /
+                            (1000 * 60 * 60 * 24)
+                        );
+
+                        if (diffDays > 0) {
+                          return `(${diffDays} day${
+                            diffDays > 1 ? "s" : ""
+                          } left)`;
+                        } else if (diffDays === 0) {
+                          return `(Today)`;
+                        } else {
+                          return `(Past Due)`;
+                        }
+                      })()}
+                    </span>
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+
+          {deadlineJobs.length > 2 && (
+            <button
+              onClick={() => setShowAllDeadlines(!showAllDeadlines)}
+              className="mt-2 flex items-center gap-1 text-indigo-600 text-sm"
+            >
+              {showAllDeadlines ? "Show less" : "Show more"}
+              {showAllDeadlines ? (
+                <ChevronUp size={16} />
+              ) : (
+                <ChevronDown size={16} />
+              )}
+            </button>
+          )}
+        </>
+      )}
+    </div>
+  );
+
   return (
     <motion.section
       initial={{ opacity: 1 }}
       animate={{ opacity: 1 }}
       className="
-                  w-full md:max-w-3xl md:mx-auto p-3 
-                  rounded-2xl
-                  shadow-xl 
-                  bg-gradient-to-br from-violet-100/90 to-violet-50/80
-                  backdrop-blur-md
-                ">
-      {/* Header with Home + Logout */}
+        w-full md:max-w-3xl md:mx-auto p-3 
+        rounded-2xl
+        shadow-xl 
+        bg-gradient-to-br from-violet-100/90 to-violet-50/80
+        backdrop-blur-md
+      "
+    >
+      {/* Header */}
       <div className="flex justify-between items-center mb-2">
         <h2 className="text-xl font-semibold text-black-800">Hello {name}</h2>
         <div className="flex gap-2">
@@ -112,8 +256,8 @@ export default function DashboardGreeting({ user, jobs }: Props) {
         </div>
       </div>
 
-      {/* Tabs */}
-      <div className="flex gap-4 mb-3 relative">
+      {/* Tabs - Mobile only */}
+      <div className="flex gap-4 mb-3 relative md:hidden">
         <button
           className={`text-sm px-3 py-1 rounded-full ${
             tab === "overview"
@@ -142,167 +286,28 @@ export default function DashboardGreeting({ user, jobs }: Props) {
         </div>
       </div>
 
-      {/* Animated Content */}
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={tab}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-          transition={{ duration: 0.4, ease: "easeInOut" }}
-          className="flex flex-col gap-4"
-        >
-          {tab === "overview" && (
-            <div className="animate-fade-in">
-              {/* Total Applications Row - FIXED, no shift */}
-              <div className="flex justify-between items-center mb-2 min-h-[28px]">
-                <div className="text-center text-gray-700 font-medium">
-                  Total Applications:{" "}
-                  <span className="font-semibold">{totalCount}</span>
-                </div>
-                <button
-                  onClick={() => setShowBars((prev) => !prev)}
-                  className="text-gray-700 hover:text-black flex items-center gap-1 text-sm"
-                >
-                  {showBars ? (
-                    <>
-                      Hide <ChevronUp size={16} />
-                    </>
-                  ) : (
-                    <>
-                      Show <ChevronDown size={16} />
-                    </>
-                  )}
-                </button>
-              </div>
+      {/* Mobile Content */}
+      <div className="block md:hidden">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={tab}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.4, ease: "easeInOut" }}
+            className="flex flex-col gap-4"
+          >
+            {tab === "overview" && overviewContent()}
+            {tab === "deadlines" && deadlinesContent()}
+          </motion.div>
+        </AnimatePresence>
+      </div>
 
-              {/* Smooth Transition of Bars */}
-              <motion.div
-                initial={false}
-                animate={{
-                  height: showBars ? "auto" : 0,
-                  opacity: showBars ? 1 : 0,
-                }}
-                transition={{ duration: 0.4, ease: "easeInOut" }}
-                className="overflow-hidden flex flex-col gap-1.5 mx-3"
-              >
-                {bars.map(({ status, count, color, widthPercent }) => (
-                  <div
-                    key={status}
-                    className="flex items-center gap-2 text-sm text-gray-700"
-                  >
-                    <span className="w-20 capitalize">{status}</span>
-                    <div className="flex-1 bg-gray-200 rounded-full h-3 overflow-hidden relative">
-                      <motion.div
-                        initial={false}
-                        animate={{
-                          width: mounted ? `${widthPercent}%` : "0%",
-                        }}
-                        transition={{ duration: 0.6, ease: "easeOut" }}
-                        className="h-3 rounded-full absolute left-0 top-0"
-                        style={{ backgroundColor: color }}
-                      ></motion.div>
-                    </div>
-                    <span className="w-6 text-right font-semibold text-gray-800">
-                      {count}
-                    </span>
-                  </div>
-                ))}
-              </motion.div>
-            </div>
-          )}
-
-          {/* DEADLINES TAB */}
-          {tab === "deadlines" && (
-            <div className="bg-white p-4 rounded-lg shadow-inner">
-              {deadlineJobs.length === 0 ? (
-                <p className="text-gray-500 text-sm">
-                  No upcoming deadlines 🎉
-                </p>
-              ) : (
-                <>
-                  {/* Animated list of deadlines */}
-                  <motion.div
-                    initial={false}
-                    animate={{
-                      height: showAllDeadlines ? "auto" : "7rem",
-                      opacity: 1,
-                    }}
-                    transition={{ duration: 0.4, ease: "easeInOut" }}
-                    style={{ overflow: "hidden", willChange: "height" }}
-                  >
-                    <ul className="space-y-3 text-sm">
-                      {deadlineJobs.map((job, i) => (
-                        <li
-                          key={i}
-                          className="flex justify-between items-center border-b pb-2"
-                        >
-                          <div>
-                            <p className="font-semibold text-indigo-800">
-                              {job.role}
-                            </p>
-                            <p className="text-gray-600">{job.company_name}</p>
-                          </div>
-                          <p className="text-sm font-medium whitespace-nowrap">
-                            <span className="text-black">
-                              {new Date(
-                                job.last_date_to_apply!
-                              ).toLocaleDateString("en-GB", {
-                                day: "numeric",
-                                month: "long",
-                                year: "numeric",
-                              })}
-                            </span>{" "}
-                            <span className="text-red-600">
-                              {(() => {
-                                const date = new Date(job.last_date_to_apply!);
-                                const now = new Date();
-                                now.setHours(0, 0, 0, 0);
-                                const dueDate = new Date(date);
-                                dueDate.setHours(0, 0, 0, 0);
-
-                                const diffDays = Math.ceil(
-                                  (dueDate.getTime() - now.getTime()) /
-                                    (1000 * 60 * 60 * 24)
-                                );
-
-                                if (diffDays > 0) {
-                                  return `(${diffDays} day${
-                                    diffDays > 1 ? "s" : ""
-                                  } left)`;
-                                } else if (diffDays === 0) {
-                                  return `(Today)`;
-                                } else {
-                                  return `(Past Due)`;
-                                }
-                              })()}
-                            </span>
-                          </p>
-                        </li>
-                      ))}
-                    </ul>
-                  </motion.div>
-
-                  {/* Show more / less button */}
-                  {deadlineJobs.length > 2 && (
-                    <button
-                      onClick={() => setShowAllDeadlines(!showAllDeadlines)}
-                      className="mt-2 flex items-center gap-1 text-indigo-600 text-sm"
-                    >
-                      {showAllDeadlines ? "Show less" : "Show more"}
-                      {showAllDeadlines ? (
-                        <ChevronUp size={16} />
-                      ) : (
-                        <ChevronDown size={16} />
-                      )}
-                    </button>
-                  )}
-                </>
-              )}
-            </div>
-          )}
-        </motion.div>
-      </AnimatePresence>
+      {/* Desktop - show both */}
+      <div className="hidden md:flex flex-col gap-4">
+        {overviewContent()}
+        {deadlinesContent()}
+      </div>
     </motion.section>
   );
 }
