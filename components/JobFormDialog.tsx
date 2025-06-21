@@ -182,12 +182,13 @@ export default function JobFormDialog({
 
   async function extractFromJD(jdText: string) {
     try {
+      const OPENROUTER_API_KEY = process.env.NEXT_PUBLIC_OPENROUTER_API_KEY;
       const response = await fetch(
         "https://openrouter.ai/api/v1/chat/completions",
         {
           method: "POST",
           headers: {
-            Authorization: `Bearer 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`,
+            Authorization: `Bearer ${OPENROUTER_API_KEY}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
