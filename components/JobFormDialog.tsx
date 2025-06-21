@@ -227,17 +227,22 @@ export default function JobFormDialog({
                 role: "system",
                 content: `You are an expert at extracting job details from Job Descriptions (JD).
                           You must ONLY respond with the final JSON — NO explanations, NO comments, NO markdown — ONLY valid JSON.
+                          If multiple roles or CTCs are present, select the first occurring one.
+                          If CTC is written in absolute numbers like "2700000 PA", convert it to "27 LPA" (divide by 100000, 1L = 1,00,000).
+                          If it is for an internship or stipend, and amount is written as annual, convert it to monthly as appropriate.
                           Today's date is ${today}.`,
               },
               {
                 role: "user",
                 content: `Extract the following fields from this JD:\n\n${jdText}\n\nReturn ONLY JSON exactly in this format:
                         {
-                          "company_name": "",  // ONLY main company name as used in official website or domain. No Pvt Ltd, Inc, Ltd, etc. Example: "google", "microsoft", "infosys"
-                          "role": "",
-                          "ctc": "",  // If CTC: "10 LPA", If Stipend: "30000 /month". Only one string. No other words.
+                          "company_name": "",        // ONLY main company name as used in their official website or domain. No Pvt Ltd, Inc, Ltd, etc. Example: "google", "microsoft", "infosys"
+                          "role": "",                // If multiple roles are mentioned, select the first occurring one
+                          "ctc": "",                 // If CTC: "10 LPA", If Stipend: "30000 /month". Only one string. No other words.
+                                                     // If numeric CTC like 2700000 PA or per annum: convert to "27 LPA"
+                                                     // If internship stipend in annual terms, convert to monthly if possible
                           "last_date_to_apply": "",  // Format: yyyy-MM-dd (for HTML date input)
-                          "requirements": ""
+                          "requirements": ""         //Separate with commas to make bullet points,Use # to create a new sticky note
                         }`,
               },
             ],
