@@ -183,6 +183,7 @@ export default function JobFormDialog({
   async function extractFromJD(jdText: string) {
     try {
       const OPENROUTER_API_KEY = process.env.NEXT_PUBLIC_OPENROUTER_API_KEY;
+      const today = new Date().toISOString().split("T")[0];
       const response = await fetch(
         "https://openrouter.ai/api/v1/chat/completions",
         {
@@ -192,23 +193,24 @@ export default function JobFormDialog({
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            model: "deepseek/deepseek-r1-0528-qwen3-8b:free",
+            model: "deepseek/deepseek-chat-v3-0324:free",
             messages: [
               {
                 role: "system",
-                content: `You are an expert at extracting job details from Job Descriptions.
-                          You must only respond with the final JSON and nothing else. No explanation.`,
+                content: `You are an expert at extracting job details from Job Descriptions (JD).
+                          You must ONLY respond with the final JSON — NO explanations, NO comments, NO markdown — ONLY valid JSON.
+                          Today's date is ${today}.`,
               },
               {
                 role: "user",
-                content: `Extract the following from this JD:\n\n${jdText}\n\nReturn ONLY JSON with these fields:\n
-                {
-                  company_name: '',  // ONLY main company name as used in official website or domain. No Pvt Ltd, Inc, Ltd, etc. Example: "google", "microsoft", "infosys"
-                  role: '',
-                  ctc: '',  // If CTC: "10 LPA", If Stipend: "30000 /month". Only one string. No other words.
-                  last_date_to_apply: '',  // Format: yyyy-MM-dd (for HTML date input)
-                  requirements: ''
-                }`,
+                content: `Extract the following fields from this JD:\n\n${jdText}\n\nReturn ONLY JSON exactly in this format:
+                        {
+                          "company_name": "",  // ONLY main company name as used in official website or domain. No Pvt Ltd, Inc, Ltd, etc. Example: "google", "microsoft", "infosys"
+                          "role": "",
+                          "ctc": "",  // If CTC: "10 LPA", If Stipend: "30000 /month". Only one string. No other words.
+                          "last_date_to_apply": "",  // Format: yyyy-MM-dd (for HTML date input)
+                          "requirements": ""
+                        }`,
               },
             ],
             max_tokens: 30000,
