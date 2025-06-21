@@ -280,9 +280,8 @@ export default function Dashboard() {
 
       <main className="flex-grow">
         {/* Sticky block for mobile */}
-        {/* Sticky block for mobile */}
         <div className="md:hidden sticky top-0 z-30 bg-white w-full">
-          <div className="px-4 pt-3 pb-3 flex flex-col gap-2">
+          <div className="px-4 pt-3 pb-1 flex flex-col gap-2">
             {user && <DashboardGreeting user={user} jobs={jobs} />}
 
             <div className="flex justify-between items-center">
@@ -293,8 +292,8 @@ export default function Dashboard() {
 
                 {/* Search Icon */}
                 <button
-                  onClick={() => setShowMobileSearch(!showMobileSearch)}
-                  className="p-2 text-gray-600 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-violet-300"
+                  onClick={() => setShowMobileSearch(true)}
+                  className="p-1 text-gray-600 rounded-md hover:bg-gray-100 "
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -340,13 +339,37 @@ export default function Dashboard() {
 
             {/* Mobile Search Box — toggled below Applications bar */}
             {showMobileSearch && (
-              <input
-                type="text"
-                placeholder="Search by company or role..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-violet-300 focus:border-violet-300 text-sm transition"
-              />
+              <div className="flex items-center gap-2 pb-2">
+                <input
+                  type="text"
+                  placeholder="Search by company or role..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="flex-grow px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-violet-300 focus:border-violet-300 text-sm transition"
+                />
+                <button
+                  onClick={() => {
+                    setShowMobileSearch(false);
+                    setSearchTerm("");
+                  }}
+                  className="p-2 text-gray-600 rounded-md hover:bg-gray-100 border border-gray-300"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              </div>
             )}
           </div>
         </div>
