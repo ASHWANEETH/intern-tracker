@@ -18,7 +18,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 interface JobFormDialogProps {
   modalOpen: boolean;
@@ -73,8 +73,12 @@ export default function JobFormDialog({
   const [companySuggestions, setCompanySuggestions] = useState<
     CompanySuggestion[]
   >([]);
-
   const [roleSuggestions, setRoleSuggestions] = useState<string[]>([]);
+  const [ctcType, setCtcType] = useState<"ctc" | "stipend">("ctc");
+  const [ctcAmount, setCtcAmount] = useState<string>("");
+
+  const companyInputRef = useRef<HTMLInputElement>(null);
+  const roleInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const fetchCompanySuggestions = async () => {
@@ -88,7 +92,7 @@ export default function JobFormDialog({
           `https://autocomplete.clearbit.com/v1/companies/suggest?query=${companyName}`
         );
         const data = await res.json();
-        setCompanySuggestions(data); // array of {name, domain}
+        setCompanySuggestions(data);
       } catch (err) {
         console.error("Error fetching company suggestions:", err);
       }
@@ -96,13 +100,12 @@ export default function JobFormDialog({
 
     const debounce = setTimeout(() => {
       fetchCompanySuggestions();
-    }, 50);
+    }, 150);
 
     return () => clearTimeout(debounce);
   }, [companyName]);
 
   useEffect(() => {
-    // Static "role" autocomplete — you can replace with API later if needed
     const allRoles = jobRoles;
 
     if (role.length < 1) {
@@ -114,6 +117,29 @@ export default function JobFormDialog({
       setRoleSuggestions(filtered);
     }
   }, [role]);
+
+  useEffect(() => {
+    // When you edit an existing job, populate CTC
+    if (ctc.includes("/month")) {
+      setCtcType("stipend");
+      setCtcAmount(ctc.replace("/month", "").trim());
+    } else if (ctc.includes("LPA")) {
+      setCtcType("ctc");
+      setCtcAmount(ctc.replace("LPA", "").trim());
+    } else {
+      setCtcAmount(ctc);
+    }
+  }, [ctc]);
+
+  const handleCtcChange = (type: "ctc" | "stipend", amount: string) => {
+    setCtcType(type);
+    setCtcAmount(amount);
+    if (type === "ctc") {
+      setCtc(amount ? `${amount} LPA` : "");
+    } else {
+      setCtc(amount ? `${amount} /month` : "");
+    }
+  };
 
   return (
     <Dialog open={modalOpen} onOpenChange={setModalOpen}>
@@ -149,6 +175,7 @@ export default function JobFormDialog({
           {/* Company Name */}
           <div className="relative">
             <Input
+              ref={companyInputRef}
               placeholder="Company Name"
               value={companyName}
               onChange={(e) => setCompanyName(e.target.value)}
@@ -156,13 +183,14 @@ export default function JobFormDialog({
             />
             {companySuggestions.length > 0 && (
               <div className="absolute z-20 bg-white border border-gray-200 rounded mt-1 w-full max-h-40 overflow-y-auto shadow-lg">
-                {companySuggestions.map((item, index) => (
+                {companySuggestions.slice(0, 3).map((item, index) => (
                   <div
                     key={index}
                     className="p-1 hover:bg-gray-100 cursor-pointer"
                     onClick={() => {
                       setCompanyName(item.name);
                       setCompanySuggestions([]);
+                      companyInputRef.current?.blur();
                     }}
                   >
                     {item.name}
@@ -175,6 +203,7 @@ export default function JobFormDialog({
           {/* Role */}
           <div className="relative">
             <Input
+              ref={roleInputRef}
               placeholder="Role"
               value={role}
               onChange={(e) => setRole(e.target.value)}
@@ -182,13 +211,14 @@ export default function JobFormDialog({
             />
             {roleSuggestions.length > 0 && (
               <div className="absolute z-20 bg-white border border-gray-200 rounded mt-1 w-full max-h-40 overflow-y-auto shadow-lg">
-                {roleSuggestions.map((item, index) => (
+                {roleSuggestions.slice(0, 5).map((item, index) => (
                   <div
                     key={index}
                     className="p-1 hover:bg-gray-100 cursor-pointer"
                     onClick={() => {
                       setRole(item);
                       setRoleSuggestions([]);
+                      roleInputRef.current?.blur();
                     }}
                   >
                     {item}
@@ -198,13 +228,35 @@ export default function JobFormDialog({
             )}
           </div>
 
-          {/* CTC */}
-          <Input
-            placeholder="CTC / Stipend"
-            value={ctc}
-            onChange={(e) => setCtc(e.target.value)}
-            required
-          />
+          {/* CTC / Stipend */}
+          <div className="flex gap-2 items-center">
+            <Select
+              value={ctcType}
+              onValueChange={(v) =>
+                handleCtcChange(v as "ctc" | "stipend", ctcAmount)
+              }
+            >
+              <SelectTrigger className="w-32">
+                <SelectValue placeholder="Type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ctc">CTC</SelectItem>
+                <SelectItem value="stipend">Stipend</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Input
+              type="text"
+              value={ctcAmount}
+              onChange={(e) => handleCtcChange(ctcType, e.target.value)}
+              placeholder="Amount"
+              className="flex-1"
+            />
+
+            <div className="text-gray-500 text-sm min-w-[40px]">
+              {ctcType === "ctc" ? "LPA" : "/month"}
+            </div>
+          </div>
 
           {/* Notes */}
           <div className="bg-yellow-50 border border-yellow-300 text-yellow-800 text-sm rounded-xl px-3 py-1 shadow-sm">
@@ -251,7 +303,6 @@ export default function JobFormDialog({
                 type="date"
                 value={lastDateToApply}
                 onChange={(e) => setLastDateToApply(e.target.value)}
-                placeholder="Select last date to apply"
                 required
               />
             </>
@@ -262,7 +313,6 @@ export default function JobFormDialog({
                 type="date"
                 value={appliedDate}
                 onChange={(e) => setAppliedDate(e.target.value)}
-                placeholder="Select applied date"
               />
 
               <label className="font-medium text-gray-700 mt-2">
@@ -272,12 +322,10 @@ export default function JobFormDialog({
                 type="date"
                 value={examDate}
                 onChange={(e) => setExamDate(e.target.value)}
-                placeholder="Select exam/interview date"
               />
             </>
           )}
 
-          {/* Submit Button */}
           <Button type="submit" className="mt-2">
             {editJobId ? "Update" : "Submit"}
           </Button>

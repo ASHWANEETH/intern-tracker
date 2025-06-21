@@ -113,7 +113,8 @@ export default function JobTile({
       {/* Summary */}
       <p className="text-gray-700 mt-1 font-medium">{job.role}</p>
       <p className="text-gray-700">
-        CTC/Stipend: <strong>{job.ctc}</strong>
+        {job.ctc?.toLowerCase().includes("lpa") ? "CTC" : "Stipend"}:{" "}
+        <strong>{job.ctc}</strong>
       </p>
 
       {/* Expandable section */}
