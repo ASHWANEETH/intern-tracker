@@ -238,159 +238,137 @@ export default function Dashboard() {
 
   if (loading)
     return (
-      <div className="flex items-center justify-center p-6">
-        <svg
-          className="animate-spin h-6 w-6 text-blue-600 mr-2"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-        >
-          <circle
-            className="opacity-25"
-            cx="12"
-            cy="12"
-            r="10"
-            stroke="currentColor"
-            strokeWidth="4"
-          ></circle>
-          <path
-            className="opacity-75"
-            fill="currentColor"
-            d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-          ></path>
-        </svg>
-        <span>Loading...</span>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="flex space-x-2">
+          <div className="w-4 h-4 bg-violet-300/90 rounded-full animate-bounce [animation-delay:-0.45s]"></div>
+          <div className="w-4 h-4 bg-violet-300/90 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+          <div className="w-4 h-4 bg-violet-300/90 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+          <div className="w-4 h-4 bg-violet-300/90 rounded-full animate-bounce"></div>
+        </div>
       </div>
     );
 
-return (
-  <div className="min-h-screen flex flex-col">
-    <ConfirmModal
-      open={!!confirmModal.action && confirmModal.action !== "logout"}
-      title={
-        confirmModal.action === "delete"
-          ? "Confirm Delete"
-          : confirmModal.action === "duplicate"
-          ? "Confirm Duplicate"
-          : ""
-      }
-      message={
-        confirmModal.action === "delete"
-          ? "Are you sure you want to delete this application?"
-          : confirmModal.action === "duplicate"
-          ? "Do you want to duplicate this application?"
-          : ""
-      }
-      onConfirm={handleConfirm}
-      onCancel={closeModal}
-    />
+  return (
+    <div className="min-h-screen flex flex-col">
+      <ConfirmModal
+        open={!!confirmModal.action && confirmModal.action !== "logout"}
+        title={
+          confirmModal.action === "delete"
+            ? "Confirm Delete"
+            : confirmModal.action === "duplicate"
+            ? "Confirm Duplicate"
+            : ""
+        }
+        message={
+          confirmModal.action === "delete"
+            ? "Are you sure you want to delete this application?"
+            : confirmModal.action === "duplicate"
+            ? "Do you want to duplicate this application?"
+            : ""
+        }
+        onConfirm={handleConfirm}
+        onCancel={closeModal}
+      />
 
-    <main className="flex-grow">
-
-      {/* Sticky block for mobile */}
-      <div className="md:hidden sticky top-0 z-30 bg-white w-full">
-        <div className="px-4 pt-3 pb-2 flex flex-col gap-3">
-          {user && <DashboardGreeting user={user} jobs={jobs} />}
-          <div className="flex justify-between items-center">
-            <h2 className="text-2xl font-semibold text-gray-900 py-2">
-              Applications
-            </h2>
-            <JobFormDialog
-              modalOpen={modalOpen}
-              setModalOpen={setModalOpen}
-              handleAddOrUpdateJob={handleAddOrUpdateJob}
-              editJobId={editJobId}
-              companyName={companyName}
-              setCompanyName={setCompanyName}
-              role={role}
-              setRole={setRole}
-              ctc={ctc}
-              setCtc={setCtc}
-              requirements={requirements}
-              setRequirements={setRequirements}
-              status={status}
-              setStatus={setStatus}
-              lastDateToApply={lastDateToApply}
-              setLastDateToApply={setLastDateToApply}
-              appliedDate={appliedDate}
-              setAppliedDate={setAppliedDate}
-              examDate={examDate}
-              setExamDate={setExamDate}
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Main content area */}
-      <div className="w-full flex flex-col md:flex-row md:items-start md:gap-6 md:px-8 px-4">
-
-        {/* Left: Dashboard Greet on desktop */}
-        <div className="hidden md:block md:w-1/3 sticky top-4 self-start z-30">
-          {user && <DashboardGreeting user={user} jobs={jobs} />}
-        </div>
-
-        {/* Right: Applications + Job Tiles */}
-        <div className="w-full md:w-2/3 flex flex-col gap-4 md:pt-0">
-
-          <div className="hidden md:flex justify-between items-center sticky top-0 pt-2 z-20 md:p-3 bg-white">
-            <h2 className="text-2xl font-semibold text-gray-900">
-              Applications
-            </h2>
-            <JobFormDialog
-              modalOpen={modalOpen}
-              setModalOpen={setModalOpen}
-              handleAddOrUpdateJob={handleAddOrUpdateJob}
-              editJobId={editJobId}
-              companyName={companyName}
-              setCompanyName={setCompanyName}
-              role={role}
-              setRole={setRole}
-              ctc={ctc}
-              setCtc={setCtc}
-              requirements={requirements}
-              setRequirements={setRequirements}
-              status={status}
-              setStatus={setStatus}
-              lastDateToApply={lastDateToApply}
-              setLastDateToApply={setLastDateToApply}
-              appliedDate={appliedDate}
-              setAppliedDate={setAppliedDate}
-              examDate={examDate}
-              setExamDate={setExamDate}
-            />
-          </div>
-
-          {/* Job Tiles */}
-          <div className="flex flex-col gap-6 pb-2 md:pb-2">
-            {jobs.map((job) => (
-              <JobTile
-                key={job.id}
-                job={job}
-                expandedJobId={expandedJobId}
-                onToggleExpand={toggleExpand}
-                onEditClick={handleEditClick}
-                onStatusChange={handleStatusChange}
-                onConfirmDelete={(job) =>
-                  setConfirmModal({ action: "delete", job })
-                }
-                onConfirmDuplicate={(job) =>
-                  setConfirmModal({ action: "duplicate", job })
-                }
-                logoRefreshKey={logoRefreshKey}
+      <main className="flex-grow">
+        {/* Sticky block for mobile */}
+        <div className="md:hidden sticky top-0 z-30 bg-white w-full">
+          <div className="px-4 pt-3 pb-2 flex flex-col gap-3">
+            {user && <DashboardGreeting user={user} jobs={jobs} />}
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl font-semibold text-gray-900 py-2">
+                Applications
+              </h2>
+              <JobFormDialog
+                modalOpen={modalOpen}
+                setModalOpen={setModalOpen}
+                handleAddOrUpdateJob={handleAddOrUpdateJob}
+                editJobId={editJobId}
+                companyName={companyName}
+                setCompanyName={setCompanyName}
+                role={role}
+                setRole={setRole}
+                ctc={ctc}
+                setCtc={setCtc}
+                requirements={requirements}
+                setRequirements={setRequirements}
+                status={status}
+                setStatus={setStatus}
+                lastDateToApply={lastDateToApply}
+                setLastDateToApply={setLastDateToApply}
+                appliedDate={appliedDate}
+                setAppliedDate={setAppliedDate}
+                examDate={examDate}
+                setExamDate={setExamDate}
               />
-            ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Main content area */}
+        <div className="w-full flex flex-col md:flex-row md:items-start md:gap-6 md:px-8 px-4">
+          {/* Left: Dashboard Greet on desktop */}
+          <div className="hidden md:block md:w-1/3 sticky top-4 self-start z-30">
+            {user && <DashboardGreeting user={user} jobs={jobs} />}
           </div>
 
+          {/* Right: Applications + Job Tiles */}
+          <div className="w-full md:w-2/3 flex flex-col gap-4 md:pt-0">
+            <div className="hidden md:flex justify-between items-center sticky top-0 pt-2 z-20 md:p-3 bg-white">
+              <h2 className="text-2xl font-semibold text-gray-900">
+                Applications
+              </h2>
+              <JobFormDialog
+                modalOpen={modalOpen}
+                setModalOpen={setModalOpen}
+                handleAddOrUpdateJob={handleAddOrUpdateJob}
+                editJobId={editJobId}
+                companyName={companyName}
+                setCompanyName={setCompanyName}
+                role={role}
+                setRole={setRole}
+                ctc={ctc}
+                setCtc={setCtc}
+                requirements={requirements}
+                setRequirements={setRequirements}
+                status={status}
+                setStatus={setStatus}
+                lastDateToApply={lastDateToApply}
+                setLastDateToApply={setLastDateToApply}
+                appliedDate={appliedDate}
+                setAppliedDate={setAppliedDate}
+                examDate={examDate}
+                setExamDate={setExamDate}
+              />
+            </div>
+
+            {/* Job Tiles */}
+            <div className="flex flex-col gap-6 pb-2 md:pb-2">
+              {jobs.map((job) => (
+                <JobTile
+                  key={job.id}
+                  job={job}
+                  expandedJobId={expandedJobId}
+                  onToggleExpand={toggleExpand}
+                  onEditClick={handleEditClick}
+                  onStatusChange={handleStatusChange}
+                  onConfirmDelete={(job) =>
+                    setConfirmModal({ action: "delete", job })
+                  }
+                  onConfirmDuplicate={(job) =>
+                    setConfirmModal({ action: "duplicate", job })
+                  }
+                  logoRefreshKey={logoRefreshKey}
+                />
+              ))}
+            </div>
+          </div>
         </div>
-      </div>
+      </main>
 
-    </main>
-
-    <footer className="sticky bottom-0 z-40 w-full bg-white/70 backdrop-blur-md border-t text-center py-1 text-sm text-gray-600">
-      <span>© {new Date().getFullYear()} Intern Tracker</span>
-    </footer>
-  </div>
-);
-
-
+      <footer className="sticky bottom-0 z-40 w-full bg-white/70 backdrop-blur-md border-t text-center py-1 text-sm text-gray-600">
+        <span>© {new Date().getFullYear()} Intern Tracker</span>
+      </footer>
+    </div>
+  );
 }
