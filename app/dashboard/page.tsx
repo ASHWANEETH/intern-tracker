@@ -338,14 +338,20 @@ export default function Dashboard() {
             </div>
 
             {/* Mobile Search Box — toggled below Applications bar */}
-            {showMobileSearch && (
-              <div className="flex items-center gap-2 pb-2">
+            <div
+              className={`transition-all duration-500 ease-in-out overflow-hidden ${
+                showMobileSearch
+                  ? "max-h-20 opacity-100 scale-100 pb-2"
+                  : "max-h-0 opacity-0 scale-95"
+              }`}
+            >
+              <div className="flex items-center gap-2">
                 <input
                   type="text"
                   placeholder="Search by company or role..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="flex-grow px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-violet-300 focus:border-violet-300 text-sm transition"
+                  className="flex-grow px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-violet-300 focus:border-violet-300 text-sm"
                 />
                 <button
                   onClick={() => {
@@ -370,7 +376,7 @@ export default function Dashboard() {
                   </svg>
                 </button>
               </div>
-            )}
+            </div>
           </div>
         </div>
 
