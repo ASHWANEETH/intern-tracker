@@ -241,9 +241,10 @@ export default function JobFormDialog({
                           "company_name": "",        // ONLY main company name as used in their official website or domain. No Pvt Ltd, Inc, Ltd, etc. Example: "google", "microsoft", "infosys"
                           "role": "",                // If multiple roles are mentioned, select the first occurring one
                           "ctc": "",                 // If CTC: "10 LPA", If Stipend: "30000 /month". Only one string. No other words, format: 10LPA or 30000/month
-                                                     // If numeric CTC like 2700000 PA or per annum: convert to "27 LPA"
-                                                     // If internship stipend in annual terms, convert to monthly if possible
                                                      // If the amount is in range like "30000-40000/month" or 2-3LPA give the similar.
+                                                     // If numeric CTC like 2700000 PA or per annum: convert to "27 LPA"
+                                                     // If numeric stipened like 30000 per month: convert to "30k /month"
+                                                     // If internship stipend in annual terms, convert to monthly if possible
                           "last_date_to_apply": "",  // Format: yyyy-MM-dd (for HTML date input)
                           "requirements": ""         //Separate with commas to make bullet points,Use # to create a new sticky note
                         }`,
