@@ -284,9 +284,9 @@ export default function Dashboard() {
           <div className="px-4 pt-3 pb-1 flex flex-col gap-2">
             {user && <DashboardGreeting user={user} jobs={jobs} />}
 
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center pt-2 pb-1">
               <div className="flex items-center gap-2">
-                <h2 className="text-2xl font-semibold text-gray-900 py-2">
+                <h2 className="text-2xl font-semibold text-gray-900">
                   Applications
                 </h2>
 
