@@ -259,17 +259,17 @@ export default function JobFormDialog({
 
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <div className="flex justify-between items-center">
+          <div className="flex items-center gap-2">
             <DialogTitle>
               {editJobId ? "Edit Job Application" : "Add Job Application"}
             </DialogTitle>
             <Button
               variant="outline"
-              size="sm"
-              type="button"
+              size="icon"
               onClick={() => setJdModalOpen(true)}
+              className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 animate-gradient-x text-white"
             >
-              Extract JD
+              AI
             </Button>
           </div>
         </DialogHeader>
