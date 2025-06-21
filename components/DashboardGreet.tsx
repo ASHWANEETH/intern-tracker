@@ -19,11 +19,11 @@ type Props = {
 };
 
 const statusColors: Record<string, string> = {
-  "to-apply": "#6b7280",
-  applied: "#3b82f6",
-  waiting: "#f59e0b",
-  rejected: "#ef4444",
-  approved: "#22c55e",
+  "to-apply": "#81858d",
+  applied: "#4f8ff7",
+  waiting: "#f7aa23",
+  rejected: "#f25454",
+  approved: "#32cc6e",
 };
 
 export default function DashboardGreeting({ user, jobs }: Props) {
