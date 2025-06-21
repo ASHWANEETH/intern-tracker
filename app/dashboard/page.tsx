@@ -318,6 +318,7 @@ export default function Dashboard() {
                 setModalOpen={setModalOpen}
                 handleAddOrUpdateJob={handleAddOrUpdateJob}
                 editJobId={editJobId}
+                setEditJobId={setEditJobId}
                 companyName={companyName}
                 setCompanyName={setCompanyName}
                 role={role}
@@ -399,6 +400,7 @@ export default function Dashboard() {
                   setModalOpen={setModalOpen}
                   handleAddOrUpdateJob={handleAddOrUpdateJob}
                   editJobId={editJobId}
+                  setEditJobId={setEditJobId}
                   companyName={companyName}
                   setCompanyName={setCompanyName}
                   role={role}

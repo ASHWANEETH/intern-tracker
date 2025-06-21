@@ -24,6 +24,7 @@ interface JobFormDialogProps {
   setModalOpen: (open: boolean) => void;
   handleAddOrUpdateJob: (e: React.FormEvent) => void;
   editJobId: string | null;
+  setEditJobId: (value: string | null) => void;
   companyName: string;
   setCompanyName: (value: string) => void;
   role: string;
@@ -47,6 +48,7 @@ export default function JobFormDialog({
   setModalOpen,
   handleAddOrUpdateJob,
   editJobId,
+  setEditJobId,
   companyName,
   setCompanyName,
   role,
@@ -241,6 +243,7 @@ export default function JobFormDialog({
                           "ctc": "",                 // If CTC: "10 LPA", If Stipend: "30000 /month". Only one string. No other words, format: 10LPA or 30000/month
                                                      // If numeric CTC like 2700000 PA or per annum: convert to "27 LPA"
                                                      // If internship stipend in annual terms, convert to monthly if possible
+                                                     // If the amount is in range like "30000-40000/month" or 2-3LPA give the similar.
                           "last_date_to_apply": "",  // Format: yyyy-MM-dd (for HTML date input)
                           "requirements": ""         //Separate with commas to make bullet points,Use # to create a new sticky note
                         }`,
@@ -275,6 +278,7 @@ export default function JobFormDialog({
       <DialogTrigger asChild>
         <Button
           onClick={() => {
+            setEditJobId(null);
             setCompanyName("");
             setRole("");
             setCtc("");
