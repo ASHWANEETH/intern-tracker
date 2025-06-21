@@ -324,7 +324,7 @@ export default function Dashboard() {
         {/* Main content area */}
         <div className="w-full flex flex-col md:flex-row md:items-start md:gap-6 md:px-8 px-4">
           {/* Left: Dashboard Greet on desktop */}
-          <div className="hidden md:block md:w-1/3 sticky top-4 self-start z-30">
+          <div className="hidden md:block md:w-1/3 md:py-3 sticky top-4 self-start z-30">
             {user && <DashboardGreeting user={user} jobs={jobs} />}
           </div>
 
