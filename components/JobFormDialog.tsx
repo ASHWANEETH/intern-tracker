@@ -291,7 +291,7 @@ export default function JobFormDialog({
             setModalOpen(true);
           }}
         >
-          New Application
+          Add New +
         </Button>
       </DialogTrigger>
 

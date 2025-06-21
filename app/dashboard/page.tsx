@@ -9,6 +9,7 @@ import JobTile from "@/components/JobTile";
 import DashboardGreeting from "@/components/DashboardGreet";
 import { ConfirmModal } from "@/components/ConfirmModal";
 import confetti from "canvas-confetti";
+import Image from "next/image";
 
 export default function Dashboard() {
   const supabase = createClient();
@@ -434,23 +435,44 @@ export default function Dashboard() {
 
             {/* Job Tiles */}
             <div className="flex flex-col gap-4 pb-2 md:pb-2">
-              {filteredJobs.map((job) => (
-                <JobTile
-                  key={job.id}
-                  job={job}
-                  expandedJobId={expandedJobId}
-                  onToggleExpand={toggleExpand}
-                  onEditClick={handleEditClick}
-                  onStatusChange={handleStatusChange}
-                  onConfirmDelete={(job) =>
-                    setConfirmModal({ action: "delete", job })
-                  }
-                  onConfirmDuplicate={(job) =>
-                    setConfirmModal({ action: "duplicate", job })
-                  }
-                  logoRefreshKey={logoRefreshKey}
-                />
-              ))}
+              {filteredJobs.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-16 text-center space-y-6">
+                  <Image
+                    src="/emptypage.svg"
+                    alt="Empty state"
+                    width={160}
+                    height={160}
+                    className="opacity-50"
+                    priority
+                  />
+
+                  <div className="text-gray-600 text-2xl font-semibold">
+                    Add an application to get started
+                  </div>
+
+                  <p className="text-gray-400 text-base">
+                    Click &quot;Add New +&quot;
+                  </p>
+                </div>
+              ) : (
+                filteredJobs.map((job) => (
+                  <JobTile
+                    key={job.id}
+                    job={job}
+                    expandedJobId={expandedJobId}
+                    onToggleExpand={toggleExpand}
+                    onEditClick={handleEditClick}
+                    onStatusChange={handleStatusChange}
+                    onConfirmDelete={(job) =>
+                      setConfirmModal({ action: "delete", job })
+                    }
+                    onConfirmDuplicate={(job) =>
+                      setConfirmModal({ action: "duplicate", job })
+                    }
+                    logoRefreshKey={logoRefreshKey}
+                  />
+                ))
+              )}
             </div>
           </div>
         </div>
