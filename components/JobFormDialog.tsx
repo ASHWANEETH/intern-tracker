@@ -86,28 +86,33 @@ export default function JobFormDialog({
   const [jdText, setJdText] = useState("");
   const [extracting, setExtracting] = useState(false);
 
-const extractingMessages = useMemo(() => [
-  "Reading through the JD... 📄",
-  "Extracting company name... 🏢",
-  "Setting role... 💼",
-  "Fetching CTC... 💰",
-  "Parsing requirements... 📝",
-  "Almost done... 🚀",
-], []);
+  const extractingMessages = useMemo(
+    () => [
+      "Reading through the JD... ",
+      "Extracting company name... ",
+      "Setting role... ",
+      "Fetching CTC... ",
+      "Parsing requirements... ",
+      "Almost done... ",
+    ],
+    []
+  );
 
-const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
+  const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
 
-useEffect(() => {
-  if (extracting) {
-    const interval = setInterval(() => {
-      setCurrentMessageIndex((prev) => (prev + 1) % extractingMessages.length);
-    }, 1500);
+  useEffect(() => {
+    if (extracting) {
+      if (currentMessageIndex < extractingMessages.length - 1) {
+        const timeout = setTimeout(() => {
+          setCurrentMessageIndex((prev) => prev + 1);
+        }, 2000);
 
-    return () => clearInterval(interval);
-  } else {
-    setCurrentMessageIndex(0);
-  }
-}, [extracting, extractingMessages.length]);
+        return () => clearTimeout(timeout);
+      }
+    } else {
+      setCurrentMessageIndex(0);
+    }
+  }, [extracting, currentMessageIndex, extractingMessages.length]);
 
   // Memoize role options
   const allRoles = useMemo(() => jobRoles, []);
@@ -287,8 +292,10 @@ useEffect(() => {
               {editJobId ? "Edit Job Application" : "Add Job Application"}
             </DialogTitle>
             <Button
-              variant="outline"
-              onClick={() => setJdModalOpen(true)}
+              size={"sm"}
+              onClick={() => {
+                setJdModalOpen(true);
+              }}
               className="ml-2 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 animate-gradient-x text-white"
             >
               Add using AI
@@ -492,11 +499,14 @@ useEffect(() => {
                 setExtracting(false);
                 setJdModalOpen(false);
               }}
-              disabled={extracting || jdText.trim().length < 20}
+              disabled={jdText.trim().length < 20}
+              className={`ml-2 px-4 py-2 rounded text-white font-semibold shadow-lg bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 animate-gradient-x ${
+                extracting ? "pointer-events-none" : ""
+              }`}
             >
               {extracting
                 ? extractingMessages[currentMessageIndex]
-                : "Analyze and Add"}
+                : "Lets Gooo ! 🚀"}
             </Button>
           </div>
         </DialogContent>
