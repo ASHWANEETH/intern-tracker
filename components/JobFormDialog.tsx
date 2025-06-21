@@ -490,6 +490,7 @@ export default function JobFormDialog({
 
 ⚠️ Note:
 👉 Please provide actual JD (not random text)
+👉 If more than one role it selects the first occurring one.
 👉 Using free API — responses may take a few seconds ⏳
 👉 Using free API — responses may be incorrect !! ⚠️
 👉 Be patient — magic is happening behind the scenes ✨
