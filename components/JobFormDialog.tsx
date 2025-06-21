@@ -187,7 +187,7 @@ export default function JobFormDialog({
         {
           method: "POST",
           headers: {
-            Authorization: `Bearer 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`,
+            Authorization: `Bearer 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`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
@@ -210,7 +210,7 @@ export default function JobFormDialog({
                 }`,
               },
             ],
-            max_tokens: 3000, // increase to avoid cutoff
+            max_tokens: 30000,
           }),
         }
       );
