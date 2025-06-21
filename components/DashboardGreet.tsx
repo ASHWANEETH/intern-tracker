@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabaseClient";
 import { useRouter } from "next/navigation";
 import { ConfirmModal } from "@/components/ConfirmModal";
+import Image from "next/image";
 
 type Props = {
   user: { full_name?: string; email?: string };
@@ -50,19 +51,19 @@ export default function DashboardGreeting({ user, jobs }: Props) {
   };
 
   useEffect(() => {
-  const checkDesktop = () => {
-    if (window.matchMedia("(min-width: 768px)").matches) {
-      setShowAllDeadlines(true);  // always expanded on desktop
-    } else {
-      setShowAllDeadlines(false); // mobile → collapsed by default
-    }
-  };
+    const checkDesktop = () => {
+      if (window.matchMedia("(min-width: 768px)").matches) {
+        setShowAllDeadlines(true); // always expanded on desktop
+      } else {
+        setShowAllDeadlines(false); // mobile → collapsed by default
+      }
+    };
 
-  checkDesktop(); // on mount
+    checkDesktop(); // on mount
 
-  window.addEventListener("resize", checkDesktop);
-  return () => window.removeEventListener("resize", checkDesktop);
-}, []);
+    window.addEventListener("resize", checkDesktop);
+    return () => window.removeEventListener("resize", checkDesktop);
+  }, []);
 
   useEffect(() => {
     setMounted(false);
@@ -156,6 +157,9 @@ export default function DashboardGreeting({ user, jobs }: Props) {
 
   const deadlinesContent = () => (
     <div className="bg-white p-4 rounded-lg shadow-inner">
+      <p className="hidden md:block font-medium text-gray-700 border-b pb-2">
+        Deadlines to Apply
+      </p>{" "}
       {deadlineJobs.length === 0 ? (
         <p className="text-gray-500 text-sm">No upcoming deadlines 🎉</p>
       ) : (
@@ -173,10 +177,12 @@ export default function DashboardGreeting({ user, jobs }: Props) {
               {deadlineJobs.map((job, i) => (
                 <li
                   key={i}
-                  className="flex justify-between items-center border-b pb-2"
+                  className="flex justify-between items-center border-b pb-2 md:py-2"
                 >
                   <div>
-                    <p className="font-semibold text-indigo-800">{job.company_name}</p>
+                    <p className="font-semibold text-indigo-800">
+                      {job.company_name}
+                    </p>
                     <p className="text-gray-600">{job.role}</p>
                   </div>
                   <p className="text-sm font-medium whitespace-nowrap text-center">
@@ -253,8 +259,10 @@ export default function DashboardGreeting({ user, jobs }: Props) {
     >
       {/* Header */}
       <div className="flex justify-between items-center mb-2">
-        <h2 className="text-xl font-semibold text-black-800">Hello {name}</h2>
-        <div className="flex gap-2">
+        <h2 className="text-xl md:text-3xl md:m-2 font-semibold text-black-800">
+          Hello {name}
+        </h2>
+        <div className="flex gap-2 md:py-3">
           <Button variant="outline" onClick={() => router.push("/")}>
             <Home className="w-4 h-4" />
           </Button>
@@ -270,6 +278,22 @@ export default function DashboardGreeting({ user, jobs }: Props) {
           />
         </div>
       </div>
+
+      {jobs.length === 0 && (
+        <div className="hidden md:flex flex-col items-center justify-center my-6 space-y-3">
+          <Image
+            src="/emptypage2.svg"
+            alt="Empty state"
+            width={100}
+            height={100}
+            className="opacity-50"
+            priority
+          />
+          <p className="text-gray-500 text-lg font-medium">
+            Something amazing is waiting!
+          </p>
+        </div>
+      )}
 
       {/* Tabs - Mobile only */}
       <div className="flex gap-4 mb-3 relative md:hidden">

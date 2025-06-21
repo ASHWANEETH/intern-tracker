@@ -383,16 +383,17 @@ export default function Dashboard() {
         </div>
 
         {/* Main content area */}
-        <div className="w-full flex flex-col md:flex-row md:items-start md:gap-6 md:px-8 px-4">
+        <div className="flex h-[calc(100vh-64px)] md:h-screen overflow-hidden">
           {/* Left: Dashboard Greet on desktop */}
-          <div className="hidden md:block md:w-1/3 md:pt-4 sticky self-start z-30">
+          <div className="hidden md:flex md:flex-col md:w-2/5 p-4 overflow-y-auto scrollbar-none">
             {user && <DashboardGreeting user={user} jobs={jobs} />}
           </div>
 
           {/* Right: Applications + Job Tiles */}
-          <div className="w-full md:w-2/3 flex flex-col gap-4 md:pt-0">
-            <div className="hidden md:block sticky top-0 z-20 bg-white">
-              <div className="flex justify-between items-center pt-3 px-4 md:px-6">
+          <div className="flex-1 flex flex-col overflow-y-auto">
+            {/* Sticky Top Header */}
+            <div className="hidden md:block sticky top-0 z-20 bg-white mx-2">
+              <div className="flex justify-between items-center md:pt-4 md:px-6">
                 <h2 className="text-2xl font-semibold text-gray-900 pl-2">
                   Applications
                 </h2>
@@ -422,7 +423,7 @@ export default function Dashboard() {
               </div>
 
               {/* Desktop Search Box */}
-              <div className="px-4 md:px-6 py-3">
+              <div className="px-6 py-3">
                 <input
                   type="text"
                   placeholder="Search by company or role..."
@@ -434,7 +435,7 @@ export default function Dashboard() {
             </div>
 
             {/* Job Tiles */}
-            <div className="flex flex-col gap-4 pb-2 md:pb-2">
+            <div className="flex-1 flex flex-col gap-4 px-4 pb-2 overflow-y-auto scrollbar-none">
               {filteredJobs.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-20 text-center space-y-8">
                   <Image
@@ -442,13 +443,12 @@ export default function Dashboard() {
                     alt="Empty state"
                     width={200}
                     height={200}
-                    className="opacity-50 md:w-[300px] md:h-[300px]"
+                    className="opacity-70 md:w-[300px] md:h-[300px]"
                     priority
                   />
                   <div className="text-gray-600 text-2xl md:text-4xl font-semibold">
                     No applications yet — let&apos;s change that! 🚀
                   </div>
-
                   <p className="text-gray-400 text-base md:text-lg">
                     Hit &quot;Add New +&quot; to start tracking your journey.
                   </p>
