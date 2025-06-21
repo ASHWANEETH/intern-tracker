@@ -291,15 +291,17 @@ export default function JobFormDialog({
             <DialogTitle>
               {editJobId ? "Edit Job Application" : "Add Job Application"}
             </DialogTitle>
-            <Button
-              size={"sm"}
-              onClick={() => {
-                setJdModalOpen(true);
-              }}
-              className="ml-2 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 animate-gradient-x text-white"
-            >
-              Add using AI
-            </Button>
+            {!editJobId && (
+              <Button
+                size={"sm"}
+                onClick={() => {
+                  setJdModalOpen(true);
+                }}
+                className="ml-2 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 animate-gradient-x text-white"
+              >
+                Add using AI
+              </Button>
+            )}
           </div>
         </DialogHeader>
 
