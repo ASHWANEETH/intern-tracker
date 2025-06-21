@@ -292,7 +292,7 @@ export default function Dashboard() {
 
                 {/* Search Icon */}
                 <button
-                  onClick={() => setShowMobileSearch(true)}
+                  onClick={() => setShowMobileSearch(!showMobileSearch)}
                   className="p-1 text-gray-600 rounded-md hover:bg-gray-100 "
                 >
                   <svg

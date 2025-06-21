@@ -171,7 +171,7 @@ export default function JobTile({
                   onClick={toggleNotes}
                   className="flex items-center gap-1 text-black font-medium text-sm hover:underline"
                 >
-                  {showNotes ? "Hide Notes" : "Notes"}
+                  Notes{" "}
                   {showNotes ? (
                     <FiChevronUp className="w-4 h-4" />
                   ) : (
@@ -186,7 +186,7 @@ export default function JobTile({
                       animate={{ height: "auto", opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
                       transition={{ duration: 0.3, ease: "easeInOut" }}
-                      className="mt-2 overflow-hidden"
+                      className="w-[75%]"
                     >
                       <Notes requirements={job.requirements} />
                     </motion.div>
