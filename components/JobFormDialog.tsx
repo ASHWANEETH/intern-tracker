@@ -308,7 +308,7 @@ export default function JobFormDialog({
                 }}
                 className="ml-2 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 animate-gradient-x text-white"
               >
-                Add using AI
+               Use AI ✨
               </Button>
             )}
           </div>
@@ -480,7 +480,7 @@ export default function JobFormDialog({
       <Dialog open={jdModalOpen} onOpenChange={setJdModalOpen}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>Add Application using AI</DialogTitle>
+            <DialogTitle>Add using AI✨</DialogTitle>
           </DialogHeader>
 
           <div className="flex flex-col gap-3">
@@ -490,9 +490,11 @@ export default function JobFormDialog({
 
 ⚠️ Note:
 👉 Please provide actual JD (not random text)
-👉 Fun prompts might confuse the AI 🤖
 👉 Using free API — responses may take a few seconds ⏳
-👉 Be patient — magic is happening behind the scenes ✨`}
+👉 Using free API — responses may be incorrect !! ⚠️
+👉 Be patient — magic is happening behind the scenes ✨
+
+Made by student for students ! Yeahhh`}
               value={jdText}
               onChange={(e) => setJdText(e.target.value)}
               className="border rounded p-2 text-sm"
