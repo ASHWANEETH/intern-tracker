@@ -86,6 +86,29 @@ export default function JobFormDialog({
   const [jdText, setJdText] = useState("");
   const [extracting, setExtracting] = useState(false);
 
+const extractingMessages = useMemo(() => [
+  "Reading through the JD... 📄",
+  "Extracting company name... 🏢",
+  "Setting role... 💼",
+  "Fetching CTC... 💰",
+  "Parsing requirements... 📝",
+  "Almost done... 🚀",
+], []);
+
+const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
+
+useEffect(() => {
+  if (extracting) {
+    const interval = setInterval(() => {
+      setCurrentMessageIndex((prev) => (prev + 1) % extractingMessages.length);
+    }, 1500);
+
+    return () => clearInterval(interval);
+  } else {
+    setCurrentMessageIndex(0);
+  }
+}, [extracting, extractingMessages.length]);
+
   // Memoize role options
   const allRoles = useMemo(() => jobRoles, []);
 
@@ -265,11 +288,10 @@ export default function JobFormDialog({
             </DialogTitle>
             <Button
               variant="outline"
-              size="icon"
               onClick={() => setJdModalOpen(true)}
-              className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 animate-gradient-x text-white"
+              className="ml-2 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 animate-gradient-x text-white"
             >
-              AI
+              Add using AI
             </Button>
           </div>
         </DialogHeader>
@@ -440,13 +462,19 @@ export default function JobFormDialog({
       <Dialog open={jdModalOpen} onOpenChange={setJdModalOpen}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>Extract from JD</DialogTitle>
+            <DialogTitle>Add Application using AI</DialogTitle>
           </DialogHeader>
 
           <div className="flex flex-col gap-3">
             <textarea
               rows={10}
-              placeholder="Paste Job Description text here..."
+              placeholder={`Paste Job Description text here...
+
+⚠️ Note:
+👉 Please provide actual JD (not random text)
+👉 Fun prompts might confuse the AI 🤖
+👉 Using free API — responses may take a few seconds ⏳
+👉 Be patient — magic is happening behind the scenes ✨`}
               value={jdText}
               onChange={(e) => setJdText(e.target.value)}
               className="border rounded p-2 text-sm"
@@ -455,23 +483,20 @@ export default function JobFormDialog({
             <Button
               onClick={async () => {
                 setExtracting(true);
-
-                // 🧠 Call DeepSeek API here
-                const result = await extractFromJD(jdText); // function we’ll define
-
-                // 🪄 Set form fields
+                const result = await extractFromJD(jdText);
                 setCompanyName(result.company_name || "");
                 setRole(result.role || "");
                 setCtc(result.ctc || "");
                 setRequirements(result.requirements || "");
                 setLastDateToApply(result.last_date_to_apply || "");
-
                 setExtracting(false);
-                setJdModalOpen(false); // close modal
+                setJdModalOpen(false);
               }}
               disabled={extracting || jdText.trim().length < 20}
             >
-              {extracting ? "Extracting..." : "Extract & Fill"}
+              {extracting
+                ? extractingMessages[currentMessageIndex]
+                : "Analyze and Add"}
             </Button>
           </div>
         </DialogContent>
