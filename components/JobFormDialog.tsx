@@ -238,7 +238,7 @@ export default function JobFormDialog({
                         {
                           "company_name": "",        // ONLY main company name as used in their official website or domain. No Pvt Ltd, Inc, Ltd, etc. Example: "google", "microsoft", "infosys"
                           "role": "",                // If multiple roles are mentioned, select the first occurring one
-                          "ctc": "",                 // If CTC: "10 LPA", If Stipend: "30000 /month". Only one string. No other words.
+                          "ctc": "",                 // If CTC: "10 LPA", If Stipend: "30000 /month". Only one string. No other words, format: 10LPA or 30000/month
                                                      // If numeric CTC like 2700000 PA or per annum: convert to "27 LPA"
                                                      // If internship stipend in annual terms, convert to monthly if possible
                           "last_date_to_apply": "",  // Format: yyyy-MM-dd (for HTML date input)
