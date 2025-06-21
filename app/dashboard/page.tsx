@@ -436,21 +436,21 @@ export default function Dashboard() {
             {/* Job Tiles */}
             <div className="flex flex-col gap-4 pb-2 md:pb-2">
               {filteredJobs.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-16 text-center space-y-6">
+                <div className="flex flex-col items-center justify-center py-20 text-center space-y-8">
                   <Image
                     src="/emptypage.svg"
                     alt="Empty state"
-                    width={160}
-                    height={160}
-                    className="opacity-50"
+                    width={200}
+                    height={200}
+                    className="opacity-50 md:w-[300px] md:h-[300px]"
                     priority
                   />
 
-                  <div className="text-gray-600 text-2xl font-semibold">
+                  <div className="text-gray-600 text-2xl md:text-4xl font-semibold">
                     Add an application to get started
                   </div>
 
-                  <p className="text-gray-400 text-base">
+                  <p className="text-gray-400 text-base md:text-lg">
                     Click &quot;Add New +&quot;
                   </p>
                 </div>
