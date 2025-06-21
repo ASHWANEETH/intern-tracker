@@ -176,10 +176,10 @@ export default function DashboardGreeting({ user, jobs }: Props) {
                   className="flex justify-between items-center border-b pb-2"
                 >
                   <div>
-                    <p className="font-semibold text-indigo-800">{job.role}</p>
-                    <p className="text-gray-600">{job.company_name}</p>
+                    <p className="font-semibold text-indigo-800">{job.company_name}</p>
+                    <p className="text-gray-600">{job.role}</p>
                   </div>
-                  <p className="text-sm font-medium whitespace-nowrap">
+                  <p className="text-sm font-medium whitespace-nowrap text-center">
                     <span className="text-black">
                       {new Date(job.last_date_to_apply!).toLocaleDateString(
                         "en-GB",
