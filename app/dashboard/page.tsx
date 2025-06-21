@@ -38,6 +38,12 @@ export default function Dashboard() {
   }>({ action: null, job: null });
   const [expandedJobId, setExpandedJobId] = useState<string | null>(null);
   const [logoRefreshKey, setLogoRefreshKey] = useState(0);
+  const [searchTerm, setSearchTerm] = useState("");
+  const filteredJobs = jobs.filter(
+    (job) =>
+      job.company_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      job.role.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const closeModal = () => setConfirmModal({ action: null, job: null });
 
@@ -273,8 +279,9 @@ export default function Dashboard() {
       <main className="flex-grow">
         {/* Sticky block for mobile */}
         <div className="md:hidden sticky top-0 z-30 bg-white w-full">
-          <div className="px-4 pt-3 pb-2 flex flex-col gap-3">
+          <div className="px-4 pt-3 pb-3 flex flex-col gap-2">
             {user && <DashboardGreeting user={user} jobs={jobs} />}
+
             <div className="flex justify-between items-center">
               <h2 className="text-2xl font-semibold text-gray-900 py-2">
                 Applications
@@ -302,6 +309,15 @@ export default function Dashboard() {
                 setExamDate={setExamDate}
               />
             </div>
+
+            {/* Mobile Search Box — only here */}
+            <input
+              type="text"
+              placeholder="Search by company or role..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-violet-300 focus:border-violet-300 text-sm"
+            />
           </div>
         </div>
 
@@ -314,37 +330,50 @@ export default function Dashboard() {
 
           {/* Right: Applications + Job Tiles */}
           <div className="w-full md:w-2/3 flex flex-col gap-4 md:pt-0">
-            <div className="hidden md:flex justify-between items-center sticky top-0 pt-2 z-20 md:p-3 bg-white">
-              <h2 className="text-2xl font-semibold text-gray-900">
-                Applications
-              </h2>
-              <JobFormDialog
-                modalOpen={modalOpen}
-                setModalOpen={setModalOpen}
-                handleAddOrUpdateJob={handleAddOrUpdateJob}
-                editJobId={editJobId}
-                companyName={companyName}
-                setCompanyName={setCompanyName}
-                role={role}
-                setRole={setRole}
-                ctc={ctc}
-                setCtc={setCtc}
-                requirements={requirements}
-                setRequirements={setRequirements}
-                status={status}
-                setStatus={setStatus}
-                lastDateToApply={lastDateToApply}
-                setLastDateToApply={setLastDateToApply}
-                appliedDate={appliedDate}
-                setAppliedDate={setAppliedDate}
-                examDate={examDate}
-                setExamDate={setExamDate}
-              />
+            <div className="hidden md:block sticky top-0 z-20 bg-white">
+              <div className="flex justify-between items-center pt-3 px-4 md:px-6">
+                <h2 className="text-2xl font-semibold text-gray-900">
+                  Applications
+                </h2>
+                <JobFormDialog
+                  modalOpen={modalOpen}
+                  setModalOpen={setModalOpen}
+                  handleAddOrUpdateJob={handleAddOrUpdateJob}
+                  editJobId={editJobId}
+                  companyName={companyName}
+                  setCompanyName={setCompanyName}
+                  role={role}
+                  setRole={setRole}
+                  ctc={ctc}
+                  setCtc={setCtc}
+                  requirements={requirements}
+                  setRequirements={setRequirements}
+                  status={status}
+                  setStatus={setStatus}
+                  lastDateToApply={lastDateToApply}
+                  setLastDateToApply={setLastDateToApply}
+                  appliedDate={appliedDate}
+                  setAppliedDate={setAppliedDate}
+                  examDate={examDate}
+                  setExamDate={setExamDate}
+                />
+              </div>
+
+              {/* Desktop Search Box */}
+              <div className="px-4 md:px-6 py-3">
+                <input
+                  type="text"
+                  placeholder="Search by company or role..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-violet-300 focus:border-violet-300 text-sm"
+                />
+              </div>
             </div>
 
             {/* Job Tiles */}
             <div className="flex flex-col gap-6 pb-2 md:pb-2">
-              {jobs.map((job) => (
+              {filteredJobs.map((job) => (
                 <JobTile
                   key={job.id}
                   job={job}
