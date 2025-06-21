@@ -286,7 +286,7 @@ export default function Dashboard() {
 
             <div className="flex justify-between items-center pt-2 pb-1">
               <div className="flex items-center gap-2">
-                <h2 className="text-2xl font-semibold text-gray-900">
+                <h2 className="text-2xl font-semibold text-gray-900 pl-2">
                   Applications
                 </h2>
 
@@ -391,7 +391,7 @@ export default function Dashboard() {
           <div className="w-full md:w-2/3 flex flex-col gap-4 md:pt-0">
             <div className="hidden md:block sticky top-0 z-20 bg-white">
               <div className="flex justify-between items-center pt-3 px-4 md:px-6">
-                <h2 className="text-2xl font-semibold text-gray-900">
+                <h2 className="text-2xl font-semibold text-gray-900 pl-2">
                   Applications
                 </h2>
                 <JobFormDialog
