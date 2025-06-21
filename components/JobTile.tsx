@@ -17,9 +17,9 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import Notes from "@/components/Notes";
-import { useState } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { Job } from "@/app/types/job";
-import { AnimatePresence, motion } from "framer-motion"; // add this!
+import { AnimatePresence, motion } from "framer-motion";
 
 const statusColors: Record<string, string> = {
   "to-apply": "bg-gray-300 text-gray-800",
@@ -61,9 +61,31 @@ export default function JobTile({
   const [showNotes, setShowNotes] = useState(false);
   const isExpanded = expandedJobId === job.id;
 
-  const gradientClasses =
-    statusGradients[job.status] ??
-    "from-gray-100/90 to-gray-50/80 border-gray-200";
+  const gradientClasses = statusGradients[job.status] ?? "from-gray-100/90 to-gray-50/80 border-gray-200";
+
+  const toggleNotes = useCallback(() => {
+    setShowNotes((prev) => !prev);
+  }, []);
+
+  const formattedLastDateToApply = useMemo(() => {
+    return job.last_date_to_apply
+      ? new Date(job.last_date_to_apply).toLocaleDateString()
+      : "-";
+  }, [job.last_date_to_apply]);
+
+  const formattedAppliedDate = useMemo(() => {
+    return job.applied_date
+      ? new Date(job.applied_date).toLocaleDateString()
+      : job.created_at
+      ? new Date(job.created_at).toLocaleDateString()
+      : "-";
+  }, [job.applied_date, job.created_at]);
+
+  const formattedExamDate = useMemo(() => {
+    return job.exam_date
+      ? new Date(job.exam_date).toLocaleDateString()
+      : "-";
+  }, [job.exam_date]);
 
   return (
     <motion.div
@@ -129,32 +151,15 @@ export default function JobTile({
           >
             {job.status === "to-apply" ? (
               <p>
-                Last Date to Apply:{" "}
-                <strong>
-                  {job.last_date_to_apply
-                    ? new Date(job.last_date_to_apply).toLocaleDateString()
-                    : "-"}
-                </strong>
+                Last Date to Apply: <strong>{formattedLastDateToApply}</strong>
               </p>
             ) : (
               <>
                 <p>
-                  Applied on:{" "}
-                  <strong>
-                    {job.applied_date
-                      ? new Date(job.applied_date).toLocaleDateString()
-                      : job.created_at
-                      ? new Date(job.created_at).toLocaleDateString()
-                      : "-"}
-                  </strong>
+                  Applied on: <strong>{formattedAppliedDate}</strong>
                 </p>
                 <p>
-                  Exam / Interview Date:{" "}
-                  <strong>
-                    {job.exam_date
-                      ? new Date(job.exam_date).toLocaleDateString()
-                      : "-"}
-                  </strong>
+                  Exam / Interview Date: <strong>{formattedExamDate}</strong>
                 </p>
               </>
             )}
@@ -163,7 +168,7 @@ export default function JobTile({
             {job.requirements && (
               <>
                 <button
-                  onClick={() => setShowNotes((prev) => !prev)}
+                  onClick={toggleNotes}
                   className="flex items-center gap-1 text-black font-medium text-sm hover:underline"
                 >
                   {showNotes ? "Hide Notes" : "Notes"}

@@ -1,7 +1,6 @@
 "use client";
 
 import { jobRoles } from "@/app/types/jobRoles";
-
 import {
   Dialog,
   DialogTrigger,
@@ -18,7 +17,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 
 interface JobFormDialogProps {
   modalOpen: boolean;
@@ -70,56 +69,22 @@ export default function JobFormDialog({
     domain: string;
   }
 
-  const [companySuggestions, setCompanySuggestions] = useState<
-    CompanySuggestion[]
-  >([]);
+  const [companySuggestions, setCompanySuggestions] = useState<CompanySuggestion[]>([]);
   const [roleSuggestions, setRoleSuggestions] = useState<string[]>([]);
   const [ctcType, setCtcType] = useState<"ctc" | "stipend">("ctc");
   const [ctcAmount, setCtcAmount] = useState<string>("");
 
+  const [isEditingCompany, setIsEditingCompany] = useState(false);
+  const [isEditingRole, setIsEditingRole] = useState(false);
+
   const companyInputRef = useRef<HTMLInputElement>(null);
   const roleInputRef = useRef<HTMLInputElement>(null);
 
+  // Memoize role options
+  const allRoles = useMemo(() => jobRoles, []);
+
+  // Handle ctc parsing
   useEffect(() => {
-    const fetchCompanySuggestions = async () => {
-      if (companyName.length < 1) {
-        setCompanySuggestions([]);
-        return;
-      }
-
-      try {
-        const res = await fetch(
-          `https://autocomplete.clearbit.com/v1/companies/suggest?query=${companyName}`
-        );
-        const data = await res.json();
-        setCompanySuggestions(data);
-      } catch (err) {
-        console.error("Error fetching company suggestions:", err);
-      }
-    };
-
-    const debounce = setTimeout(() => {
-      fetchCompanySuggestions();
-    }, 150);
-
-    return () => clearTimeout(debounce);
-  }, [companyName]);
-
-  useEffect(() => {
-    const allRoles = jobRoles;
-
-    if (role.length < 1) {
-      setRoleSuggestions([]);
-    } else {
-      const filtered = allRoles.filter((r) =>
-        r.toLowerCase().includes(role.toLowerCase())
-      );
-      setRoleSuggestions(filtered);
-    }
-  }, [role]);
-
-  useEffect(() => {
-    // When you edit an existing job, populate CTC
     if (ctc.includes("/month")) {
       setCtcType("stipend");
       setCtcAmount(ctc.replace("/month", "").trim());
@@ -131,7 +96,7 @@ export default function JobFormDialog({
     }
   }, [ctc]);
 
-  const handleCtcChange = (type: "ctc" | "stipend", amount: string) => {
+  const handleCtcChange = useCallback((type: "ctc" | "stipend", amount: string) => {
     setCtcType(type);
     setCtcAmount(amount);
     if (type === "ctc") {
@@ -139,6 +104,66 @@ export default function JobFormDialog({
     } else {
       setCtc(amount ? `${amount} /month` : "");
     }
+  }, [setCtcType, setCtcAmount, setCtc]);
+
+  // Debounced company suggestions
+  useEffect(() => {
+    if (companyName.length < 1 || !isEditingCompany) {
+      setCompanySuggestions([]);
+      return;
+    }
+
+    const controller = new AbortController();
+
+    const fetchCompanySuggestions = async () => {
+      try {
+        const res = await fetch(
+          `https://autocomplete.clearbit.com/v1/companies/suggest?query=${companyName}`,
+          { signal: controller.signal }
+        );
+        const data = await res.json();
+        setCompanySuggestions(data);
+      } catch (err) {
+        if (typeof err === "object" && err !== null && "name" in err && (err as { name?: string }).name !== "AbortError") {
+          console.error("Error fetching company suggestions:", err);
+        }
+      }
+    };
+
+    const debounce = setTimeout(() => {
+      fetchCompanySuggestions();
+    }, 200);
+
+    return () => {
+      controller.abort();
+      clearTimeout(debounce);
+    };
+  }, [companyName, isEditingCompany]);
+
+  // Filter role suggestions
+  useEffect(() => {
+    if (role.length < 1 || !isEditingRole) {
+      setRoleSuggestions([]);
+    } else {
+      const filtered = allRoles.filter((r) =>
+        r.toLowerCase().includes(role.toLowerCase())
+      );
+      setRoleSuggestions(filtered.slice(0, 5));
+    }
+  }, [role, isEditingRole, allRoles]);
+
+  const handleCompanySelect = (name: string) => {
+    setCompanyName(name);
+    setCompanySuggestions([]);
+    setIsEditingCompany(false);
+    companyInputRef.current?.blur();
+  };
+
+  const handleRoleSelect = (name: string) => {
+    setRole(name);
+    setRoleSuggestions([]);
+    setIsEditingRole(false);
+    roleInputRef.current?.blur();
   };
 
   return (
@@ -178,7 +203,10 @@ export default function JobFormDialog({
               ref={companyInputRef}
               placeholder="Company Name"
               value={companyName}
-              onChange={(e) => setCompanyName(e.target.value)}
+              onChange={(e) => {
+                setCompanyName(e.target.value);
+                setIsEditingCompany(true);
+              }}
               required
             />
             {companySuggestions.length > 0 && (
@@ -187,11 +215,8 @@ export default function JobFormDialog({
                   <div
                     key={index}
                     className="p-1 hover:bg-gray-100 cursor-pointer"
-                    onClick={() => {
-                      setCompanyName(item.name);
-                      setCompanySuggestions([]);
-                      companyInputRef.current?.blur();
-                    }}
+                    onMouseDown={() => handleCompanySelect(item.name)}
+                    onTouchStart={() => handleCompanySelect(item.name)}
                   >
                     {item.name}
                   </div>
@@ -206,20 +231,20 @@ export default function JobFormDialog({
               ref={roleInputRef}
               placeholder="Role"
               value={role}
-              onChange={(e) => setRole(e.target.value)}
+              onChange={(e) => {
+                setRole(e.target.value);
+                setIsEditingRole(true);
+              }}
               required
             />
             {roleSuggestions.length > 0 && (
               <div className="absolute z-20 bg-white border border-gray-200 rounded mt-1 w-full max-h-40 overflow-y-auto shadow-lg">
-                {roleSuggestions.slice(0, 5).map((item, index) => (
+                {roleSuggestions.map((item, index) => (
                   <div
                     key={index}
                     className="p-1 hover:bg-gray-100 cursor-pointer"
-                    onClick={() => {
-                      setRole(item);
-                      setRoleSuggestions([]);
-                      roleInputRef.current?.blur();
-                    }}
+                    onMouseDown={() => handleRoleSelect(item)}
+                    onTouchStart={() => handleRoleSelect(item)}
                   >
                     {item}
                   </div>
@@ -263,12 +288,10 @@ export default function JobFormDialog({
             <p className="font-semibold mb-1">Tip for Formatting Notes</p>
             <ul className="list-disc list-inside space-y-1">
               <li>
-                Separate with <span className="font-medium">commas</span> to
-                make bullet points
+                Separate with <span className="font-medium">commas</span> to make bullet points
               </li>
               <li>
-                Use <span className="font-medium">#</span> to create a new
-                sticky note
+                Use <span className="font-medium">#</span> to create a new sticky note
               </li>
             </ul>
           </div>
@@ -296,9 +319,7 @@ export default function JobFormDialog({
           {/* Conditional Dates */}
           {status === "to-apply" ? (
             <>
-              <label className="font-medium text-gray-700">
-                Last Date to Apply
-              </label>
+              <label className="font-medium text-gray-700">Last Date to Apply</label>
               <Input
                 type="date"
                 value={lastDateToApply}
@@ -315,9 +336,7 @@ export default function JobFormDialog({
                 onChange={(e) => setAppliedDate(e.target.value)}
               />
 
-              <label className="font-medium text-gray-700 mt-2">
-                Exam / Interview Date
-              </label>
+              <label className="font-medium text-gray-700 mt-2">Exam / Interview Date</label>
               <Input
                 type="date"
                 value={examDate}

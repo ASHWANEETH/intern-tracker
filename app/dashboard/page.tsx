@@ -361,7 +361,7 @@ return (
           </div>
 
           {/* Job Tiles */}
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-6 pb-2 md:pb-2">
             {jobs.map((job) => (
               <JobTile
                 key={job.id}
