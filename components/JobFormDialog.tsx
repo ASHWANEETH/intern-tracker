@@ -69,7 +69,9 @@ export default function JobFormDialog({
     domain: string;
   }
 
-  const [companySuggestions, setCompanySuggestions] = useState<CompanySuggestion[]>([]);
+  const [companySuggestions, setCompanySuggestions] = useState<
+    CompanySuggestion[]
+  >([]);
   const [roleSuggestions, setRoleSuggestions] = useState<string[]>([]);
   const [ctcType, setCtcType] = useState<"ctc" | "stipend">("ctc");
   const [ctcAmount, setCtcAmount] = useState<string>("");
@@ -79,6 +81,10 @@ export default function JobFormDialog({
 
   const companyInputRef = useRef<HTMLInputElement>(null);
   const roleInputRef = useRef<HTMLInputElement>(null);
+
+  const [jdModalOpen, setJdModalOpen] = useState(false);
+  const [jdText, setJdText] = useState("");
+  const [extracting, setExtracting] = useState(false);
 
   // Memoize role options
   const allRoles = useMemo(() => jobRoles, []);
@@ -96,15 +102,18 @@ export default function JobFormDialog({
     }
   }, [ctc]);
 
-  const handleCtcChange = useCallback((type: "ctc" | "stipend", amount: string) => {
-    setCtcType(type);
-    setCtcAmount(amount);
-    if (type === "ctc") {
-      setCtc(amount ? `${amount} LPA` : "");
-    } else {
-      setCtc(amount ? `${amount} /month` : "");
-    }
-  }, [setCtcType, setCtcAmount, setCtc]);
+  const handleCtcChange = useCallback(
+    (type: "ctc" | "stipend", amount: string) => {
+      setCtcType(type);
+      setCtcAmount(amount);
+      if (type === "ctc") {
+        setCtc(amount ? `${amount} LPA` : "");
+      } else {
+        setCtc(amount ? `${amount} /month` : "");
+      }
+    },
+    [setCtcType, setCtcAmount, setCtc]
+  );
 
   // Debounced company suggestions
   useEffect(() => {
@@ -124,7 +133,12 @@ export default function JobFormDialog({
         const data = await res.json();
         setCompanySuggestions(data);
       } catch (err) {
-        if (typeof err === "object" && err !== null && "name" in err && (err as { name?: string }).name !== "AbortError") {
+        if (
+          typeof err === "object" &&
+          err !== null &&
+          "name" in err &&
+          (err as { name?: string }).name !== "AbortError"
+        ) {
           console.error("Error fetching company suggestions:", err);
         }
       }
@@ -166,6 +180,60 @@ export default function JobFormDialog({
     roleInputRef.current?.blur();
   };
 
+  async function extractFromJD(jdText: string) {
+    try {
+      const response = await fetch(
+        "https://openrouter.ai/api/v1/chat/completions",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer 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`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            model: "deepseek/deepseek-r1-0528-qwen3-8b:free",
+            messages: [
+              {
+                role: "system",
+                content: `You are an expert at extracting job details from Job Descriptions.
+                          You must only respond with the final JSON and nothing else. No explanation.`,
+              },
+              {
+                role: "user",
+                content: `Extract the following from this JD:\n\n${jdText}\n\nReturn ONLY JSON with these fields:\n
+                {
+                  company_name: '',  // ONLY main company name as used in official website or domain. No Pvt Ltd, Inc, Ltd, etc. Example: "google", "microsoft", "infosys"
+                  role: '',
+                  ctc: '',  // If CTC: "10 LPA", If Stipend: "30000 /month". Only one string. No other words.
+                  last_date_to_apply: '',  // Format: yyyy-MM-dd (for HTML date input)
+                  requirements: ''
+                }`,
+              },
+            ],
+            max_tokens: 3000, // increase to avoid cutoff
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      console.log("LLM FULL RESPONSE:", data);
+
+      const rawText = data?.choices?.[0]?.message?.content || "";
+
+      const jsonMatch = rawText.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        return JSON.parse(jsonMatch[0]);
+      } else {
+        console.error("No JSON found in response:", rawText);
+        return {};
+      }
+    } catch (err) {
+      console.error("Failed to extract JD:", err);
+      return {};
+    }
+  }
+
   return (
     <Dialog open={modalOpen} onOpenChange={setModalOpen}>
       <DialogTrigger asChild>
@@ -188,9 +256,19 @@ export default function JobFormDialog({
 
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>
-            {editJobId ? "Edit Job Application" : "Add Job Application"}
-          </DialogTitle>
+          <div className="flex justify-between items-center">
+            <DialogTitle>
+              {editJobId ? "Edit Job Application" : "Add Job Application"}
+            </DialogTitle>
+            <Button
+              variant="outline"
+              size="sm"
+              type="button"
+              onClick={() => setJdModalOpen(true)}
+            >
+              Extract JD
+            </Button>
+          </div>
         </DialogHeader>
 
         <form
@@ -288,10 +366,12 @@ export default function JobFormDialog({
             <p className="font-semibold mb-1">Tip for Formatting Notes</p>
             <ul className="list-disc list-inside space-y-1">
               <li>
-                Separate with <span className="font-medium">commas</span> to make bullet points
+                Separate with <span className="font-medium">commas</span> to
+                make bullet points
               </li>
               <li>
-                Use <span className="font-medium">#</span> to create a new sticky note
+                Use <span className="font-medium">#</span> to create a new
+                sticky note
               </li>
             </ul>
           </div>
@@ -319,7 +399,9 @@ export default function JobFormDialog({
           {/* Conditional Dates */}
           {status === "to-apply" ? (
             <>
-              <label className="font-medium text-gray-700">Last Date to Apply</label>
+              <label className="font-medium text-gray-700">
+                Last Date to Apply
+              </label>
               <Input
                 type="date"
                 value={lastDateToApply}
@@ -336,7 +418,9 @@ export default function JobFormDialog({
                 onChange={(e) => setAppliedDate(e.target.value)}
               />
 
-              <label className="font-medium text-gray-700 mt-2">Exam / Interview Date</label>
+              <label className="font-medium text-gray-700 mt-2">
+                Exam / Interview Date
+              </label>
               <Input
                 type="date"
                 value={examDate}
@@ -350,6 +434,45 @@ export default function JobFormDialog({
           </Button>
         </form>
       </DialogContent>
+      <Dialog open={jdModalOpen} onOpenChange={setJdModalOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Extract from JD</DialogTitle>
+          </DialogHeader>
+
+          <div className="flex flex-col gap-3">
+            <textarea
+              rows={10}
+              placeholder="Paste Job Description text here..."
+              value={jdText}
+              onChange={(e) => setJdText(e.target.value)}
+              className="border rounded p-2 text-sm"
+            />
+
+            <Button
+              onClick={async () => {
+                setExtracting(true);
+
+                // 🧠 Call DeepSeek API here
+                const result = await extractFromJD(jdText); // function we’ll define
+
+                // 🪄 Set form fields
+                setCompanyName(result.company_name || "");
+                setRole(result.role || "");
+                setCtc(result.ctc || "");
+                setRequirements(result.requirements || "");
+                setLastDateToApply(result.last_date_to_apply || "");
+
+                setExtracting(false);
+                setJdModalOpen(false); // close modal
+              }}
+              disabled={extracting || jdText.trim().length < 20}
+            >
+              {extracting ? "Extracting..." : "Extract & Fill"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </Dialog>
   );
 }
