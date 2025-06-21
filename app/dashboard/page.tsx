@@ -445,13 +445,19 @@ export default function Dashboard() {
                     className="opacity-50 md:w-[300px] md:h-[300px]"
                     priority
                   />
-
                   <div className="text-gray-600 text-2xl md:text-4xl font-semibold">
-                    Add an application to get started
+                    No applications yet — let&apos;s change that! 🚀
                   </div>
 
                   <p className="text-gray-400 text-base md:text-lg">
-                    Click &quot;Add New +&quot;
+                    Hit &quot;Add New +&quot; to start tracking your journey.
+                  </p>
+                  <p className="text-gray-400 text-base md:text-lg">
+                    And don’t miss the{" "}
+                    <span className="font-medium text-purple-500">
+                      AI magic ✨
+                    </span>{" "}
+                    — it’ll fill out details for you!
                   </p>
                 </div>
               ) : (
