@@ -21,7 +21,7 @@ export default function Notes({ requirements }: NotesProps) {
         .map((noteBlock, blockIndex) => (
           <div
             key={blockIndex}
-            className={`relative my-1 p-3 rounded-xl shadow-md border-l-4 ${color.bg} ${color.border}`}
+            className={`relative mb-2 p-3 rounded-xl shadow-md border-l-4 ${color.bg} ${color.border}`}
           >
             <ul
               className={`text-sm list-disc list-inside space-y-1 ${color.text}`}
