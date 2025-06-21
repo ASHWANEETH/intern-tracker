@@ -372,7 +372,7 @@ export default function Dashboard() {
             </div>
 
             {/* Job Tiles */}
-            <div className="flex flex-col gap-6 pb-2 md:pb-2">
+            <div className="flex flex-col gap-4 pb-2 md:pb-2">
               {filteredJobs.map((job) => (
                 <JobTile
                   key={job.id}
