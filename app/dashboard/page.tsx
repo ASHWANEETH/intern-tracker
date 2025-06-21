@@ -47,6 +47,8 @@ export default function Dashboard() {
 
   const closeModal = () => setConfirmModal({ action: null, job: null });
 
+  const [showMobileSearch, setShowMobileSearch] = useState(false);
+
   function launchConfetti() {
     confetti({
       particleCount: 100,
@@ -278,14 +280,40 @@ export default function Dashboard() {
 
       <main className="flex-grow">
         {/* Sticky block for mobile */}
+        {/* Sticky block for mobile */}
         <div className="md:hidden sticky top-0 z-30 bg-white w-full">
           <div className="px-4 pt-3 pb-3 flex flex-col gap-2">
             {user && <DashboardGreeting user={user} jobs={jobs} />}
 
             <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-semibold text-gray-900 py-2">
-                Applications
-              </h2>
+              <div className="flex items-center gap-2">
+                <h2 className="text-2xl font-semibold text-gray-900 py-2">
+                  Applications
+                </h2>
+
+                {/* Search Icon */}
+                <button
+                  onClick={() => setShowMobileSearch(!showMobileSearch)}
+                  className="p-2 text-gray-600 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-violet-300"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M21 21l-4.35-4.35M10 18a8 8 0 100-16 8 8 0 000 16z"
+                    />
+                  </svg>
+                </button>
+              </div>
+
+              {/* Add Job Button */}
               <JobFormDialog
                 modalOpen={modalOpen}
                 setModalOpen={setModalOpen}
@@ -310,14 +338,16 @@ export default function Dashboard() {
               />
             </div>
 
-            {/* Mobile Search Box — only here */}
-            <input
-              type="text"
-              placeholder="Search by company or role..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-violet-300 focus:border-violet-300 text-sm"
-            />
+            {/* Mobile Search Box — toggled below Applications bar */}
+            {showMobileSearch && (
+              <input
+                type="text"
+                placeholder="Search by company or role..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-violet-300 focus:border-violet-300 text-sm transition"
+              />
+            )}
           </div>
         </div>
 
