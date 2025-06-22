@@ -246,7 +246,7 @@ export default function JobFormDialog({
                                                      // If numeric stipened like 30000 per month: convert to "30k /month"
                                                      // If internship stipend in annual terms, convert to monthly if possible
                           "last_date_to_apply": "",  // Format: yyyy-MM-dd (for HTML date input)
-                          "requirements": ""         //Separate with commas to make bullet points,Use # to create a new sticky note
+                          "requirements": ""         //Separate with commas.
                         }`,
               },
             ],
