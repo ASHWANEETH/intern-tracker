@@ -7,6 +7,8 @@ import AuthModal from "@/components/AuthModal";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import FooterWithModals from "@/components/Footer";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 const supabase = createClient();
 
@@ -18,6 +20,13 @@ export default function Home() {
     full_name?: string;
   } | null>(null);
 
+  useEffect(() => {
+    AOS.init({
+      once: true, // run only once per element
+      duration: 800,
+      easing: "ease-out-cubic",
+    });
+  }, []);
   useEffect(() => {
     const getSession = async () => {
       const {
@@ -61,102 +70,137 @@ export default function Home() {
     router.refresh();
   };
 
-  // Modal wrapper to handle outside click and close
-
   return (
-    <div className="min-h-screen bg-white flex flex-col items-center justify-between text-center px-4 py-5 sm:px-6 lg:px-8">
-      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md py-2 px-2 sm:px-3 w-full max-w-6xl mx-auto flex flex-col sm:flex-row items-center sm:justify-between gap-2 sm:gap-0 transition-all">
-        <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-3">
+    <div className="min-h-screen bg-white flex flex-col items-center justify-between text-center px-4 sm:px-6 lg:px-8">
+      {/* Header */}
+      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md py-3 px-4 w-full max-w-6xl mx-auto flex flex-col sm:flex-row items-center sm:justify-between gap-2 transition-all">
+        <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3">
           <Image
             src="/logo.svg"
             alt="Intern Tracker Logo"
-            width={40}
-            height={40}
+            width={48}
+            height={48}
             priority
             className="sm:w-12 sm:h-12 w-10 h-10"
           />
-          <h1 className="text-xl sm:text-2xl tracking-tight text-gray-800 text-center sm:text-left">
+          <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-gray-800">
             Intern Tracker
           </h1>
         </div>
 
         {user ? (
-          <div className="flex items-center gap-3 sm:gap-4 text-sm sm:text-base">
-            <span className="font-medium text-gray-700 whitespace-nowrap hidden sm:inline">
+          <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-end gap-2 sm:gap-4 text-sm sm:text-base">
+            <span className="font-medium text-gray-700">
               Hello {user.full_name ?? user.email} !
             </span>
-            <Button onClick={() => router.push("/dashboard")} size="sm">
-              Dashboard
-            </Button>
-            <Button variant="outline" onClick={handleLogout} size="sm">
-              Logout
-            </Button>
+            <div className="flex gap-2 mt-2 sm:mt-0">
+              <Button onClick={() => router.push("/dashboard")} size="sm">
+                Dashboard
+              </Button>
+              <Button variant="outline" onClick={handleLogout} size="sm">
+                Logout
+              </Button>
+            </div>
           </div>
         ) : (
-          <>
-            <div className="hidden sm:block">
-              Hey Buddy ! &nbsp;
-              <AuthModal />
-            </div>
-          </>
+          <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-end gap-2 sm:gap-4">
+            <span className="font-medium text-gray-700">Hey Buddy !</span>
+            <AuthModal />
+          </div>
         )}
       </header>
 
-      {/* <Image
-        src="/main.png"
-        alt="Yoo bro the image didn't load !! wait"
-        width={600}
-        height={500}
-        priority
-        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 700px"
-        className="my-5 w-full max-w-4xl h-auto object-contain"
-      /> */}
+      {/* Hero Section */}
+      <main className="flex flex-col md:flex-row items-center justify-center gap-12 px-4 sm:px-8 md:px-16 py-16 w-full max-w-6xl mx-auto">
+        {/* Text */}
+        <div className="flex flex-col items-center md:items-start text-center md:text-left gap-6 max-w-lg">
+          <h2 className="text-4xl sm:text-5xl font-bold leading-tight text-gray-900">
+            Track your internship applications with ease.
+          </h2>
+          <p className="text-gray-600 text-lg sm:text-xl">
+            Intern Tracker helps students stay organized, reduce stress, and
+            land the perfect role.
+          </p>
+        </div>
 
-      <main className="flex-1 flex flex-col items-center gap-6 px-2 sm:px-0">
-        <h2 className="text-3xl sm:text-4xl font-bold max-w-xl leading-tight">
-          Track your internship applications with ease.
-        </h2>
-        <p className="text-gray-600 max-w-md px-3 sm:px-0">
-          Intern Tracker helps students stay organized, reduce stress, and land
-          the perfect role.
-        </p>
-
-        {user ? (
-          <>
-            <span className="text-lg font-medium">
-              Hey {user.full_name ?? user.email} !
-            </span>
-            <Button onClick={() => router.push("/dashboard")}>
-              Let&apos;s gooo !
-            </Button>
-          </>
-        ) : (
-          <>
-            <AuthModal />
-            Let&apos;s gooooo !!
-          </>
-        )}
+        {/* Image */}
+        <div className="hidden md:block flex-shrink-0 md:max-w-[320px] lg:max-w-[340px]">
+          <Image
+            src="/home.svg"
+            alt="Intern Tracker illustration"
+            width={340}
+            height={340}
+            priority
+            sizes="(max-width: 1024px) 30vw, 340px"
+            className="w-full h-auto object-contain"
+          />
+        </div>
       </main>
 
-      <section className="w-full py-16 px-4 bg-muted rounded-xl text-center mt-7">
-        <h3 className="text-2xl font-semibold mb-3">How We Help You ?</h3>
-        <ul className="text-gray-700 space-y-2 text-base">
-          <li>✅ Effortless tracking of all your internship applications</li>
-          <li>📅 Keep tabs on deadlines, interviews, and follow-ups</li>
-          <li>📈 Analytics to help you understand your application trends</li>
-          <li>🔒 Secure login and data storage with Supabase</li>
-          <li>💬 Friendly reminders and a dashboard built just for students</li>
-        </ul>
+      <section className="w-full py-8 px-4 text-center">
+        <h3 className="text-3xl font-bold mb-8">How We Help You ?</h3>
+
+        <div className="grid grid-cols-1 gap-8 max-w-4xl mx-auto">
+          {[
+            {
+              title: "Effortless Tracking",
+              desc: "Keep all your internship applications organized in one place and never miss a deadline.",
+              img: "/easyTrack.svg",
+            },
+            {
+              title: "Stay on Top of Deadlines",
+              desc: "Manage upcoming interviews, exams, and application dates with ease.",
+              img: "/deadline.svg",
+            },
+            {
+              title: "Analytics & Insights",
+              desc: "Get helpful trends and insights on your application journey.",
+              img: "/analytics.svg",
+            },
+            {
+              title: "Friendly Reminders",
+              desc: "Stay motivated with helpful reminders and an easy-to-use dashboard.",
+              img: "/notify.svg",
+            },
+          ].map((item, idx) => (
+            <div
+              key={idx}
+              className={`rounded-xl border border-white/20 bg-white/30 backdrop-blur-lg shadow-2xl p-8 mx-7 flex flex-col md:flex-row items-center md:items-center text-center md:text-left transition-transform duration-300 hover:scale-[1.01] hover:shadow-2xl ${
+                idx % 2 === 1 ? "md:flex-row-reverse" : ""
+              }`}
+              data-aos="fade-up"
+              data-aos-delay={idx * 100}
+            >
+              {/* Icon wrapper */}
+              <div className="w-[140px] h-[140px] flex-shrink-0 mb-6 md:mb-0 md:mx-8 flex items-center justify-center">
+                <Image
+                  src={item.img}
+                  alt={item.title}
+                  width={120}
+                  height={120}
+                  className="object-contain"
+                />
+              </div>
+
+              {/* Text content */}
+              <div className="flex-1 flex flex-col justify-center">
+                <h4 className="text-2xl font-semibold mb-3">{item.title}</h4>
+                <p className="text-gray-600 text-base">{item.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
       </section>
 
-      <section className="w-full max-w-xl text-center my-8 px-4">
-        <h3 className="text-xl font-semibold mb-2">Ping Us Anytime !</h3>
-        <p className="text-gray-600">
+      {/* Contact Section */}
+      <section className="w-full max-w-xl text-center my-12 px-4">
+        <h3 className="text-xl font-semibold mb-3">Ping Us Anytime !</h3>
+        <p className="text-gray-600 mb-2">
           If something breaks, tell us! We’ll fix it faster than a chai break.
           ☕
         </p>
-        <p className="text-blue-600 mt-1 font-medium">
-          ✉️ &nbsp;{" "}
+        <p className="text-blue-600 font-medium">
+          ✉️{" "}
           <a href="mailto:report.interntracker@gmail.com" className="underline">
             report.interntracker@gmail.com
           </a>
@@ -170,9 +214,7 @@ export default function Home() {
           }) => (
             <p className="text-sm text-gray-500 mt-4 text-center">
               <span className="block sm:inline">
-                Got a few extra seconds? Have a laugh (or a cry) reading
-                our&nbsp;
-                <br />
+                Got a few extra seconds? Have a laugh (or a cry) reading our{" "}
               </span>
               <button
                 className="underline text-blue-500"
@@ -180,14 +222,14 @@ export default function Home() {
               >
                 About Us
               </button>
-              ,&nbsp;
+              ,{" "}
               <button
                 className="underline text-blue-500"
                 onClick={() => setShowPrivacyModal(true)}
               >
                 Privacy Policy
               </button>
-              , and&nbsp;
+              , and{" "}
               <button
                 className="underline text-blue-500"
                 onClick={() => setShowTermsModal(true)}
@@ -200,37 +242,7 @@ export default function Home() {
         />
       </section>
 
-      <section
-        id="quotes"
-        className="w-full py-16 px-4 bg-muted rounded-xl text-center"
-      >
-        <h2 className="text-3xl font-bold mb-6">
-          Student Motivation Corner 🎓😄
-        </h2>
-        <ul className="space-y-4 text-lg text-muted-foreground">
-          <li>
-            📚 &quot;If you’re going to procrastinate, at least do it with
-            confidence.&quot;
-          </li>
-          <li>
-            ☕ &quot;Coffee: because adulting is hard and studying is
-            harder.&quot;
-          </li>
-          <li>
-            📝 &quot;Study tip: Stand up. Stretch. Take a walk. Go to the
-            airport. Get on a plane. Never return.&quot;
-          </li>
-          <li>
-            📖 &quot;I’m not lazy, I’m just in energy-saving mode for
-            finals.&quot;
-          </li>
-          <li>
-            🎯 &quot;Some people graduate with honors, I am just honored to
-            graduate.&quot;
-          </li>
-        </ul>
-      </section>
-
+      {/* Footer */}
       <FooterWithModals />
     </div>
   );
