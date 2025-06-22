@@ -146,7 +146,7 @@ export default function Home() {
             {
               title: "Effortless Tracking",
               desc: "Keep all your internship applications organized in one place and never miss a deadline.",
-              img: "/easyTrack.svg",
+              img: "/easytrack.svg",
             },
             {
               title: "Stay on Top of Deadlines",
