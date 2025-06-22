@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 
-const TRAIL_LENGTH = 5; // number of dots
+const TRAIL_LENGTH = 5; // number of dots.
 const SPEED = 0.5; // lower = more lag
 
 export default function CursorTrail() {
