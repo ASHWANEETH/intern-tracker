@@ -22,8 +22,8 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Intern Tracker",
   description: "Track your internship applications easily",
-    icons: {
-    icon: "/logo_head.svg",
+  icons: {
+    icon: "/logo1.svg",
   },
 };
 

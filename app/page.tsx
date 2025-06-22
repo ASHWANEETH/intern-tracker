@@ -1,5 +1,6 @@
 "use client";
 
+declare module "aos";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabaseClient";
@@ -81,7 +82,7 @@ export default function Home() {
             width={48}
             height={48}
             priority
-            className="sm:w-12 sm:h-12 w-10 h-10"
+            className="sm:w-10 sm:h-10 w-10 h-10"
           />
           <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-gray-800">
             Intern Tracker
