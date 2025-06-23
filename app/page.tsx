@@ -10,8 +10,15 @@ import Image from "next/image";
 import FooterWithModals from "@/components/Footer";
 import AOS from "aos";
 import "aos/dist/aos.css";
+import ScrambledText from "@/components/reactbits/ScrambledText";
+import SplitText from "@/components/reactbits/SplitText";
+import SpotlightCard from "@/components/reactbits/SpotlightCard";
+import ScrollReveal from "@/components/reactbits/ScrollReveal";
 
 const supabase = createClient();
+const handleAnimationComplete = () => {
+  console.log("All letters have animated!");
+};
 
 export default function Home() {
   const router = useRouter();
@@ -112,15 +119,22 @@ export default function Home() {
       </header>
 
       {/* Hero Section */}
-      <main className="flex flex-col md:flex-row items-center justify-center gap-12 px-4 sm:px-8 md:px-16 py-16 w-full max-w-6xl mx-auto">
+      <main className="flex flex-col md:flex-row items-center justify-center gap-12 px-4 sm:px-8 md:px-10 py-10 w-full max-w-6xl mx-auto">
         {/* Text */}
         <div className="flex flex-col items-center md:items-start text-center md:text-left gap-6 max-w-lg">
-          <h2 className="text-4xl sm:text-5xl font-bold leading-tight text-gray-900">
-            Track your internship applications with ease.
-          </h2>
-          <p className="text-gray-600 text-lg sm:text-xl">
-            Intern Tracker helps students stay organized, reduce stress, and
-            land the perfect role.
+          <ScrambledText
+            className="text-5xl sm:text-4xl md:text-4xl lg:text-6xl font-bold leading-tight text-gray-900"
+            radius={30}
+            duration={1}
+            speed={0.5}
+            scrambleChars=".:"
+          >
+            Track your <br />
+            Applications <br /> with ease.
+          </ScrambledText>
+
+          <p className="text-gray-600 text-1xl sm:text-xl md:text-xl font-mono">
+            stay organized, reduce stress and land the perfect role.
           </p>
         </div>
 
@@ -139,7 +153,22 @@ export default function Home() {
       </main>
 
       <section className="w-full py-8 px-4 text-center">
-        <h3 className="text-3xl font-bold mb-8">How We Help You ?</h3>
+        <h3 className="text-3xl font-bold mb-8">
+          <SplitText
+            text="How We Help You ?"
+            className="font-mono text-2xl font-semibold text-center"
+            delay={100}
+            duration={0.6}
+            ease="power3.out"
+            splitType="words"
+            from={{ opacity: 0, y: 40 }}
+            to={{ opacity: 1, y: 0 }}
+            threshold={0.1}
+            rootMargin="-100px"
+            textAlign="center"
+            onLetterAnimationComplete={handleAnimationComplete}
+          />
+        </h3>
 
         <div className="grid grid-cols-1 gap-8 max-w-4xl mx-auto">
           {[
@@ -164,31 +193,31 @@ export default function Home() {
               img: "/notify.svg",
             },
           ].map((item, idx) => (
-            <div
-              key={idx}
-              className={`rounded-xl border border-white/20 bg-white/30 backdrop-blur-lg shadow-2xl p-8 mx-7 flex flex-col md:flex-row items-center md:items-center text-center md:text-left transition-transform duration-300 hover:scale-[1.01] hover:shadow-2xl ${
-                idx % 2 === 1 ? "md:flex-row-reverse" : ""
-              }`}
-              data-aos="fade-up"
-              data-aos-delay={idx * 100}
-            >
-              {/* Icon wrapper */}
-              <div className="w-[140px] h-[140px] flex-shrink-0 mb-6 md:mb-0 md:mx-8 flex items-center justify-center">
-                <Image
-                  src={item.img}
-                  alt={item.title}
-                  width={120}
-                  height={120}
-                  className="object-contain"
-                />
-              </div>
+            <ScrollReveal key={idx}>
+              <SpotlightCard
+                className={`custom-spotlight-card rounded-xl p-8 mx-7 flex flex-col md:flex-row items-center md:text-left shadow-xl hover:scale-[1.01] hover:shadow-2xl`}
+                spotlightColor="rgba(139, 92, 246, 0.25)"
+              >
+                {/* Icon wrapper */}
+                <div className="w-[140px] h-[140px] flex-shrink-0 mb-6 md:mb-0 md:mx-8 flex items-center justify-center">
+                  <Image
+                    src={item.img}
+                    alt={item.title}
+                    width={120}
+                    height={120}
+                    className="object-contain"
+                  />
+                </div>
 
-              {/* Text content */}
-              <div className="flex-1 flex flex-col justify-center">
-                <h4 className="text-2xl font-semibold mb-3">{item.title}</h4>
-                <p className="text-gray-600 text-base">{item.desc}</p>
-              </div>
-            </div>
+                {/* Text content */}
+                <div className="flex-1 flex flex-col justify-center">
+                  <h4 className="text-2xl font-mono text-black font-semibold mb-3">
+                    {item.title}
+                  </h4>
+                  <p className="text-black text-base font-mono">{item.desc}</p>
+                </div>
+              </SpotlightCard>
+            </ScrollReveal>
           ))}
         </div>
       </section>

@@ -136,7 +136,7 @@
     animation: gradient-x 3s ease infinite;
     background-size: 200% 200%;
   }
-}
+
 
 .scrollbar-none {
   scrollbar-width: none; /* Firefox */
@@ -165,4 +165,5 @@ html, body {
   cursor: url('/cursor.png'), auto;
 }
 
+}
 
