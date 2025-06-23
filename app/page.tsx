@@ -89,9 +89,9 @@ export default function Home() {
             width={48}
             height={48}
             priority
-            className="sm:w-10 sm:h-10 w-10 h-10"
+            className="sm:w-8 sm:h-10 w-10 h-10 pb-2"
           />
-          <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-gray-800">
+          <h1 className=" text-1xl sm:text-xl font-semibold tracking-tight text-gray-800">
             Intern Tracker
           </h1>
         </div>
@@ -112,7 +112,7 @@ export default function Home() {
           </div>
         ) : (
           <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-end gap-2 sm:gap-4">
-            <span className="font-medium text-gray-700">Hey Buddy !</span>
+            <span className=" font-medium text-gray-700">Hey Buddy !</span>
             <AuthModal />
           </div>
         )}
@@ -133,7 +133,7 @@ export default function Home() {
             Applications <br /> with ease.
           </ScrambledText>
 
-          <p className="text-gray-600 text-1xl sm:text-xl md:text-xl font-mono">
+          <p className="text-gray-600 text-1xl sm:text-xl md:text-xl ">
             stay organized, reduce stress and land the perfect role.
           </p>
         </div>
@@ -156,7 +156,7 @@ export default function Home() {
         <h3 className="text-3xl font-bold mb-8">
           <SplitText
             text="How We Help You ?"
-            className="font-mono text-2xl font-semibold text-center"
+            className=" text-2xl font-semibold text-center"
             delay={100}
             duration={0.6}
             ease="power3.out"
@@ -211,10 +211,10 @@ export default function Home() {
 
                 {/* Text content */}
                 <div className="flex-1 flex flex-col justify-center">
-                  <h4 className="text-2xl font-mono text-black font-semibold mb-3">
+                  <h4 className="text-2xl  text-black font-semibold mb-3">
                     {item.title}
                   </h4>
-                  <p className="text-black text-base font-mono">{item.desc}</p>
+                  <p className="text-black text-base ">{item.desc}</p>
                 </div>
               </SpotlightCard>
             </ScrollReveal>
