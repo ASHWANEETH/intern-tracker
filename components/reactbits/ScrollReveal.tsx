@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useLayoutEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -22,37 +22,41 @@ const ScrollReveal: React.FC<ScrollRevealProps> = ({
   triggerStart = "top 80%",
 }) => {
   const ref = useRef<HTMLDivElement>(null);
+  const hasAnimated = useRef(false);
 
-  useEffect(() => {
-    if (!ref.current) return;
+  useLayoutEffect(() => {
+    if (!ref.current || hasAnimated.current) return;
 
-    gsap.fromTo(
-      ref.current,
-      { opacity: baseOpacity, y: yOffset },
-      {
-        opacity: 1,
-        y: 0,
-        duration,
-        delay,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: ref.current,
-          start: triggerStart,
-          toggleActions: "play none none none",
-        },
-      }
-    );
+    const ctx = gsap.context(() => {
+      ScrollTrigger.create({
+        trigger: ref.current!,
+        start: triggerStart,
+        toggleActions: "play none none none",
+        animation: gsap.fromTo(
+          ref.current,
+          { opacity: baseOpacity, y: yOffset },
+          {
+            opacity: 1,
+            y: 0,
+            duration,
+            delay,
+            ease: "power3.out",
+            onComplete: () => {
+              hasAnimated.current = true; // mark as animated
+              // force visibility visible so it does not disappear
+              gsap.set(ref.current, { clearProps: "all", opacity: 1, y: 0 });
+            },
+          }
+        ),
+      });
+    }, ref);
 
     return () => {
-      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+      ctx.revert();
     };
   }, [baseOpacity, yOffset, duration, delay, triggerStart]);
 
-  return (
-    <div ref={ref}>
-      {children}
-    </div>
-  );
+  return <div ref={ref}>{children}</div>;
 };
 
 export default ScrollReveal;
