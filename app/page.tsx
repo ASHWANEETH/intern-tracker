@@ -251,41 +251,6 @@ export default function Home() {
               report.interntracker@gmail.com
             </a>
           </p>
-          <FooterWithModals
-            showFullFooter={false}
-            renderTriggerLinks={({
-              setShowPrivacyModal,
-              setShowTermsModal,
-              setShowAboutModal,
-            }) => (
-              <p className="text-sm text-gray-500 mt-4 text-center">
-                <span className="block sm:inline">
-                  Got a few extra seconds? Have a laugh (or a cry) reading our{" "}
-                </span>
-                <button
-                  className="underline text-blue-500"
-                  onClick={() => setShowAboutModal(true)}
-                >
-                  About Us
-                </button>
-                ,{" "}
-                <button
-                  className="underline text-blue-500"
-                  onClick={() => setShowPrivacyModal(true)}
-                >
-                  Privacy Policy
-                </button>
-                , and{" "}
-                <button
-                  className="underline text-blue-500"
-                  onClick={() => setShowTermsModal(true)}
-                >
-                  Terms
-                </button>
-                .
-              </p>
-            )}
-          />
         </section>
 
         {/* Footer */}
