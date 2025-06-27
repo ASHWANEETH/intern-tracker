@@ -90,7 +90,7 @@ export default function Home() {
     >
       <div className="min-h-screen bg-white flex flex-col items-center justify-between text-center px-4 sm:px-6 lg:px-8 select-none">
         {/* Header */}
-        <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md py-3 px-4 w-full max-w-6xl mx-auto flex flex-col sm:flex-row items-center sm:justify-between gap-2 transition-all">
+        <header className="sticky top-0 z-5000 bg-white/90 backdrop-blur-md py-3 px-4 w-full max-w-6xl mx-auto flex flex-col sm:flex-row items-center sm:justify-between gap-2 transition-all">
           <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3">
             <Image
               src="/logo.svg"
@@ -251,41 +251,6 @@ export default function Home() {
               report.interntracker@gmail.com
             </a>
           </p>
-          <FooterWithModals
-            showFullFooter={false}
-            renderTriggerLinks={({
-              setShowPrivacyModal,
-              setShowTermsModal,
-              setShowAboutModal,
-            }) => (
-              <p className="text-sm text-gray-500 mt-4 text-center">
-                <span className="block sm:inline">
-                  Got a few extra seconds? Have a laugh (or a cry) reading our{" "}
-                </span>
-                <button
-                  className="underline text-blue-500"
-                  onClick={() => setShowAboutModal(true)}
-                >
-                  About Us
-                </button>
-                ,{" "}
-                <button
-                  className="underline text-blue-500"
-                  onClick={() => setShowPrivacyModal(true)}
-                >
-                  Privacy Policy
-                </button>
-                , and{" "}
-                <button
-                  className="underline text-blue-500"
-                  onClick={() => setShowTermsModal(true)}
-                >
-                  Terms
-                </button>
-                .
-              </p>
-            )}
-          />
         </section>
 
         {/* Footer */}

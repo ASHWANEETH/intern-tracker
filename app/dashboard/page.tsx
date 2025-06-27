@@ -278,8 +278,46 @@ export default function Dashboard() {
         onConfirm={handleConfirm}
         onCancel={closeModal}
       />
+      {/* Desktop & Tablet Header */}
+      <header className="hidden md:flex sticky top-0 z-50 bg-white/90 backdrop-blur-md py-3 px-6 w-full flex-col sm:flex-row items-center sm:justify-between gap-2 transition-all select-none">
+        {" "}
+        <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3">
+          <Image
+            src="/logo.svg"
+            alt="Intern Tracker Logo"
+            width={48}
+            height={48}
+            priority
+            className="sm:w-8 sm:h-10 w-10 h-10 pb-2"
+          />
+          <h1 className="text-1xl sm:text-xl font-semibold tracking-tight text-gray-800">
+            Intern Tracker
+          </h1>
+        </div>
+        {user ? (
+          <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-end gap-2 sm:gap-4 text-sm sm:text-base">
+            <div className="flex gap-2 mt-2 sm:mt-0">
+              <button
+                onClick={async () => {
+                  await supabase.auth.signOut();
+                  setUser(null);
+                  router.push("/");
+                }}
+                className="px-4 py-2 rounded-md border border-gray-300 text-gray-700 text-sm hover:bg-gray-100"
+              >
+                Logout
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-end gap-2 sm:gap-4">
+            <span className="font-medium text-gray-700">Hey Buddy !</span>
+            {/* You can put <AuthModal /> here if you want */}
+          </div>
+        )}
+      </header>
 
-      <main className="flex-grow">
+      <main className="flex-grow w-full md:mx-2">
         {/* Sticky block for mobile */}
         <div className="md:hidden sticky top-0 z-30 bg-white w-full">
           <div className="px-4 pt-3 pb-1 flex flex-col gap-2">
@@ -383,7 +421,7 @@ export default function Dashboard() {
         </div>
 
         {/* Main content area */}
-        <div className="flex h-[calc(100vh-64px)] md:h-screen overflow-hidden">
+        <div className="flex h-[calc(100vh-72px)] md:h-screen overflow-hidden">
           {/* Left: Dashboard Greet on desktop */}
           <div className="hidden md:flex md:flex-col md:w-2/5 p-4 overflow-y-auto scrollbar-none">
             {user && <DashboardGreeting user={user} jobs={jobs} />}
