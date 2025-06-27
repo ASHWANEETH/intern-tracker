@@ -1,4 +1,3 @@
-// components/ConfirmModal.tsx
 'use client'
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
