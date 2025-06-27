@@ -89,9 +89,9 @@ export default function OverviewTab({ user, jobs }: Props) {
     .slice(0, 3);
 
   return (
-    <div className="w-full md:max-w-5xl md:mx-auto space-y-8 px-4">
+    <div className="w-full space-y-8">
       {/* Greeting outside */}
-      <h2 className="text-2xl md:text-3xl font-semibold text-black text-center md:text-left">
+      <h2 className="text-2xl md:text-3xl font-semibold text-black text-center md:text-left md:ml-2">
         Hello {name}!{" "}
         <span className="text-base text-gray-600">{getGreeting()}.</span>
       </h2>

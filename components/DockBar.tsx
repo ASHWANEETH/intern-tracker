@@ -19,6 +19,7 @@ import React, {
 } from "react";
 
 export type DockItemData = {
+  key: string;
   icon: React.ReactNode;
   label: React.ReactNode;
   onClick: () => void;
@@ -27,6 +28,7 @@ export type DockItemData = {
 
 export type DockProps = {
   items: DockItemData[];
+  activeKey?: string;
   className?: string;
   distance?: number;
   panelHeight?: number;
@@ -153,6 +155,7 @@ function DockIcon({ children, className = "" }: DockIconProps) {
 
 export default function Dock({
   items,
+  activeKey,
   className = "",
   spring = { mass: 0.1, stiffness: 150, damping: 12 },
   magnification = 70,
@@ -184,21 +187,28 @@ export default function Dock({
         role="toolbar"
         aria-label="Application dock"
       >
-        {items.map((item, index) => (
-          <DockItem
-            key={index}
-            onClick={item.onClick}
-            className={item.className}
-            mouseX={mouseX}
-            spring={spring}
-            distance={distance}
-            magnification={magnification}
-            baseItemSize={baseItemSize}
-          >
-            <DockIcon>{item.icon}</DockIcon>
-            <DockLabel>{item.label}</DockLabel>
-          </DockItem>
-        ))}
+        {items.map((item, index) => {
+          const isActive = item.key === activeKey; // 👈 compare keys
+          return (
+            <DockItem
+              key={index}
+              onClick={item.onClick}
+              className={`${item.className ?? ""} ${
+                isActive
+                  ? "border-yellow-400 border-[3px]"
+                  : ""
+              }`}
+              mouseX={mouseX}
+              spring={spring}
+              distance={distance}
+              magnification={magnification}
+              baseItemSize={baseItemSize}
+            >
+              <DockIcon>{item.icon}</DockIcon>
+              <DockLabel>{item.label}</DockLabel>
+            </DockItem>
+          );
+        })}
       </motion.div>
     </div>
   );

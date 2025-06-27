@@ -39,9 +39,9 @@ export default function Dashboard() {
   const [hydrated, setHydrated] = useState(false); // 👈 hydration state
   const [dataLoaded, setDataLoaded] = useState(false); // 👈 avoid showing "0" apps on first render
 
-  const panelHeight = isMobile ? 35 : 45;
-  const baseItemSize = isMobile ? 40 : 52;
-  const magnification = isMobile ? 45 : 60;
+  const panelHeight = isMobile ? 35 : 40;
+  const baseItemSize = isMobile ? 40 : 45;
+  const magnification = isMobile ? 45 : 50;
 
   // Ensure hydration before rendering icons (fix icon flicker)
   useEffect(() => {
@@ -114,73 +114,91 @@ export default function Dashboard() {
   );
 
   const dockItems = [
-    {
-      icon: hydrated && <VscHome size={20} />, // ✅ hydrate-safe
-      label: "Overview",
-      onClick: () => setActiveTab("overview"),
-    },
-    {
-      icon: hydrated && <VscArchive size={20} />,
-      label: "Applications",
-      onClick: () => setActiveTab("applications"),
-    },
-    {
-      icon: hydrated && <VscCalendar size={20} />,
-      label: "Deadlines",
-      onClick: () => setActiveTab("deadlines"),
-    },
-    {
-      icon: hydrated && <VscSettingsGear size={20} />,
-      label: "Settings",
-      onClick: () => alert("Coming Soon"),
-    },
-    {
-      icon: hydrated && <VscSignOut size={20} className="text-red-500" />,
-      label: "Logout",
-      onClick: () => setLogoutModalOpen(true),
-      className: "hover:bg-red-100",
-    },
-  ];
+  {
+    key: "overview",
+    icon: hydrated && <VscHome size={20} />,
+    label: "Overview",
+    onClick: () => setActiveTab("overview"),
+  },
+  {
+    key: "applications",
+    icon: hydrated && <VscArchive size={20} />,
+    label: "Applications",
+    onClick: () => setActiveTab("applications"),
+  },
+  {
+    key: "deadlines",
+    icon: hydrated && <VscCalendar size={20} />,
+    label: "Deadlines",
+    onClick: () => setActiveTab("deadlines"),
+  },
+  {
+    key: "settings",
+    icon: hydrated && <VscSettingsGear size={20} />,
+    label: "Settings",
+    onClick: () => alert("Coming Soon"),
+  },
+  {
+    key: "logout",
+    icon: hydrated && <VscSignOut size={20} className="text-red-500" />,
+    label: "Logout",
+    onClick: () => setLogoutModalOpen(true),
+    className: "hover:bg-red-100",
+  },
+];
+
 
   return (
-    <div className="min-h-screen w-full flex flex-col">
-      <header className="sticky z-100 top-0 bg-white/90 backdrop-blur-md py-3 px-4 w-full max-w-6xl mx-auto flex flex-col sm:flex-row items-center sm:justify-between gap-2 transition-all">
-        <div className="flex items-center gap-3">
-          <Image
-            src="/logo.svg"
-            alt="Intern Tracker Logo"
-            width={48}
-            height={48}
-            priority
-            className="sm:w-8 sm:h-10 w-10 h-10 pb-2"
-          />
-          <h1 className="text-xl font-semibold tracking-tight text-gray-800">
-            Intern Tracker
-          </h1>
-        </div>
-        <div className="relative z-10 flex items-center justify-center mt-2 mb-3 h-[90px]">
-          {hydrated && (
-            <Dock
-              items={dockItems}
-              panelHeight={panelHeight}
-              baseItemSize={baseItemSize}
-              magnification={magnification}
+    <div className="min-h-screen w-full flex flex-col md:mx-2">
+      {/* Consistent container wrapper */}
+      <div className="w-full max-w-7xl mx-auto px-4 flex-1 flex flex-col">
+        {/* Header */}
+        <header className="sticky z-100 top-0 bg-white/90 backdrop-blur-md py-3 w-full flex flex-col sm:flex-row items-center sm:justify-between gap-2 transition-all">
+          <div className="flex items-center gap-3">
+            <Image
+              src="/logo.svg"
+              alt="Intern Tracker Logo"
+              width={48}
+              height={48}
+              priority
+              className="sm:w-8 sm:h-10 w-10 h-10 pb-2 md:ml-1"
             />
-          )}
-        </div>
-      </header>
+            <div>
+              <h1 className="text-xl font-semibold tracking-tight text-gray-800 pr-4">
+                Intern Tracker
+              </h1>
+              <p className="text-xs text-gray-500 leading-tight mt-1 hidden sm:block">
+                Track applications with ease...
+              </p>
+            </div>
+          </div>
+          <div className="relative z-10 flex items-center justify-center mt-2 mb-3 h-[90px]">
+            {hydrated && (
+              <Dock
+                items={dockItems}
+                panelHeight={panelHeight}
+                baseItemSize={baseItemSize}
+                magnification={magnification}
+                activeKey={activeTab}
+              />
+            )}
+          </div>
+        </header>
 
-      <main className="flex-1 px-4">
-        {activeTab === "overview" &&
-          (user && dataLoaded ? (
-            <OverviewTab user={user} jobs={jobs} />
-          ) : (
-            <DotLoader />
-          ))}
-        {activeTab === "applications" && <ApplicationsTab />}
-        {activeTab === "deadlines" && <DeadlinesTab />}
-      </main>
+        {/* Main Content */}
+        <main className="flex-1 w-full">
+          {activeTab === "overview" &&
+            (user && dataLoaded ? (
+              <OverviewTab user={user} jobs={jobs} />
+            ) : (
+              <DotLoader />
+            ))}
+          {activeTab === "applications" && <ApplicationsTab />}
+          {activeTab === "deadlines" && <DeadlinesTab />}
+        </main>
+      </div>
 
+      {/* Logout modal outside container to prevent layout clipping */}
       <ConfirmModal
         open={logoutModalOpen}
         title="Logout"
