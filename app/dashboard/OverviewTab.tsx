@@ -1,35 +1,36 @@
 // app/dashboard/OverviewTab.tsx
 "use client";
-import { useEffect, useState } from "react";
-import DashboardGreeting from "@/components/DashboardGreet";
-import { createClient } from "@/lib/supabaseClient";
+// import { useEffect, useState } from "react";
+// import DashboardGreeting from "@/components/DashboardGreet";
+// import { createClient } from "@/lib/supabaseClient";
 
 export default function OverviewTab() {
-  const supabase = createClient();
-  const [user, setUser] = useState(null);
-  const [jobs, setJobs] = useState([]);
+  // const supabase = createClient();
+  // const [user, setUser] = useState(null);
+  // const [jobs, setJobs] = useState([]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const { data: sessionData } = await supabase.auth.getSession();
-      const session = sessionData?.session;
-      if (!session) return;
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     const { data: sessionData } = await supabase.auth.getSession();
+  //     const session = sessionData?.session;
+  //     if (!session) return;
 
-      const { data: jobData } = await supabase
-        .from("job_applications")
-        .select("*")
-        .eq("user_id", session.user.id);
+  //     const { data: jobData } = await supabase
+  //       .from("job_applications")
+  //       .select("*")
+  //       .eq("user_id", session.user.id);
 
-      setUser(session.user);
-      setJobs(jobData || []);
-    };
+  //     setUser(session.user);
+  //     setJobs(jobData || []);
+  //   };
 
-    fetchData();
-  }, []);
+  //   fetchData();
+  // }, []);
 
   return (
-    <div className="p-6">
-      {user && <DashboardGreeting user={user} jobs={jobs} />}
+    <div className="text-gray-800">
+      <h2 className="text-2xl font-bold mb-4">Applications</h2>
+      <p>Track your job applications here.</p>
     </div>
   );
 }

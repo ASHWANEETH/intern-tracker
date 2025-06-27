@@ -1,39 +1,35 @@
 // app/dashboard/DeadlinesTab.tsx
 "use client";
-import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabaseClient";
-import JobTile from "@/components/JobTile";
+// import { useEffect, useState } from "react";
+// import { createClient } from "@/lib/supabaseClient";
+// import JobTile from "@/components/JobTile";
 
 export default function DeadlinesTab() {
-  const supabase = createClient();
-  const [jobs, setJobs] = useState([]);
+  // const supabase = createClient();
+  // const [jobs, setJobs] = useState([]);
 
-  useEffect(() => {
-    const fetch = async () => {
-      const { data: sessionData } = await supabase.auth.getSession();
-      const user = sessionData?.session?.user;
-      if (!user) return;
+  // useEffect(() => {
+  //   const fetch = async () => {
+  //     const { data: sessionData } = await supabase.auth.getSession();
+  //     const user = sessionData?.session?.user;
+  //     if (!user) return;
 
-      const { data } = await supabase
-        .from("job_applications")
-        .select("*")
-        .eq("user_id", user.id)
-        .order("last_date_to_apply", { ascending: true });
+  //     const { data } = await supabase
+  //       .from("job_applications")
+  //       .select("*")
+  //       .eq("user_id", user.id)
+  //       .order("last_date_to_apply", { ascending: true });
 
-      setJobs(data || []);
-    };
+  //     setJobs(data || []);
+  //   };
 
-    fetch();
-  }, []);
+  //   fetch();
+  // }, []);
 
-  return (
-    <div className="p-4">
-      <h2 className="text-xl font-bold mb-4">Upcoming Deadlines</h2>
-      <div className="flex flex-col gap-4">
-        {jobs.filter(j => j.last_date_to_apply).map(job => (
-          <JobTile key={job.id} job={job} />
-        ))}
-      </div>
+    return (
+    <div className="text-gray-800">
+      <h2 className="text-2xl font-bold mb-4">Applications</h2>
+      <p>Track your job applications here.</p>
     </div>
   );
 }
