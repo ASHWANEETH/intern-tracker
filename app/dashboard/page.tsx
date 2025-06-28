@@ -194,44 +194,52 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen w-full bg-white dark:bg-[#0d0d0d] text-gray-900 dark:text-gray-100 transition-colors">
       <div className="w-full max-w-7xl mx-auto px-4 flex-1 flex flex-col">
-        <header className="sticky z-50 top-0 bg-white/90 dark:bg-[#0d0d0d]/80 backdrop-blur-md py-3 w-full transition-all">
-          <div className="flex flex-col sm:flex-row items-center sm:justify-between gap-2">
-            <div className="flex items-center gap-3">
-              <Image
-                src={darkMode ? "/logod.svg" : "/logo.svg"}
-                alt="Intern Tracker Logo"
-                width={48}
-                height={48}
-                priority
-                className="sm:w-8 sm:h-10 w-10 h-10 pb-2 md:ml-1"
-              />
-              <div>
-                <h1 className="text-xl font-semibold tracking-tight">
-                  Intern Tracker
-                </h1>
-                <p className="text-xs text-gray-500 dark:text-gray-400 leading-tight mt-1 hidden sm:block">
-                  Track applications with ease...
-                </p>
+        <header className="sticky z-50 top-0 bg-white/90 dark:bg-[#0d0d0d]/80 backdrop-blur-md w-full transition-all">
+          <div className="w-full max-w-7xl mx-auto px-4 py-3 flex flex-col gap-2">
+            {/* Top: Logo+Text and Dock */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+              {/* Logo + Text: always in a row */}
+              <div className="flex items-center gap-3 justify-center sm:justify-start text-center sm:text-left mr-2">
+                <Image
+                  src={darkMode ? "/logod.svg" : "/logo.svg"}
+                  alt="Intern Tracker Logo"
+                  width={48}
+                  height={48}
+                  priority
+                  className="w-8 h-8 pb-1 sm:w-8 sm:h-10"
+                />
+                <div>
+                  <h1 className="text-xl font-semibold tracking-tight ">
+                    Intern Tracker
+                  </h1>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 leading-tight mt-1 hidden sm:block">
+                    Track applications with ease...
+                  </p>
+                </div>
+              </div>
+
+              {/* Dock */}
+              <div className="relative z-10 flex items-center justify-center mt-3">
+                {hydrated && (
+                  <Dock
+                    items={dockItems}
+                    panelHeight={panelHeight}
+                    baseItemSize={baseItemSize}
+                    magnification={magnification}
+                    activeKey={activeTab}
+                  />
+                )}
               </div>
             </div>
-            <div className="relative z-10 flex items-center justify-center mt-2 mb-3 h-[90px]">
-              {hydrated && (
-                <Dock
-                  items={dockItems}
-                  panelHeight={panelHeight}
-                  baseItemSize={baseItemSize}
-                  magnification={magnification}
-                  activeKey={activeTab}
-                />
-              )}
-            </div>
+
+            {/* Greeting */}
+            <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-center sm:text-left">
+              Hello {name}!{" "}
+              <span className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
+                {greeting}.
+              </span>
+            </h2>
           </div>
-          <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-center md:text-left ml-2">
-            Hello {name}!{" "}
-            <span className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
-              {greeting}.
-            </span>
-          </h2>
         </header>
 
         <main className="flex-1 w-full">

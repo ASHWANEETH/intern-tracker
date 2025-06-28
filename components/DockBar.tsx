@@ -89,11 +89,12 @@ function DockItem({
       onFocus={() => isHovered.set(1)}
       onBlur={() => isHovered.set(0)}
       onClick={onClick}
-      className={`relative inline-flex items-center justify-center rounded-full 
+      className={`relative inline-flex items-center justify-center
                 bg-white dark:bg-[#060010] 
                 border-black dark:border-white 
                 border-[1.8px] 
-                shadow-md 
+                shadow-md
+                rounded-[15px]
                 transition-colors duration-300 ${className}`}
       tabIndex={0}
       role="button"
