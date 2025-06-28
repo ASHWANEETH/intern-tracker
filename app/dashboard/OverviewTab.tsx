@@ -5,7 +5,7 @@ import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import { Job } from "@/app/types/job";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import SpotlightCard from "@/components/reactbits/SpotlightCard"; // 👈 Make sure it's correctly imported
+import SpotlightCard from "@/components/reactbits/SpotlightCard";
 
 dayjs.extend(relativeTime);
 
@@ -87,48 +87,49 @@ export default function OverviewTab({ user, jobs }: Props) {
     .slice(0, 3);
 
   return (
-    <div className="w-full space-y-8">
-      <h2 className="text-2xl md:text-3xl font-semibold text-center md:ml-2 md:text-left">
+    <div className="w-full space-y-6 sm:space-y-8">
+      <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-center md:text-left">
         Hello {name}!{" "}
-        <span className="text-base text-gray-600 dark:text-gray-400">
+        <span className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
           {getGreeting()}.
         </span>
       </h2>
 
       {jobs.length === 0 ? (
-        <SpotlightCard className="text-center py-10">
-          <p className="text-lg text-gray-500">No job applications yet. Start applying!</p>
+        <SpotlightCard className="text-center px-3 py-6 sm:p-6">
+          <p className="text-sm sm:text-base text-gray-500">
+            No job applications yet. Start applying!
+          </p>
         </SpotlightCard>
       ) : (
         <>
           {/* Chart Section */}
-          <SpotlightCard spotlightColor="rgba(139, 92, 246, 0.2)">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-medium">Application Status</h3>
-              <p className="text-sm">
-                Total Applications:{" "}
-                <span className="font-semibold">{jobs.length}</span>
+          <SpotlightCard spotlightColor="rgba(139, 92, 246, 0.2)" className="px-4 py-4 sm:p-6">
+            <div className="flex justify-between items-center mb-3 sm:mb-4">
+              <h3 className="text-sm sm:text-base font-medium">Application Status</h3>
+              <p className="text-xs sm:text-sm">
+                Total Applications: <span className="font-semibold">{jobs.length}</span>
               </p>
             </div>
-            <div className="flex flex-col md:flex-row md:items-center gap-6">
+            <div className="flex flex-col md:flex-row md:items-center gap-4 sm:gap-6">
               <div className="flex-1 space-y-2">
                 {bars.map(({ status, count, color, widthPercent }) => (
-                  <div key={status} className="flex items-center gap-2 text-sm">
-                    <span className="w-24 capitalize">{status}</span>
-                    <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-3 relative overflow-hidden">
+                  <div key={status} className="flex items-center gap-2 text-xs sm:text-sm">
+                    <span className="w-20 sm:w-24 capitalize">{status}</span>
+                    <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 relative">
                       <div
-                        className="h-3 absolute top-0 left-0 rounded-full transition-all duration-700"
+                        className="h-2.5 absolute top-0 left-0 rounded-full transition-all duration-700"
                         style={{
                           width: mounted ? `${widthPercent}%` : "0%",
                           backgroundColor: color,
                         }}
                       />
                     </div>
-                    <span className="w-6 text-right font-semibold">{count}</span>
+                    <span className="w-5 text-right font-semibold">{count}</span>
                   </div>
                 ))}
               </div>
-              <div className="hidden md:block w-[250px] h-64">
+              <div className="hidden md:block w-[200px] h-56">
                 {mounted && (
                   <ResponsiveContainer>
                     <PieChart>
@@ -156,14 +157,12 @@ export default function OverviewTab({ user, jobs }: Props) {
           </SpotlightCard>
 
           {/* Deadlines */}
-          <SpotlightCard spotlightColor="rgba(236, 72, 153, 0.15)">
-            <h3 className="text-lg font-medium mb-2">Upcoming Deadlines</h3>
-            <ul className="space-y-1 text-sm">
+          <SpotlightCard spotlightColor="rgba(236, 72, 153, 0.15)" className="px-4 py-4 sm:p-6">
+            <h3 className="text-sm sm:text-base font-medium mb-2">Upcoming Deadlines</h3>
+            <ul className="space-y-1 text-xs sm:text-sm">
               {upcomingDeadlines.map((job) => (
                 <li key={job.id} className="flex justify-between">
-                  <span>
-                    📅 {job.role} at {job.company_name}
-                  </span>
+                  <span>📅 {job.role} at {job.company_name}</span>
                   <span className="text-gray-500 text-xs">
                     {dayjs(job.last_date_to_apply).format("MMM D")}
                   </span>
@@ -173,15 +172,24 @@ export default function OverviewTab({ user, jobs }: Props) {
                 <li className="italic text-gray-500">No upcoming deadlines.</li>
               )}
             </ul>
+            <a
+              href="#"
+              className="text-xs sm:text-sm text-violet-700 dark:text-violet-400 hover:underline font-medium mt-2 inline-block"
+            >
+              Show all deadlines →
+            </a>
           </SpotlightCard>
 
           {/* Top 3 CTC */}
-          <SpotlightCard spotlightColor="rgba(34, 197, 94, 0.15)">
-            <h3 className="text-lg font-medium mb-4">Top 3 Highest Packages</h3>
-            <div className="grid md:grid-cols-3 gap-4">
+          <SpotlightCard spotlightColor="rgba(34, 197, 94, 0.15)" className="px-4 py-4 sm:p-6">
+            <h3 className="text-sm sm:text-base font-medium mb-3">Top 3 Highest Packages</h3>
+            <div className="grid md:grid-cols-3 gap-3">
               {top3.map((job, idx) => (
-                <div key={job.id} className="p-4 rounded-xl bg-white/80 dark:bg-zinc-800 shadow">
-                  <h4 className="text-sm font-semibold">
+                <div
+                  key={job.id}
+                  className="px-3 py-2.5 sm:p-4 rounded-xl bg-white/80 dark:bg-zinc-800 shadow text-xs sm:text-sm"
+                >
+                  <h4 className="font-semibold">
                     #{idx + 1} {job.role} at {job.company_name}
                   </h4>
                   <p className="text-green-600 font-bold">₹ {job.ctc}</p>
@@ -191,13 +199,14 @@ export default function OverviewTab({ user, jobs }: Props) {
           </SpotlightCard>
 
           {/* Latest Activity */}
-          <SpotlightCard spotlightColor="rgba(59, 130, 246, 0.12)">
-            <h3 className="text-lg font-medium mb-2">Latest Activity</h3>
-            <ul className="space-y-1 text-sm">
+          <SpotlightCard spotlightColor="rgba(59, 130, 246, 0.12)" className="px-4 py-4 sm:p-6">
+            <h3 className="text-sm sm:text-base font-medium mb-2">Latest Activity</h3>
+            <ul className="space-y-1 text-xs sm:text-sm">
               {latestJobs.map((job) => (
                 <li key={job.id} className="flex justify-between items-center">
                   <span>
-                    ✅ Applied to <span className="font-medium">{job.role}</span> at{" "}
+                    ✅ Applied to{" "}
+                    <span className="font-medium">{job.role}</span> at{" "}
                     <span className="font-medium">{job.company_name}</span>
                   </span>
                   <span className="text-xs text-gray-500">
@@ -213,7 +222,7 @@ export default function OverviewTab({ user, jobs }: Props) {
         </>
       )}
 
-      <footer className="sticky bottom-0 z-40 w-full bg-white/70 dark:bg-black/40 backdrop-blur-md border-t text-center py-1 text-sm text-gray-600 dark:text-gray-400">
+      <footer className="sticky bottom-0 z-40 w-full bg-white/70 dark:bg-black/40 backdrop-blur-md border-t text-center py-0.5 text-[11px] sm:text-sm text-gray-600 dark:text-gray-400">
         <span>© {new Date().getFullYear()} Intern Tracker</span>
       </footer>
     </div>
