@@ -80,7 +80,7 @@ export default function OverviewTab({ jobs }: Props) {
     .slice(0, 3);
 
   return (
-    <div className="w-full space-y-3 sm:space-y-4">
+    <div className="w-full space-y-3 sm:space-y-4 mt-0 sm:mt-0">
       {jobs.length === 0 ? (
         <SpotlightCard className="text-center px-3 py-6 sm:p-6 flex flex-col items-center gap-10">
           <p className="text-sm sm:text-base text-gray-500">

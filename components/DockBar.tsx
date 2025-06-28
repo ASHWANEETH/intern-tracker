@@ -92,7 +92,7 @@ function DockItem({
       className={`relative inline-flex items-center justify-center rounded-full 
                 bg-white dark:bg-[#060010] 
                 border-black dark:border-white 
-                border-[2px] 
+                border-[1.8px] 
                 shadow-md 
                 transition-colors duration-300 ${className}`}
       tabIndex={0}
@@ -206,7 +206,7 @@ export default function Dock({
               key={index}
               onClick={item.onClick}
               className={`${item.className ?? ""} ${
-                isActive ? "border-yellow-400 dark:border-yellow-400 border-[2px]" : ""
+                isActive ? "border-yellow-400 dark:border-yellow-400" : ""
               }`}
               mouseX={mouseX}
               spring={spring}
