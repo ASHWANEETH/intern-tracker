@@ -207,7 +207,7 @@ export default function Dock({
               key={index}
               onClick={item.onClick}
               className={`${item.className ?? ""} ${
-                isActive ? "border-yellow-400 dark:border-yellow-400" : ""
+                isActive ? "border-emerald-600  dark:border-yellow-400" : ""
               }`}
               mouseX={mouseX}
               spring={spring}
