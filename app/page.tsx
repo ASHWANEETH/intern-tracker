@@ -198,7 +198,7 @@ export default function Home() {
             {features.map((item, idx) => (
               <SpotlightCard
                 key={idx}
-                className="rounded-xl py-6 sm:py-8 md:py-10 mx-7 flex flex-col md:flex-row items-center md:text-left shadow-xl dark:shadow-gray-900 hover:scale-[1.01] transition"
+                className="rounded-xl py-6 sm:py-8 md:py-10 flex flex-col md:flex-row items-center md:text-left shadow-xl dark:shadow-gray-900 hover:scale-[1.01] transition"
                 spotlightColor="rgba(139, 92, 246, 0.2)"
               >
                 <div className="w-[140px] h-[140px] mb-6 md:mb-0 md:mx-8 flex items-center justify-center">
