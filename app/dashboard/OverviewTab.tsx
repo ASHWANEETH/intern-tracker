@@ -6,6 +6,7 @@ import { Job } from "@/app/types/job";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import SpotlightCard from "@/components/reactbits/SpotlightCard";
+import Image from "next/image";
 
 dayjs.extend(relativeTime);
 
@@ -22,22 +23,13 @@ const statusColors: Record<string, string> = {
   approved: "#32cc6e",
 };
 
-export default function OverviewTab({ user, jobs }: Props) {
-  const name = user?.full_name ?? user?.email ?? "there";
+export default function OverviewTab({ jobs }: Props) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => setMounted(true), 100);
     return () => clearTimeout(timer);
   }, [jobs]);
-
-  const getGreeting = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return "Good morning";
-    if (hour < 17) return "Good afternoon";
-    if (hour < 21) return "Good evening";
-    return "Good night";
-  };
 
   const statusCounts = jobs.reduce((acc: Record<string, number>, job) => {
     if (!job.status || job.status === "-9") return acc;
@@ -89,18 +81,20 @@ export default function OverviewTab({ user, jobs }: Props) {
 
   return (
     <div className="w-full space-y-3 sm:space-y-4">
-      <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-center md:text-left ml-2">
-        Hello {name}!{" "}
-        <span className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
-          {getGreeting()}.
-        </span>
-      </h2>
-
       {jobs.length === 0 ? (
-        <SpotlightCard className="text-center px-3 py-6 sm:p-6">
+        <SpotlightCard className="text-center px-3 py-6 sm:p-6 flex flex-col items-center gap-10">
           <p className="text-sm sm:text-base text-gray-500">
-            No job applications yet. Start applying!
+            No job applications yet. Start adding!
           </p>
+          <Image
+            src="/adddash.svg"
+            alt="Illustration"
+            width={0}
+            height={0}
+            sizes="(max-width: 640px) 80px, (max-width: 768px) 100px, 120px"
+            className="w-50 sm:w-60 md:w-80 h-auto"
+            priority
+          />
         </SpotlightCard>
       ) : (
         <>
