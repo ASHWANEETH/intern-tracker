@@ -73,7 +73,8 @@ export default function OverviewTab({ user, jobs }: Props) {
     .filter((j) => j.applied_date)
     .sort(
       (a, b) =>
-        new Date(b.applied_date!).getTime() - new Date(a.applied_date!).getTime()
+        new Date(b.applied_date!).getTime() -
+        new Date(a.applied_date!).getTime()
     )
     .slice(0, 3);
 
@@ -87,8 +88,8 @@ export default function OverviewTab({ user, jobs }: Props) {
     .slice(0, 3);
 
   return (
-    <div className="w-full space-y-6 sm:space-y-8">
-      <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-center md:text-left">
+    <div className="w-full space-y-3 sm:space-y-4">
+      <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-center md:text-left ml-2">
         Hello {name}!{" "}
         <span className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
           {getGreeting()}.
@@ -104,17 +105,26 @@ export default function OverviewTab({ user, jobs }: Props) {
       ) : (
         <>
           {/* Chart Section */}
-          <SpotlightCard spotlightColor="rgba(139, 92, 246, 0.2)" className="px-4 py-4 sm:p-6">
+          <SpotlightCard
+            spotlightColor="rgba(139, 92, 246, 0.2)"
+            className="px-4 py-4 sm:p-5"
+          >
             <div className="flex justify-between items-center mb-3 sm:mb-4">
-              <h3 className="text-sm sm:text-base font-medium">Application Status</h3>
+              <h3 className="text-sm sm:text-base font-medium">
+                Application Status
+              </h3>
               <p className="text-xs sm:text-sm">
-                Total Applications: <span className="font-semibold">{jobs.length}</span>
+                Total Applications:{" "}
+                <span className="font-semibold">{jobs.length}</span>
               </p>
             </div>
             <div className="flex flex-col md:flex-row md:items-center gap-4 sm:gap-6">
               <div className="flex-1 space-y-2">
                 {bars.map(({ status, count, color, widthPercent }) => (
-                  <div key={status} className="flex items-center gap-2 text-xs sm:text-sm">
+                  <div
+                    key={status}
+                    className="flex items-center gap-2 text-xs sm:text-sm"
+                  >
                     <span className="w-20 sm:w-24 capitalize">{status}</span>
                     <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 relative">
                       <div
@@ -125,7 +135,9 @@ export default function OverviewTab({ user, jobs }: Props) {
                         }}
                       />
                     </div>
-                    <span className="w-5 text-right font-semibold">{count}</span>
+                    <span className="w-5 text-right font-semibold">
+                      {count}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -157,12 +169,19 @@ export default function OverviewTab({ user, jobs }: Props) {
           </SpotlightCard>
 
           {/* Deadlines */}
-          <SpotlightCard spotlightColor="rgba(236, 72, 153, 0.15)" className="px-4 py-4 sm:p-6">
-            <h3 className="text-sm sm:text-base font-medium mb-2">Upcoming Deadlines</h3>
+          <SpotlightCard
+            spotlightColor="rgba(236, 72, 153, 0.15)"
+            className="px-4 py-4 sm:p-5"
+          >
+            <h3 className="text-sm sm:text-base font-medium mb-2">
+              Upcoming Deadlines
+            </h3>
             <ul className="space-y-1 text-xs sm:text-sm">
               {upcomingDeadlines.map((job) => (
                 <li key={job.id} className="flex justify-between">
-                  <span>📅 {job.role} at {job.company_name}</span>
+                  <span>
+                    📅 {job.role} at {job.company_name}
+                  </span>
                   <span className="text-gray-500 text-xs">
                     {dayjs(job.last_date_to_apply).format("MMM D")}
                   </span>
@@ -181,8 +200,13 @@ export default function OverviewTab({ user, jobs }: Props) {
           </SpotlightCard>
 
           {/* Top 3 CTC */}
-          <SpotlightCard spotlightColor="rgba(34, 197, 94, 0.15)" className="px-4 py-4 sm:p-6">
-            <h3 className="text-sm sm:text-base font-medium mb-3">Top 3 Highest Packages</h3>
+          <SpotlightCard
+            spotlightColor="rgba(34, 197, 94, 0.15)"
+            className="px-4 py-4 sm:p-5"
+          >
+            <h3 className="text-sm sm:text-base font-medium mb-3">
+              Top 3 Highest Packages
+            </h3>
             <div className="grid md:grid-cols-3 gap-3">
               {top3.map((job, idx) => (
                 <div
@@ -199,16 +223,24 @@ export default function OverviewTab({ user, jobs }: Props) {
           </SpotlightCard>
 
           {/* Latest Activity */}
-          <SpotlightCard spotlightColor="rgba(59, 130, 246, 0.12)" className="px-4 py-4 sm:p-6">
-            <h3 className="text-sm sm:text-base font-medium mb-2">Latest Activity</h3>
+          <SpotlightCard
+            spotlightColor="rgba(59, 130, 246, 0.12)"
+            className="px-4 py-4 sm:p-5"
+          >
+            <h3 className="text-sm sm:text-base font-medium mb-2">
+              Latest Activity
+            </h3>
             <ul className="space-y-1 text-xs sm:text-sm">
               {latestJobs.map((job) => (
                 <li key={job.id} className="flex justify-between items-center">
-                  <span>
-                    ✅ Applied to{" "}
-                    <span className="font-medium">{job.role}</span> at{" "}
-                    <span className="font-medium">{job.company_name}</span>
+                  <span className="flex items-center gap-1">
+                    <span className="w-1 h-1 mr-1 rounded-full bg-gray-500 dark:bg-gray-400" />
+                    <span>
+                      Applied to <span className="font-medium">{job.role}</span>{" "}
+                      at <span className="font-medium">{job.company_name}</span>
+                    </span>
                   </span>
+
                   <span className="text-xs text-gray-500">
                     {dayjs(job.applied_date).fromNow()}
                   </span>

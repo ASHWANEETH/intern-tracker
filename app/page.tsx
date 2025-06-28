@@ -157,7 +157,7 @@ export default function Home() {
         </header>
 
         {/* Hero Section */}
-        <main className="flex flex-col md:flex-row items-center justify-center gap-12 py-12 sm:py-14 md:py-16 w-full max-w-6xl mx-auto">
+        <main className="flex flex-col md:flex-row items-center justify-center gap-10 py-12 md:px-2 sm:py-14 md:py-16 w-full max-w-6xl mx-auto">
           <div className="flex flex-col items-center md:items-start text-center md:text-left gap-6 max-w-lg">
             <ScrambledText className="text-5xl font-bold leading-tight dark:text-white">
               Track your <br /> Applications <br /> with ease.

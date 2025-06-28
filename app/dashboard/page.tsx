@@ -22,7 +22,6 @@ import DeadlinesTab from "./DeadlinesTab";
 import { Job } from "@/app/types/job";
 import { Sun, Moon } from "lucide-react";
 
-
 const supabase = createClient();
 
 export default function Dashboard() {
@@ -133,50 +132,54 @@ export default function Dashboard() {
   );
 
   const dockItems = [
-  {
-    key: "overview",
-    icon: hydrated && <VscHome size={20} />,
-    label: "Overview",
-    onClick: () => setActiveTab("overview"),
-  },
-  {
-    key: "applications",
-    icon: hydrated && <VscArchive size={20} />,
-    label: "Applications",
-    onClick: () => setActiveTab("applications"),
-  },
-  {
-    key: "deadlines",
-    icon: hydrated && <VscCalendar size={20} />,
-    label: "Deadlines",
-    onClick: () => setActiveTab("deadlines"),
-  },
-  {
-    key: "settings",
-    icon: hydrated && <VscSettingsGear size={20} />,
-    label: "Settings",
-    onClick: () => alert("Coming Soon"),
-  },
-  {
-    key: "theme",
-    icon: hydrated && (darkMode ? <Sun size={20} /> : <Moon size={20} />),
-    label: darkMode ? "Light Mode" : "Dark Mode",
-    onClick: toggleDarkMode,
-  },
-  {
-    key: "logout",
-    icon: hydrated && <VscSignOut size={20} className="text-red-500" />,
-    label: "Logout",
-    onClick: () => setLogoutModalOpen(true),
-    className: "hover:bg-red-100 dark:hover:bg-red-900",
-  },
-];
-
+    {
+      key: "overview",
+      icon: hydrated && <VscHome size={20} />,
+      label: "Overview",
+      onClick: () => setActiveTab("overview"),
+    },
+    {
+      key: "applications",
+      icon: hydrated && <VscArchive size={20} />,
+      label: "Applications",
+      onClick: () => setActiveTab("applications"),
+    },
+    {
+      key: "deadlines",
+      icon: hydrated && <VscCalendar size={20} />,
+      label: "Deadlines",
+      onClick: () => setActiveTab("deadlines"),
+    },
+    {
+      key: "settings",
+      icon: hydrated && <VscSettingsGear size={20} />,
+      label: "Settings",
+      onClick: () => alert("Coming Soon"),
+    },
+    {
+      key: "theme",
+      icon:
+        hydrated &&
+        (darkMode ? (
+          <Sun size={20} className="text-yellow-600" />
+        ) : (
+          <Moon size={20} className="text-blue-600" />
+        )),
+      label: darkMode ? "Light Mode" : "Dark Mode",
+      onClick: toggleDarkMode,
+    },
+    {
+      key: "logout",
+      icon: hydrated && <VscSignOut size={20} className="text-red-400" />,
+      label: "Logout",
+      onClick: () => setLogoutModalOpen(true),
+    },
+  ];
 
   return (
     <div className="min-h-screen w-full bg-white dark:bg-[#0d0d0d] text-gray-900 dark:text-gray-100 transition-colors">
       <div className="w-full max-w-7xl mx-auto px-4 flex-1 flex flex-col">
-        <header className="sticky z-100 top-0 bg-white/90 dark:bg-[#0d0d0d]/80 backdrop-blur-md py-3 w-full flex flex-col sm:flex-row items-center sm:justify-between gap-2 transition-all">
+        <header className="sticky z-50 top-0 bg-white/90 dark:bg-[#0d0d0d]/80 backdrop-blur-md py-3 w-full flex flex-col sm:flex-row items-center sm:justify-between gap-2 transition-all">
           <div className="flex items-center gap-3">
             <Image
               src={darkMode ? "/logod.svg" : "/logo.svg"}

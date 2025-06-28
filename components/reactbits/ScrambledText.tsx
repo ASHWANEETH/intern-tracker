@@ -16,7 +16,7 @@ export interface ScrambledTextProps {
 }
 
 const ScrambledText: React.FC<ScrambledTextProps> = ({
-  radius = 100,
+  radius = 50,
   duration = 1.2,
   speed = 0.5,
   scrambleChars = ".:",

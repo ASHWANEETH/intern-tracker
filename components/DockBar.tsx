@@ -89,7 +89,12 @@ function DockItem({
       onFocus={() => isHovered.set(1)}
       onBlur={() => isHovered.set(0)}
       onClick={onClick}
-      className={`relative inline-flex items-center justify-center rounded-full bg-[#060010] border-white border-[3px] shadow-md ${className}`}
+      className={`relative inline-flex items-center justify-center rounded-full 
+                bg-white dark:bg-[#060010] 
+                border-black dark:border-white 
+                border-[2px] 
+                shadow-md 
+                transition-colors duration-300 ${className}`}
       tabIndex={0}
       role="button"
       aria-haspopup="true"
@@ -129,7 +134,12 @@ function DockLabel({ children, className = "", ...rest }: DockLabelProps) {
           animate={{ opacity: 1, y: -8 }}
           exit={{ opacity: 0, y: 0 }}
           transition={{ duration: 0.2 }}
-          className={`${className} absolute -top-5 left-1/2 w-fit whitespace-pre rounded-md border border-neutral-700 bg-[#060010] px-2 py-0.5 text-xs text-white`}
+          className={`${className} absolute -top-5 left-1/2 w-fit whitespace-pre rounded-md 
+                                    border border-neutral-300 dark:border-neutral-700 
+                                    bg-white dark:bg-[#060010] 
+                                    text-black dark:text-white 
+                                    px-2 py-0.5 text-xs 
+                                    transition-colors duration-300`}
           role="tooltip"
           style={{ x: "-50%" }}
         >
@@ -147,7 +157,9 @@ type DockIconProps = {
 
 function DockIcon({ children, className = "" }: DockIconProps) {
   return (
-    <div className={`flex items-center justify-center text-white ${className}`}>
+    <div
+      className={`flex items-center justify-center text-black dark:text-white transition-colors duration-300 ${className}`}
+    >
       {children}
     </div>
   );
@@ -194,9 +206,7 @@ export default function Dock({
               key={index}
               onClick={item.onClick}
               className={`${item.className ?? ""} ${
-                isActive
-                  ? "border-yellow-400 border-[3px]"
-                  : ""
+                isActive ? "border-yellow-400 dark:border-yellow-400 border-[2px]" : ""
               }`}
               mouseX={mouseX}
               spring={spring}
