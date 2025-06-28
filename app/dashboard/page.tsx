@@ -20,6 +20,8 @@ import OverviewTab from "./OverviewTab";
 import ApplicationsTab from "./ApplicationsTab";
 import DeadlinesTab from "./DeadlinesTab";
 import { Job } from "@/app/types/job";
+import { Sun, Moon } from "lucide-react";
+
 
 const supabase = createClient();
 
@@ -34,19 +36,36 @@ export default function Dashboard() {
     email: string;
     full_name?: string;
   } | null>(null);
-
+  const [darkMode, setDarkMode] = useState(false);
   const [jobs, setJobs] = useState<Job[]>([]);
-  const [hydrated, setHydrated] = useState(false); // 👈 hydration state
-  const [dataLoaded, setDataLoaded] = useState(false); // 👈 avoid showing "0" apps on first render
+  const [hydrated, setHydrated] = useState(false);
+  const [dataLoaded, setDataLoaded] = useState(false);
 
   const panelHeight = isMobile ? 35 : 40;
   const baseItemSize = isMobile ? 40 : 45;
   const magnification = isMobile ? 45 : 50;
 
-  // Ensure hydration before rendering icons (fix icon flicker)
   useEffect(() => {
     setHydrated(true);
+
+    const theme = localStorage.getItem("theme");
+    if (theme === "dark") {
+      document.documentElement.classList.add("dark");
+      setDarkMode(true);
+    }
   }, []);
+
+  const toggleDarkMode = () => {
+    const newMode = !darkMode;
+    setDarkMode(newMode);
+    if (newMode) {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  };
 
   useEffect(() => {
     const fetchUserAndJobs = async () => {
@@ -70,7 +89,7 @@ export default function Dashboard() {
 
       if (!jobsError && jobsData) {
         setJobs(jobsData as Job[]);
-        setDataLoaded(true); // ✅ jobs fetched
+        setDataLoaded(true);
       }
     };
 
@@ -101,7 +120,7 @@ export default function Dashboard() {
           {[...Array(5)].map((_, i) => (
             <div
               key={i}
-              className="w-3 h-3 md:w-4 md:h-4 rounded-full bg-violet-300"
+              className="w-3 h-3 md:w-4 md:h-4 rounded-full bg-violet-300 dark:bg-violet-500"
               style={{
                 animation: "soft-bounce 1.2s ease-in-out infinite",
                 animationDelay: `${i * 0.15}s`,
@@ -139,24 +158,28 @@ export default function Dashboard() {
     onClick: () => alert("Coming Soon"),
   },
   {
+    key: "theme",
+    icon: hydrated && (darkMode ? <Sun size={20} /> : <Moon size={20} />),
+    label: darkMode ? "Light Mode" : "Dark Mode",
+    onClick: toggleDarkMode,
+  },
+  {
     key: "logout",
     icon: hydrated && <VscSignOut size={20} className="text-red-500" />,
     label: "Logout",
     onClick: () => setLogoutModalOpen(true),
-    className: "hover:bg-red-100",
+    className: "hover:bg-red-100 dark:hover:bg-red-900",
   },
 ];
 
 
   return (
-    <div className="min-h-screen w-full flex flex-col md:mx-2">
-      {/* Consistent container wrapper */}
+    <div className="min-h-screen w-full bg-white dark:bg-[#0d0d0d] text-gray-900 dark:text-gray-100 transition-colors">
       <div className="w-full max-w-7xl mx-auto px-4 flex-1 flex flex-col">
-        {/* Header */}
-        <header className="sticky z-100 top-0 bg-white/90 backdrop-blur-md py-3 w-full flex flex-col sm:flex-row items-center sm:justify-between gap-2 transition-all">
+        <header className="sticky z-100 top-0 bg-white/90 dark:bg-[#0d0d0d]/80 backdrop-blur-md py-3 w-full flex flex-col sm:flex-row items-center sm:justify-between gap-2 transition-all">
           <div className="flex items-center gap-3">
             <Image
-              src="/logo.svg"
+              src={darkMode ? "/logod.svg" : "/logo.svg"}
               alt="Intern Tracker Logo"
               width={48}
               height={48}
@@ -164,10 +187,10 @@ export default function Dashboard() {
               className="sm:w-8 sm:h-10 w-10 h-10 pb-2 md:ml-1"
             />
             <div>
-              <h1 className="text-xl font-semibold tracking-tight text-gray-800 pr-4">
+              <h1 className="text-xl font-semibold tracking-tight">
                 Intern Tracker
               </h1>
-              <p className="text-xs text-gray-500 leading-tight mt-1 hidden sm:block">
+              <p className="text-xs text-gray-500 dark:text-gray-400 leading-tight mt-1 hidden sm:block">
                 Track applications with ease...
               </p>
             </div>
@@ -185,7 +208,6 @@ export default function Dashboard() {
           </div>
         </header>
 
-        {/* Main Content */}
         <main className="flex-1 w-full">
           {activeTab === "overview" &&
             (user && dataLoaded ? (
@@ -198,7 +220,6 @@ export default function Dashboard() {
         </main>
       </div>
 
-      {/* Logout modal outside container to prevent layout clipping */}
       <ConfirmModal
         open={logoutModalOpen}
         title="Logout"
