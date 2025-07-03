@@ -194,7 +194,7 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen w-full bg-white dark:bg-[#0d0d0d] text-gray-900 dark:text-gray-100 transition-colors">
       <div className="w-full max-w-7xl mx-auto px-4 flex-1 flex flex-col">
-        <header className="sticky z-50 top-0 bg-white/90 dark:bg-[#0d0d0d]/80 backdrop-blur-md w-full transition-all">
+        <header className="sticky z-50 top-0 bg-white/90 dark:bg-[#0d0d0d]/80 backdrop-blur-md w-full transition-all mb-2">
           <div className="w-full max-w-7xl mx-auto px-4 py-3 flex flex-col gap-2">
             {/* Top: Logo+Text and Dock */}
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">

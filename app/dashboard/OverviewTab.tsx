@@ -101,12 +101,9 @@ export default function OverviewTab({ jobs }: Props) {
           {/* Chart Section */}
           <SpotlightCard
             spotlightColor="rgba(139, 92, 246, 0.2)"
-            className="px-4 py-4 sm:p-5"
+            className="px-4 py-5 sm:p-5"
           >
-            <div className="flex justify-between items-center mb-3 sm:mb-4">
-              <h3 className="text-sm sm:text-base font-medium">
-                Application Status
-              </h3>
+            <div className="flex justify-around items-center mb-4 md:mb-1">
               <p className="text-xs sm:text-sm">
                 Total Applications:{" "}
                 <span className="font-semibold">{jobs.length}</span>
@@ -135,7 +132,7 @@ export default function OverviewTab({ jobs }: Props) {
                   </div>
                 ))}
               </div>
-              <div className="hidden md:block w-[200px] h-56">
+              <div className="hidden md:block w-[300px] h-56">
                 {mounted && (
                   <ResponsiveContainer>
                     <PieChart>
@@ -165,7 +162,7 @@ export default function OverviewTab({ jobs }: Props) {
           {/* Deadlines */}
           <SpotlightCard
             spotlightColor="rgba(236, 72, 153, 0.15)"
-            className="px-4 py-4 sm:p-5"
+            className="px-4 py-5 sm:p-5"
           >
             <h3 className="text-sm sm:text-base font-medium mb-2">
               Upcoming Deadlines
@@ -196,7 +193,7 @@ export default function OverviewTab({ jobs }: Props) {
           {/* Top 3 CTC */}
           <SpotlightCard
             spotlightColor="rgba(34, 197, 94, 0.15)"
-            className="px-4 py-4 sm:p-5"
+            className="px-4 py-5 sm:p-5"
           >
             <h3 className="text-sm sm:text-base font-medium mb-3">
               Top 3 Highest Packages
@@ -219,7 +216,7 @@ export default function OverviewTab({ jobs }: Props) {
           {/* Latest Activity */}
           <SpotlightCard
             spotlightColor="rgba(59, 130, 246, 0.12)"
-            className="px-4 py-4 sm:p-5"
+            className="px-4 py-5 sm:p-5"
           >
             <h3 className="text-sm sm:text-base font-medium mb-2">
               Latest Activity
