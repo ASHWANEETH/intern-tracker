@@ -295,7 +295,7 @@ return (
       </Button>
     </DialogTrigger>
 
-    <DialogContent className="max-w-md dark:bg-zinc-900 dark:text-white">
+    <DialogContent className="max-w-md text-x dark:bg-zinc-900 dark:text-white">
       <DialogHeader>
         <div className="flex items-center gap-2">
           <DialogTitle>
@@ -317,7 +317,7 @@ return (
 
       <form
         onSubmit={handleAddOrUpdateJob}
-        className="flex flex-col gap-3 relative"
+        className="flex flex-col gap-3.5 relative"
       >
         {/* Company Name */}
         <div className="relative">

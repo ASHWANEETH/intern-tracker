@@ -14,6 +14,7 @@ dayjs.extend(relativeTime);
 type Props = {
   user: { full_name?: string; email?: string };
   jobs: Job[];
+  setActiveTab: (tab: "overview" | "applications" | "deadlines") => void;
 };
 
 const statusColors: Record<string, string> = {
@@ -24,7 +25,7 @@ const statusColors: Record<string, string> = {
   approved: "#32cc6e",
 };
 
-export default function OverviewTab({ jobs }: Props) {
+export default function OverviewTab({ jobs, setActiveTab }: Props) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -109,9 +110,9 @@ export default function OverviewTab({ jobs }: Props) {
                 Total Applications:{" "}
                 <span className="font-semibold">{jobs.length}</span>
                 <button
-                  // onClick={() => setActiveTab("applications")}
+                  onClick={() => setActiveTab("applications")}
                   className="text-violet-600 dark:text-violet-400 ml-1"
-                  title="Go to Applications"
+                  title="Show Applications"
                 >
                   <VscLinkExternal size={10} />
                 </button>

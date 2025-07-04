@@ -21,7 +21,7 @@ import { useState, useCallback, useMemo } from "react";
 import { Job } from "@/app/types/job";
 import { AnimatePresence, motion } from "framer-motion";
 
-// Updated with directional gradients and dark-mode variants
+// Status background gradients and badges
 const statusGradients: Record<string, string> = {
   "to-apply":
     "bg-gradient-to-r from-gray-100 to-white border border-gray-200 dark:from-white/10 dark:to-transparent dark:border-none",
@@ -36,7 +36,7 @@ const statusGradients: Record<string, string> = {
 };
 
 const statusColors: Record<string, string> = {
-  "to-apply": "bg-gray-300 text-gray-800",
+  "to-apply": "bg-gray-300 text-gray-800 dark:text-white",
   applied: "bg-blue-200 text-blue-800",
   waiting: "bg-yellow-200 text-yellow-800",
   rejected: "bg-red-200 text-red-800",
@@ -100,17 +100,13 @@ export default function JobTile({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2, ease: "easeInOut" }}
-      className={`
-        rounded-2xl px-5 py-3 shadow-xl 
-        ${gradientClasses}
-        backdrop-blur-md transition cursor-pointer relative
-      `}
+      className={`rounded-2xl px-4 py-3 sm:py-3 shadow-xl ${gradientClasses} backdrop-blur-md transition cursor-pointer relative`}
     >
       {/* Header Row */}
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center mb-1">
         <div className="flex items-center gap-2">
           <CompanyLogo key={logoRefreshKey} companyName={job.company_name} />
-          <h3 className="text-lg font-semibold capitalize text-gray-900 dark:text-gray-100">
+          <h3 className="text-sm sm:text-base font-medium capitalize text-gray-900 dark:text-gray-100">
             {job.company_name}
           </h3>
         </div>
@@ -119,9 +115,9 @@ export default function JobTile({
           onValueChange={(value) => onStatusChange(job.id, value)}
         >
           <SelectTrigger
-            className={`px-3 py-1 rounded-full text-sm font-semibold cursor-pointer transition-colors duration-200 ease-in-out ${
-              statusColors[job.status] || "bg-gray-300 text-gray-800"
-            } dark:bg-neutral-700 dark:text-white`}
+            className={`px-2 py-0.5 rounded-full text-xs font-semibold dark:border-none ${
+              statusColors[job.status] || "bg-gray-300 text-white"
+            }`}
           >
             <SelectValue />
           </SelectTrigger>
@@ -136,15 +132,15 @@ export default function JobTile({
       </div>
 
       {/* Summary */}
-      <p className="text-gray-700 dark:text-gray-300 mt-1 font-medium">
+      <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 font-medium">
         {job.role}
       </p>
-      <p className="text-gray-700 dark:text-gray-300">
+      <p className="text-sm sm:text-sm text-gray-700 dark:text-gray-300">
         {job.ctc?.toLowerCase().includes("lpa") ? "CTC" : "Stipend"}:{" "}
-        <strong className="dark:text-white">{job.ctc}</strong>
+        <span className="font-semibold dark:text-white">{job.ctc}</span>
       </p>
 
-      {/* Expandable section */}
+      {/* Expandable Section */}
       <AnimatePresence initial={false}>
         {isExpanded && (
           <motion.div
@@ -157,23 +153,23 @@ export default function JobTile({
             {job.status === "to-apply" ? (
               <p>
                 Last Date to Apply:{" "}
-                <strong className="dark:text-white">
+                <span className="font-medium dark:text-white">
                   {formattedLastDateToApply}
-                </strong>
+                </span>
               </p>
             ) : (
               <>
                 <p>
                   Applied on:{" "}
-                  <strong className="dark:text-white">
+                  <span className="font-medium dark:text-white">
                     {formattedAppliedDate}
-                  </strong>
+                  </span>
                 </p>
                 <p>
                   Exam / Interview Date:{" "}
-                  <strong className="dark:text-white">
+                  <span className="font-medium dark:text-white">
                     {formattedExamDate}
-                  </strong>
+                  </span>
                 </p>
               </>
             )}
@@ -183,14 +179,9 @@ export default function JobTile({
               <>
                 <button
                   onClick={toggleNotes}
-                  className="flex items-center gap-1 text-black dark:text-gray-200 font-medium text-sm hover:underline"
+                  className="flex items-center gap-1 font-medium text-sm text-gray-800 dark:text-gray-200 hover:underline mt-2"
                 >
-                  Notes{" "}
-                  {showNotes ? (
-                    <FiChevronUp className="w-4 h-4" />
-                  ) : (
-                    <FiChevronDown className="w-4 h-4" />
-                  )}
+                  Notes {showNotes ? <FiChevronUp /> : <FiChevronDown />}
                 </button>
 
                 <AnimatePresence initial={false}>
@@ -215,7 +206,7 @@ export default function JobTile({
       {/* Action Buttons */}
       <div className="flex gap-2 mt-3">
         <Button size="sm" onClick={() => onEditClick(job)}>
-          <FiEdit className="w-4 h-4" />
+          <FiEdit className="w-3 h-3" />
         </Button>
         <Button size="sm" onClick={() => onConfirmDuplicate(job)}>
           <FiCopy className="w-4 h-4" />
@@ -229,7 +220,7 @@ export default function JobTile({
         </Button>
       </div>
 
-      {/* Toggle Dropdown Icon */}
+      {/* Expand/Collapse Icon */}
       <div
         className="absolute bottom-4 right-4 text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white cursor-pointer"
         onClick={() => onToggleExpand(job.id)}

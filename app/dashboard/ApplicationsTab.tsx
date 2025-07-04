@@ -247,7 +247,7 @@ export default function ApplicationsTab() {
 
       {/* Title and New App Button */}
       <div className="flex items-center justify-between flex-wrap gap-3 mb-4">
-        <h2 className="text-xl sm:text-2xl font-semibold">Applications</h2>
+        <h2 className="text-xl sm:text-xl font-semibold ml-1">Applications</h2>
         <JobFormDialog
           modalOpen={modalOpen}
           setModalOpen={setModalOpen}
@@ -313,10 +313,10 @@ export default function ApplicationsTab() {
             className="opacity-70 dark:opacity-50"
             priority
           />
-          <p className="text-xl sm:text-2xl font-semibold">
+          <p className="text-sm sm:text-base font-medium">
             No applications yet — let&apos;s change that! 🚀
           </p>
-          <p className="text-gray-500 dark:text-gray-400 text-sm sm:text-base">
+          <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
             Hit &quot;Add New +&quot; to begin tracking your journey.
           </p>
         </div>

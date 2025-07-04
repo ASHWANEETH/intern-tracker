@@ -245,7 +245,7 @@ export default function Dashboard() {
         <main className="flex-1 w-full">
           {activeTab === "overview" &&
             (user && dataLoaded ? (
-              <OverviewTab user={user} jobs={jobs} />
+              <OverviewTab user={user} jobs={jobs} setActiveTab={setActiveTab}/>
             ) : (
               <DotLoader />
             ))}
