@@ -245,47 +245,48 @@ export default function ApplicationsTab() {
         onCancel={closeModal}
       />
 
-      {/* Title and New App Button */}
-      <div className="flex items-center justify-between flex-wrap gap-3 mb-4">
-        <h2 className="text-xl sm:text-xl font-semibold ml-1">Applications</h2>
-        <JobFormDialog
-          modalOpen={modalOpen}
-          setModalOpen={setModalOpen}
-          handleAddOrUpdateJob={handleAddOrUpdateJob}
-          editJobId={editJobId}
-          setEditJobId={setEditJobId}
-          companyName={companyName}
-          setCompanyName={setCompanyName}
-          role={role}
-          setRole={setRole}
-          ctc={ctc}
-          setCtc={setCtc}
-          requirements={requirements}
-          setRequirements={setRequirements}
-          status={status}
-          setStatus={setStatus}
-          lastDateToApply={lastDateToApply}
-          setLastDateToApply={setLastDateToApply}
-          appliedDate={appliedDate}
-          setAppliedDate={setAppliedDate}
-          examDate={examDate}
-          setExamDate={setExamDate}
+      <div className="sticky md:top-35 top-45 z-10 pt-3 sm:pt-4 pb-3 sm:pb-4 bg-white/90 dark:bg-[#0d0d0d]/90 backdrop-blur-md">
+        <div className="flex items-center justify-between flex-wrap gap-3 mb-3 px-1">
+          <h2 className="text-xl sm:text-xl font-semibold">Applications</h2>
+          <JobFormDialog
+            modalOpen={modalOpen}
+            setModalOpen={setModalOpen}
+            handleAddOrUpdateJob={handleAddOrUpdateJob}
+            editJobId={editJobId}
+            setEditJobId={setEditJobId}
+            companyName={companyName}
+            setCompanyName={setCompanyName}
+            role={role}
+            setRole={setRole}
+            ctc={ctc}
+            setCtc={setCtc}
+            requirements={requirements}
+            setRequirements={setRequirements}
+            status={status}
+            setStatus={setStatus}
+            lastDateToApply={lastDateToApply}
+            setLastDateToApply={setLastDateToApply}
+            appliedDate={appliedDate}
+            setAppliedDate={setAppliedDate}
+            examDate={examDate}
+            setExamDate={setExamDate}
+          />
+        </div>
+
+        {/* Search Bar */}
+        <input
+          type="text"
+          placeholder="Search by company or role..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-800 text-sm dark:text-white"
         />
       </div>
 
-      {/* Search */}
-      <input
-        type="text"
-        placeholder="Search by company or role..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        className="w-full px-4 py-2 mb-6 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-800 text-sm dark:text-white"
-      />
-
-      {/* Job List */}
-      {filteredJobs.length > 0 ? (
-        <div className="space-y-4">
-          {filteredJobs.map((job) => (
+      {/* Scrollable Job List */}
+      <div className="flex-1 overflow-y-auto mt-2 space-y-4">
+        {filteredJobs.length > 0 ? (
+          filteredJobs.map((job) => (
             <JobTile
               key={job.id}
               job={job}
@@ -301,26 +302,26 @@ export default function ApplicationsTab() {
               }
               logoRefreshKey={logoRefreshKey}
             />
-          ))}
-        </div>
-      ) : (
-        <div className="flex flex-col items-center justify-center text-center py-20 space-y-6">
-          <Image
-            src="/emptypage.svg"
-            alt="Empty state"
-            width={240}
-            height={240}
-            className="opacity-70 dark:opacity-50"
-            priority
-          />
-          <p className="text-sm sm:text-base font-medium">
-            No applications yet — let&apos;s change that! 🚀
-          </p>
-          <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-            Hit &quot;Add New +&quot; to begin tracking your journey.
-          </p>
-        </div>
-      )}
+          ))
+        ) : (
+          <div className="flex flex-col items-center justify-center text-center py-20 space-y-6">
+            <Image
+              src="/emptypage.svg"
+              alt="Empty state"
+              width={240}
+              height={240}
+              className="opacity-70 dark:opacity-50"
+              priority
+            />
+            <p className="text-sm sm:text-base font-medium">
+              No applications yet — let&apos;s change that! 🚀
+            </p>
+            <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+              Hit &quot;Add New +&quot; to begin tracking your journey.
+            </p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
