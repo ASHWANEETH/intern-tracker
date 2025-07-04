@@ -108,7 +108,7 @@ export default function Dashboard() {
     };
 
     fetchUserAndJobs();
-  }, []);
+  }, [activeTab]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
