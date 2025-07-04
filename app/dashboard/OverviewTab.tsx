@@ -7,6 +7,7 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import SpotlightCard from "@/components/reactbits/SpotlightCard";
 import Image from "next/image";
+import { VscLinkExternal } from "react-icons/vsc";
 
 dayjs.extend(relativeTime);
 
@@ -80,7 +81,7 @@ export default function OverviewTab({ jobs }: Props) {
     .slice(0, 3);
 
   return (
-    <div className="w-full space-y-3 sm:space-y-4 mt-0 sm:mt-0">
+    <div className="w-full sm:px-4 md:px-4 space-y-3 sm:space-y-4 mt-0 sm:mt-0">
       {jobs.length === 0 ? (
         <SpotlightCard className="text-center px-3 py-6 sm:p-6 flex flex-col items-center gap-10">
           <p className="text-sm sm:text-base text-gray-500">
@@ -104,9 +105,16 @@ export default function OverviewTab({ jobs }: Props) {
             className="px-4 py-5 sm:p-5"
           >
             <div className="flex justify-around items-center mb-4 md:mb-1">
-              <p className="text-xs sm:text-sm">
+              <p className="text-xs sm:text-sm flex items-center gap-1">
                 Total Applications:{" "}
                 <span className="font-semibold">{jobs.length}</span>
+                <button
+                  // onClick={() => setActiveTab("applications")}
+                  className="text-violet-600 dark:text-violet-400 ml-1"
+                  title="Go to Applications"
+                >
+                  <VscLinkExternal size={10} />
+                </button>
               </p>
             </div>
             <div className="flex flex-col md:flex-row md:items-center gap-4 sm:gap-6">

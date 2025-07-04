@@ -274,220 +274,228 @@ export default function JobFormDialog({
     }
   }
 
-  return (
-    <Dialog open={modalOpen} onOpenChange={setModalOpen}>
-      <DialogTrigger asChild>
-        <Button
-          onClick={() => {
-            setEditJobId(null);
-            setCompanyName("");
-            setRole("");
-            setCtc("");
-            setRequirements("");
-            setStatus("to-apply");
-            setLastDateToApply("");
-            setAppliedDate("");
-            setExamDate("");
-            setModalOpen(true);
-          }}
-        >
-          Add New +
-        </Button>
-      </DialogTrigger>
+return (
+  <Dialog open={modalOpen} onOpenChange={setModalOpen}>
+    <DialogTrigger asChild>
+      <Button
+        onClick={() => {
+          setEditJobId(null);
+          setCompanyName("");
+          setRole("");
+          setCtc("");
+          setRequirements("");
+          setStatus("to-apply");
+          setLastDateToApply("");
+          setAppliedDate("");
+          setExamDate("");
+          setModalOpen(true);
+        }}
+      >
+        Add New +
+      </Button>
+    </DialogTrigger>
 
-      <DialogContent className="max-w-md">
-        <DialogHeader>
-          <div className="flex items-center gap-2">
-            <DialogTitle>
-              {editJobId ? "Edit Job Application" : "Add Job Application"}
-            </DialogTitle>
-            {!editJobId && (
-              <Button
-                size={"sm"}
-                onClick={() => {
-                  setJdModalOpen(true);
-                }}
-                className="ml-2 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 animate-gradient-x text-white"
-              >
-               Use AI ✨
-              </Button>
-            )}
-          </div>
-        </DialogHeader>
-
-        <form
-          onSubmit={handleAddOrUpdateJob}
-          className="flex flex-col gap-3 relative"
-        >
-          {/* Company Name */}
-          <div className="relative">
-            <Input
-              ref={companyInputRef}
-              placeholder="Company Name"
-              value={companyName}
-              onChange={(e) => {
-                setCompanyName(e.target.value);
-                setIsEditingCompany(true);
+    <DialogContent className="max-w-md dark:bg-zinc-900 dark:text-white">
+      <DialogHeader>
+        <div className="flex items-center gap-2">
+          <DialogTitle>
+            {editJobId ? "Edit Job Application" : "Add Job Application"}
+          </DialogTitle>
+          {!editJobId && (
+            <Button
+              size={"sm"}
+              onClick={() => {
+                setJdModalOpen(true);
               }}
-              required
-            />
-            {companySuggestions.length > 0 && (
-              <div className="absolute z-20 bg-white border border-gray-200 rounded mt-1 w-full max-h-40 overflow-y-auto shadow-lg">
-                {companySuggestions.slice(0, 3).map((item, index) => (
-                  <div
-                    key={index}
-                    className="p-1 hover:bg-gray-100 cursor-pointer"
-                    onMouseDown={() => handleCompanySelect(item.name)}
-                    onTouchStart={() => handleCompanySelect(item.name)}
-                  >
-                    {item.name}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Role */}
-          <div className="relative">
-            <Input
-              ref={roleInputRef}
-              placeholder="Role"
-              value={role}
-              onChange={(e) => {
-                setRole(e.target.value);
-                setIsEditingRole(true);
-              }}
-              required
-            />
-            {roleSuggestions.length > 0 && (
-              <div className="absolute z-20 bg-white border border-gray-200 rounded mt-1 w-full max-h-40 overflow-y-auto shadow-lg">
-                {roleSuggestions.map((item, index) => (
-                  <div
-                    key={index}
-                    className="p-1 hover:bg-gray-100 cursor-pointer"
-                    onMouseDown={() => handleRoleSelect(item)}
-                    onTouchStart={() => handleRoleSelect(item)}
-                  >
-                    {item}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* CTC / Stipend */}
-          <div className="flex gap-2 items-center">
-            <Select
-              value={ctcType}
-              onValueChange={(v) =>
-                handleCtcChange(v as "ctc" | "stipend", ctcAmount)
-              }
+              className="ml-2 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 animate-gradient-x text-white"
             >
-              <SelectTrigger className="w-32">
-                <SelectValue placeholder="Type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="ctc">CTC</SelectItem>
-                <SelectItem value="stipend">Stipend</SelectItem>
-              </SelectContent>
-            </Select>
+              Use AI ✨
+            </Button>
+          )}
+        </div>
+      </DialogHeader>
 
-            <Input
-              type="text"
-              value={ctcAmount}
-              onChange={(e) => handleCtcChange(ctcType, e.target.value)}
-              placeholder="Amount"
-              className="flex-1"
-            />
-
-            <div className="text-gray-500 text-sm min-w-[40px]">
-              {ctcType === "ctc" ? "LPA" : "/month"}
-            </div>
-          </div>
-
-          {/* Notes */}
-          <div className="bg-yellow-50 border border-yellow-300 text-yellow-800 text-sm rounded-xl px-3 py-1 shadow-sm">
-            <p className="font-semibold mb-1">Tip for Formatting Notes</p>
-            <ul className="list-disc list-inside space-y-1">
-              <li>
-                Separate with <span className="font-medium">commas</span> to
-                make bullet points
-              </li>
-              <li>
-                Use <span className="font-medium">#</span> to create a new
-                sticky note
-              </li>
-            </ul>
-          </div>
-
+      <form
+        onSubmit={handleAddOrUpdateJob}
+        className="flex flex-col gap-3 relative"
+      >
+        {/* Company Name */}
+        <div className="relative">
           <Input
-            placeholder="Notes"
-            value={requirements}
-            onChange={(e) => setRequirements(e.target.value)}
+            ref={companyInputRef}
+            placeholder="Company Name"
+            value={companyName}
+            onChange={(e) => {
+              setCompanyName(e.target.value);
+              setIsEditingCompany(true);
+            }}
+            required
+            className="dark:bg-zinc-800 dark:text-white dark:border-zinc-600"
           />
+          {companySuggestions.length > 0 && (
+            <div className="absolute z-20 bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-600 rounded mt-1 w-full max-h-40 overflow-y-auto shadow-lg">
+              {companySuggestions.slice(0, 3).map((item, index) => (
+                <div
+                  key={index}
+                  className="p-1 hover:bg-gray-100 dark:hover:bg-zinc-700 cursor-pointer"
+                  onMouseDown={() => handleCompanySelect(item.name)}
+                  onTouchStart={() => handleCompanySelect(item.name)}
+                >
+                  {item.name}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
 
-          {/* Status */}
-          <Select value={status} onValueChange={setStatus}>
-            <SelectTrigger>
-              <SelectValue placeholder="Status" />
+        {/* Role */}
+        <div className="relative">
+          <Input
+            ref={roleInputRef}
+            placeholder="Role"
+            value={role}
+            onChange={(e) => {
+              setRole(e.target.value);
+              setIsEditingRole(true);
+            }}
+            required
+            className="dark:bg-zinc-800 dark:text-white dark:border-zinc-600"
+          />
+          {roleSuggestions.length > 0 && (
+            <div className="absolute z-20 bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-600 rounded mt-1 w-full max-h-40 overflow-y-auto shadow-lg">
+              {roleSuggestions.map((item, index) => (
+                <div
+                  key={index}
+                  className="p-1 hover:bg-gray-100 dark:hover:bg-zinc-700 cursor-pointer"
+                  onMouseDown={() => handleRoleSelect(item)}
+                  onTouchStart={() => handleRoleSelect(item)}
+                >
+                  {item}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* CTC / Stipend */}
+        <div className="flex gap-2 items-center">
+          <Select
+            value={ctcType}
+            onValueChange={(v) =>
+              handleCtcChange(v as "ctc" | "stipend", ctcAmount)
+            }
+          >
+            <SelectTrigger className="w-32 dark:bg-zinc-800 dark:border-zinc-600 dark:text-white">
+              <SelectValue placeholder="Type" />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="to-apply">To Apply</SelectItem>
-              <SelectItem value="applied">Applied</SelectItem>
-              <SelectItem value="waiting">Waiting</SelectItem>
-              <SelectItem value="rejected">Rejected</SelectItem>
-              <SelectItem value="approved">Approved</SelectItem>
+            <SelectContent className="dark:bg-zinc-800 dark:text-white">
+              <SelectItem value="ctc">CTC</SelectItem>
+              <SelectItem value="stipend">Stipend</SelectItem>
             </SelectContent>
           </Select>
 
-          {/* Conditional Dates */}
-          {status === "to-apply" ? (
-            <>
-              <label className="font-medium text-gray-700">
-                Last Date to Apply
-              </label>
-              <Input
-                type="date"
-                value={lastDateToApply}
-                onChange={(e) => setLastDateToApply(e.target.value)}
-                required
-              />
-            </>
-          ) : (
-            <>
-              <label className="font-medium text-gray-700">Applied Date</label>
-              <Input
-                type="date"
-                value={appliedDate}
-                onChange={(e) => setAppliedDate(e.target.value)}
-              />
+          <Input
+            type="text"
+            value={ctcAmount}
+            onChange={(e) => handleCtcChange(ctcType, e.target.value)}
+            placeholder="Amount"
+            className="flex-1 dark:bg-zinc-800 dark:text-white dark:border-zinc-600"
+          />
 
-              <label className="font-medium text-gray-700 mt-2">
-                Exam / Interview Date
-              </label>
-              <Input
-                type="date"
-                value={examDate}
-                onChange={(e) => setExamDate(e.target.value)}
-              />
-            </>
-          )}
+          <div className="text-gray-500 dark:text-gray-300 text-sm min-w-[40px]">
+            {ctcType === "ctc" ? "LPA" : "/month"}
+          </div>
+        </div>
 
-          <Button type="submit" className="mt-2">
-            {editJobId ? "Update" : "Submit"}
-          </Button>
-        </form>
-      </DialogContent>
-      <Dialog open={jdModalOpen} onOpenChange={setJdModalOpen}>
-        <DialogContent className="max-w-lg">
-          <DialogHeader>
-            <DialogTitle>Add using AI✨</DialogTitle>
-          </DialogHeader>
+        {/* Notes */}
+        <div className="bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-300 dark:border-yellow-600 text-yellow-800 dark:text-yellow-100 text-sm rounded-xl px-3 py-1 shadow-sm">
+          <p className="font-semibold mb-1">Tip for Formatting Notes</p>
+          <ul className="list-disc list-inside space-y-1">
+            <li>
+              Separate with <span className="font-medium">commas</span> to make bullet points
+            </li>
+            <li>
+              Use <span className="font-medium">#</span> to create a new sticky note
+            </li>
+          </ul>
+        </div>
 
-          <div className="flex flex-col gap-3">
-            <textarea
-              rows={10}
-              placeholder={`Paste Job Description text here...
+        <Input
+          placeholder="Notes"
+          value={requirements}
+          onChange={(e) => setRequirements(e.target.value)}
+          className="dark:bg-zinc-800 dark:text-white dark:border-zinc-600"
+        />
+
+        {/* Status */}
+        <Select value={status} onValueChange={setStatus}>
+          <SelectTrigger className="dark:bg-zinc-800 dark:text-white dark:border-zinc-600">
+            <SelectValue placeholder="Status" />
+          </SelectTrigger>
+          <SelectContent className="dark:bg-zinc-800 dark:text-white">
+            <SelectItem value="to-apply">To Apply</SelectItem>
+            <SelectItem value="applied">Applied</SelectItem>
+            <SelectItem value="waiting">Waiting</SelectItem>
+            <SelectItem value="rejected">Rejected</SelectItem>
+            <SelectItem value="approved">Approved</SelectItem>
+          </SelectContent>
+        </Select>
+
+        {/* Conditional Dates */}
+        {status === "to-apply" ? (
+          <>
+            <label className="font-medium text-gray-700 dark:text-gray-300">
+              Last Date to Apply
+            </label>
+            <Input
+              type="date"
+              value={lastDateToApply}
+              onChange={(e) => setLastDateToApply(e.target.value)}
+              required
+              className="dark:bg-zinc-800 dark:text-white dark:border-zinc-600"
+            />
+          </>
+        ) : (
+          <>
+            <label className="font-medium text-gray-700 dark:text-gray-300">
+              Applied Date
+            </label>
+            <Input
+              type="date"
+              value={appliedDate}
+              onChange={(e) => setAppliedDate(e.target.value)}
+              className="dark:bg-zinc-800 dark:text-white dark:border-zinc-600"
+            />
+
+            <label className="font-medium text-gray-700 dark:text-gray-300 mt-2">
+              Exam / Interview Date
+            </label>
+            <Input
+              type="date"
+              value={examDate}
+              onChange={(e) => setExamDate(e.target.value)}
+              className="dark:bg-zinc-800 dark:text-white dark:border-zinc-600"
+            />
+          </>
+        )}
+
+        <Button type="submit" className="mt-2">
+          {editJobId ? "Update" : "Submit"}
+        </Button>
+      </form>
+    </DialogContent>
+
+    {/* AI Modal */}
+    <Dialog open={jdModalOpen} onOpenChange={setJdModalOpen}>
+      <DialogContent className="max-w-lg dark:bg-zinc-900 dark:text-white">
+        <DialogHeader>
+          <DialogTitle>Add using AI✨</DialogTitle>
+        </DialogHeader>
+
+        <div className="flex flex-col gap-3">
+          <textarea
+            rows={10}
+            placeholder={`Paste Job Description text here...
 
 ⚠️ Note:
 👉 Please provide actual JD (not random text)
@@ -497,35 +505,36 @@ export default function JobFormDialog({
 👉 Be patient — magic is happening behind the scenes ✨
 
 Made by student for students ! Yeahhh`}
-              value={jdText}
-              onChange={(e) => setJdText(e.target.value)}
-              className="border rounded p-2 text-sm"
-            />
+            value={jdText}
+            onChange={(e) => setJdText(e.target.value)}
+            className="border rounded p-2 text-sm dark:bg-zinc-800 dark:text-white dark:border-zinc-600"
+          />
 
-            <Button
-              onClick={async () => {
-                setExtracting(true);
-                const result = await extractFromJD(jdText);
-                setCompanyName(result.company_name || "");
-                setRole(result.role || "");
-                setCtc(result.ctc || "");
-                setRequirements(result.requirements || "");
-                setLastDateToApply(result.last_date_to_apply || "");
-                setExtracting(false);
-                setJdModalOpen(false);
-              }}
-              disabled={jdText.trim().length < 20}
-              className={`ml-2 px-4 py-2 rounded text-white font-semibold shadow-lg bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 animate-gradient-x ${
-                extracting ? "pointer-events-none" : ""
-              }`}
-            >
-              {extracting
-                ? extractingMessages[currentMessageIndex]
-                : "Lets Gooo ! 🚀"}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+          <Button
+            onClick={async () => {
+              setExtracting(true);
+              const result = await extractFromJD(jdText);
+              setCompanyName(result.company_name || "");
+              setRole(result.role || "");
+              setCtc(result.ctc || "");
+              setRequirements(result.requirements || "");
+              setLastDateToApply(result.last_date_to_apply || "");
+              setExtracting(false);
+              setJdModalOpen(false);
+            }}
+            disabled={jdText.trim().length < 20}
+            className={`ml-2 px-4 py-2 rounded text-white font-semibold shadow-lg bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 animate-gradient-x ${
+              extracting ? "pointer-events-none" : ""
+            }`}
+          >
+            {extracting
+              ? extractingMessages[currentMessageIndex]
+              : "Lets Gooo ! 🚀"}
+          </Button>
+        </div>
+      </DialogContent>
     </Dialog>
-  );
+  </Dialog>
+);
+
 }

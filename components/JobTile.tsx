@@ -21,20 +21,26 @@ import { useState, useCallback, useMemo } from "react";
 import { Job } from "@/app/types/job";
 import { AnimatePresence, motion } from "framer-motion";
 
+// Updated with directional gradients and dark-mode variants
+const statusGradients: Record<string, string> = {
+  "to-apply":
+    "bg-gradient-to-r from-gray-100 to-white border border-gray-200 dark:from-white/10 dark:to-transparent dark:border-none",
+  applied:
+    "bg-gradient-to-r from-blue-100 to-white border border-blue-200 dark:from-blue-600/20 dark:to-transparent dark:border-none",
+  waiting:
+    "bg-gradient-to-r from-yellow-100 to-white border border-yellow-200 dark:from-yellow-600/20 dark:to-transparent dark:border-none",
+  rejected:
+    "bg-gradient-to-r from-red-100 to-white border border-red-200 dark:from-red-600/20 dark:to-transparent dark:border-none",
+  approved:
+    "bg-gradient-to-r from-green-100 to-white border border-green-200 dark:from-green-600/20 dark:to-transparent dark:border-none",
+};
+
 const statusColors: Record<string, string> = {
   "to-apply": "bg-gray-300 text-gray-800",
   applied: "bg-blue-200 text-blue-800",
   waiting: "bg-yellow-200 text-yellow-800",
   rejected: "bg-red-200 text-red-800",
   approved: "bg-green-200 text-green-800",
-};
-
-const statusGradients: Record<string, string> = {
-  "to-apply": "from-gray-100/90 to-gray-50/80 border-gray-200",
-  applied: "from-blue-100/90 to-blue-50/80 border-blue-200",
-  waiting: "from-yellow-100/90 to-yellow-50/80 border-yellow-200",
-  rejected: "from-red-100/90 to-red-50/80 border-red-200",
-  approved: "from-green-100/90 to-green-50/80 border-green-200",
 };
 
 type Props = {
@@ -61,7 +67,9 @@ export default function JobTile({
   const [showNotes, setShowNotes] = useState(false);
   const isExpanded = expandedJobId === job.id;
 
-  const gradientClasses = statusGradients[job.status] ?? "from-gray-100/90 to-gray-50/80 border-gray-200";
+  const gradientClasses =
+    statusGradients[job.status] ??
+    "bg-gradient-to-tr from-gray-100 to-white border border-gray-200";
 
   const toggleNotes = useCallback(() => {
     setShowNotes((prev) => !prev);
@@ -82,9 +90,7 @@ export default function JobTile({
   }, [job.applied_date, job.created_at]);
 
   const formattedExamDate = useMemo(() => {
-    return job.exam_date
-      ? new Date(job.exam_date).toLocaleDateString()
-      : "-";
+    return job.exam_date ? new Date(job.exam_date).toLocaleDateString() : "-";
   }, [job.exam_date]);
 
   return (
@@ -95,19 +101,16 @@ export default function JobTile({
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2, ease: "easeInOut" }}
       className={`
-        rounded-2xl px-5 py-3
-        md:mx-4 
-        shadow-xl 
-        bg-gradient-to-br ${gradientClasses} 
-        backdrop-blur-md 
-        transition cursor-pointer relative
+        rounded-2xl px-5 py-3 shadow-xl 
+        ${gradientClasses}
+        backdrop-blur-md transition cursor-pointer relative
       `}
     >
       {/* Header Row */}
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-2">
           <CompanyLogo key={logoRefreshKey} companyName={job.company_name} />
-          <h3 className="text-lg font-semibold capitalize text-gray-900">
+          <h3 className="text-lg font-semibold capitalize text-gray-900 dark:text-gray-100">
             {job.company_name}
           </h3>
         </div>
@@ -118,11 +121,11 @@ export default function JobTile({
           <SelectTrigger
             className={`px-3 py-1 rounded-full text-sm font-semibold cursor-pointer transition-colors duration-200 ease-in-out ${
               statusColors[job.status] || "bg-gray-300 text-gray-800"
-            }`}
+            } dark:bg-neutral-700 dark:text-white`}
           >
             <SelectValue />
           </SelectTrigger>
-          <SelectContent className="max-w-xs">
+          <SelectContent className="max-w-xs dark:bg-neutral-800 dark:text-white">
             <SelectItem value="to-apply">To Apply</SelectItem>
             <SelectItem value="applied">Applied</SelectItem>
             <SelectItem value="waiting">Waiting</SelectItem>
@@ -133,10 +136,12 @@ export default function JobTile({
       </div>
 
       {/* Summary */}
-      <p className="text-gray-700 mt-1 font-medium">{job.role}</p>
-      <p className="text-gray-700">
+      <p className="text-gray-700 dark:text-gray-300 mt-1 font-medium">
+        {job.role}
+      </p>
+      <p className="text-gray-700 dark:text-gray-300">
         {job.ctc?.toLowerCase().includes("lpa") ? "CTC" : "Stipend"}:{" "}
-        <strong>{job.ctc}</strong>
+        <strong className="dark:text-white">{job.ctc}</strong>
       </p>
 
       {/* Expandable section */}
@@ -147,19 +152,28 @@ export default function JobTile({
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.2, ease: "easeInOut" }}
-            className="overflow-hidden mt-2 text-sm text-gray-600 space-y-1"
+            className="overflow-hidden mt-2 text-sm text-gray-600 dark:text-gray-300 space-y-1"
           >
             {job.status === "to-apply" ? (
               <p>
-                Last Date to Apply: <strong>{formattedLastDateToApply}</strong>
+                Last Date to Apply:{" "}
+                <strong className="dark:text-white">
+                  {formattedLastDateToApply}
+                </strong>
               </p>
             ) : (
               <>
                 <p>
-                  Applied on: <strong>{formattedAppliedDate}</strong>
+                  Applied on:{" "}
+                  <strong className="dark:text-white">
+                    {formattedAppliedDate}
+                  </strong>
                 </p>
                 <p>
-                  Exam / Interview Date: <strong>{formattedExamDate}</strong>
+                  Exam / Interview Date:{" "}
+                  <strong className="dark:text-white">
+                    {formattedExamDate}
+                  </strong>
                 </p>
               </>
             )}
@@ -169,7 +183,7 @@ export default function JobTile({
               <>
                 <button
                   onClick={toggleNotes}
-                  className="flex items-center gap-1 text-black font-medium text-sm hover:underline"
+                  className="flex items-center gap-1 text-black dark:text-gray-200 font-medium text-sm hover:underline"
                 >
                   Notes{" "}
                   {showNotes ? (
@@ -217,7 +231,7 @@ export default function JobTile({
 
       {/* Toggle Dropdown Icon */}
       <div
-        className="absolute bottom-4 right-4 text-gray-500 hover:text-gray-800 cursor-pointer"
+        className="absolute bottom-4 right-4 text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white cursor-pointer"
         onClick={() => onToggleExpand(job.id)}
       >
         {isExpanded ? <FiChevronUp size={20} /> : <FiChevronDown size={20} />}
