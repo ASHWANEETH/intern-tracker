@@ -245,7 +245,7 @@ export default function ApplicationsTab() {
         onCancel={closeModal}
       />
 
-      <div className="sticky md:top-35 top-45 z-10 pt-3 sm:pt-4 pb-3 sm:pb-4 bg-white/90 dark:bg-[#0d0d0d]/90 backdrop-blur-md">
+      <div className="sticky md:top-38 sm:top-35 top-45 z-10 pt-3 sm:pt-4 pb-3 sm:pb-4 bg-white/90 dark:bg-[#0d0d0d]/90 backdrop-blur-md">
         <div className="flex items-center justify-between flex-wrap gap-3 mb-3 px-1">
           <h2 className="text-xl sm:text-xl font-semibold">Applications</h2>
           <JobFormDialog
