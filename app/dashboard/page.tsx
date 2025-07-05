@@ -10,6 +10,8 @@ import {
   VscSettingsGear,
   VscSignOut,
 } from "react-icons/vsc";
+import confetti from "canvas-confetti";
+
 
 import { useIsMobile } from "@/hooks/use-mobile";
 import { createClient } from "@/lib/supabaseClient";
@@ -80,6 +82,21 @@ export default function Dashboard() {
       localStorage.setItem("theme", "light");
     }
   };
+
+    const handleStatusChange = async (jobId: string, newStatus: string) => {
+      await supabase
+        .from("job_applications")
+        .update({ status: newStatus })
+        .eq("id", jobId);
+      setJobs((prev) =>
+        prev.map((job) =>
+          job.id === jobId ? { ...job, status: newStatus } : job
+        )
+      );
+      if (newStatus === "approved") {
+        confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+      }
+    };
 
   useEffect(() => {
     const fetchUserAndJobs = async () => {
@@ -245,12 +262,17 @@ export default function Dashboard() {
         <main className="flex-1 w-full">
           {activeTab === "overview" &&
             (user && dataLoaded ? (
-              <OverviewTab user={user} jobs={jobs} setActiveTab={setActiveTab}/>
+              <OverviewTab
+                user={user}
+                jobs={jobs}
+                setActiveTab={setActiveTab}
+              />
             ) : (
               <DotLoader />
             ))}
-          {activeTab === "applications" && <ApplicationsTab />}
-          {activeTab === "deadlines" && <DeadlinesTab />}
+          {activeTab === "applications" && <ApplicationsTab/>}
+          {activeTab === "deadlines" &&
+            (user && dataLoaded ? <DeadlinesTab jobs={jobs} onStatusUpdate={handleStatusChange} /> : <DotLoader />)}
         </main>
       </div>
 

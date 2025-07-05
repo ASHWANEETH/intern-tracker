@@ -1,3 +1,5 @@
+"use client";
+
 import React, {
   useRef,
   useState,
@@ -25,14 +27,15 @@ const AnimatedItem: React.FC<AnimatedItemProps> = ({
 }) => {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { amount: 0.5, once: false });
+
   return (
     <motion.div
       ref={ref}
       data-index={index}
       onMouseEnter={onMouseEnter}
       onClick={onClick}
-      initial={{ scale: 0.7, opacity: 0 }}
-      animate={inView ? { scale: 1, opacity: 1 } : { scale: 0.7, opacity: 0 }}
+      initial={{ scale: 0.95, opacity: 0 }}
+      animate={inView ? { scale: 1, opacity: 1 } : { scale: 0.95, opacity: 0 }}
       transition={{ duration: 0.2, delay }}
       className="mb-4 cursor-pointer"
     >
@@ -42,8 +45,8 @@ const AnimatedItem: React.FC<AnimatedItemProps> = ({
 };
 
 interface AnimatedListProps {
-  items?: string[];
-  onItemSelect?: (item: string, index: number) => void;
+  items?: ReactNode[];
+  onItemSelect?: (item: ReactNode, index: number) => void;
   showGradients?: boolean;
   enableArrowNavigation?: boolean;
   className?: string;
@@ -53,29 +56,13 @@ interface AnimatedListProps {
 }
 
 const AnimatedList: React.FC<AnimatedListProps> = ({
-  items = [
-    "Item 1",
-    "Item 2",
-    "Item 3",
-    "Item 4",
-    "Item 5",
-    "Item 6",
-    "Item 7",
-    "Item 8",
-    "Item 9",
-    "Item 10",
-    "Item 11",
-    "Item 12",
-    "Item 13",
-    "Item 14",
-    "Item 15",
-  ],
+  items = [],
   onItemSelect,
   showGradients = true,
   enableArrowNavigation = true,
   className = "",
   itemClassName = "",
-  displayScrollbar = true,
+  displayScrollbar = false,
   initialSelectedIndex = -1,
 }) => {
   const listRef = useRef<HTMLDivElement>(null);
@@ -83,7 +70,8 @@ const AnimatedList: React.FC<AnimatedListProps> = ({
     useState<number>(initialSelectedIndex);
   const [keyboardNav, setKeyboardNav] = useState<boolean>(false);
   const [topGradientOpacity, setTopGradientOpacity] = useState<number>(0);
-  const [bottomGradientOpacity, setBottomGradientOpacity] = useState<number>(1);
+  const [bottomGradientOpacity, setBottomGradientOpacity] =
+    useState<number>(1);
 
   const handleScroll = (e: UIEvent<HTMLDivElement>) => {
     const { scrollTop, scrollHeight, clientHeight } =
@@ -148,24 +136,24 @@ const AnimatedList: React.FC<AnimatedListProps> = ({
   }, [selectedIndex, keyboardNav]);
 
   return (
-    <div className={`relative w-[500px] ${className}`}>
+    <div className={`relative w-full ${className}`}>
       <div
         ref={listRef}
-        className={`max-h-[400px] overflow-y-auto p-4 ${
+        className={`max-h-[400px] overflow-y-auto p-2 sm:p-4 transition-all duration-300 rounded-lg ${
           displayScrollbar
-            ? "[&::-webkit-scrollbar]:w-[8px] [&::-webkit-scrollbar-track]:bg-[#060010] [&::-webkit-scrollbar-thumb]:bg-[#222] [&::-webkit-scrollbar-thumb]:rounded-[4px]"
+            ? "[&::-webkit-scrollbar]:w-[6px] [&::-webkit-scrollbar-thumb]:bg-gray-400 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-600 [&::-webkit-scrollbar-thumb]:rounded-full"
             : "scrollbar-hide"
         }`}
         onScroll={handleScroll}
         style={{
           scrollbarWidth: displayScrollbar ? "thin" : "none",
-          scrollbarColor: "#222 #060010",
+          scrollbarColor: "var(--tw-prose-body) transparent",
         }}
       >
         {items.map((item, index) => (
           <AnimatedItem
             key={index}
-            delay={0.1}
+            delay={0.05}
             index={index}
             onMouseEnter={() => setSelectedIndex(index)}
             onClick={() => {
@@ -176,23 +164,28 @@ const AnimatedList: React.FC<AnimatedListProps> = ({
             }}
           >
             <div
-              className={`p-4 bg-[#111] rounded-lg ${selectedIndex === index ? "bg-[#222]" : ""} ${itemClassName}`}
+              className={`rounded-md transition duration-200 ${
+                selectedIndex === index
+                  ? "bg-gray-100 dark:bg-neutral-700"
+                  : "bg-white dark:bg-neutral-800"
+              } ${itemClassName}`}
             >
-              <p className="text-white m-0">{item}</p>
+              {item}
             </div>
           </AnimatedItem>
         ))}
       </div>
+
       {showGradients && (
         <>
           <div
-            className="absolute top-0 left-0 right-0 h-[50px] bg-gradient-to-b from-[#060010] to-transparent pointer-events-none transition-opacity duration-300 ease"
+            className="absolute top-0 left-0 right-0 h-[40px] bg-gradient-to-b from-white dark:from-[#0d0d0d] to-transparent pointer-events-none transition-opacity duration-300 ease"
             style={{ opacity: topGradientOpacity }}
-          ></div>
+          />
           <div
-            className="absolute bottom-0 left-0 right-0 h-[100px] bg-gradient-to-t from-[#060010] to-transparent pointer-events-none transition-opacity duration-300 ease"
+            className="absolute bottom-0 left-0 right-0 h-[80px] bg-gradient-to-t from-white dark:from-[#0d0d0d] to-transparent pointer-events-none transition-opacity duration-300 ease"
             style={{ opacity: bottomGradientOpacity }}
-          ></div>
+          />
         </>
       )}
     </div>
