@@ -12,8 +12,8 @@ import {
   subMonths,
   differenceInCalendarDays,
 } from "date-fns";
-import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
-import { BsBook } from "react-icons/bs";
+import { FiChevronLeft, FiChevronRight, FiCheck  } from "react-icons/fi";
+import { BsBook} from "react-icons/bs";
 import AnimatedList from "@/components/reactbits/AnimatedList";
 import { ConfirmModal } from "@/components/ConfirmModal";
 
@@ -320,7 +320,7 @@ export default function DeadlinesTab({
                       onClick={() => openConfirmModal(j.id)}
                       className="text-xs px-2 py-[2px] bg-green-600 hover:bg-green-700 text-white rounded"
                     >
-                      Mark as Applied
+                      <FiCheck size={14} />
                     </button>
                   </div>
                 </div>
