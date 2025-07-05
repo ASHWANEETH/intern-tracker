@@ -73,7 +73,7 @@ export default function OverviewTab({ jobs, setActiveTab }: Props) {
     .slice(0, 3);
 
   const upcomingDeadlines = [...jobs]
-    .filter((j) => j.last_date_to_apply)
+    .filter((j) => j.status === "to-apply" && j.last_date_to_apply)
     .sort(
       (a, b) =>
         new Date(a.last_date_to_apply!).getTime() -
@@ -169,6 +169,7 @@ export default function OverviewTab({ jobs, setActiveTab }: Props) {
           </SpotlightCard>
 
           {/* Deadlines */}
+
           <SpotlightCard
             spotlightColor="rgba(236, 72, 153, 0.15)"
             className="px-4 py-5 sm:p-5"
@@ -177,26 +178,30 @@ export default function OverviewTab({ jobs, setActiveTab }: Props) {
               Upcoming Deadlines
             </h3>
             <ul className="space-y-1 text-xs sm:text-sm">
-              {upcomingDeadlines.map((job) => (
-                <li key={job.id} className="flex justify-between">
-                  <span>
-                    📅 {job.role} at {job.company_name}
-                  </span>
-                  <span className="text-gray-500 text-xs">
-                    {dayjs(job.last_date_to_apply).format("MMM D")}
-                  </span>
-                </li>
-              ))}
-              {upcomingDeadlines.length === 0 && (
+              {upcomingDeadlines
+                .filter((job) => job.status === "to-apply")
+                .map((job) => (
+                  <li key={job.id} className="flex justify-between">
+                    <span>
+                      📅 {job.role} at {job.company_name}
+                    </span>
+                    <span className="text-gray-500 text-xs">
+                      {dayjs(job.last_date_to_apply).format("MMM D")}
+                    </span>
+                  </li>
+                ))}
+
+              {upcomingDeadlines.filter((j) => j.status === "to-apply")
+                .length === 0 && (
                 <li className="italic text-gray-500">No upcoming deadlines.</li>
               )}
             </ul>
-            <a
-              href="#"
+            <button
+              onClick={() => setActiveTab("deadlines")} // assumes this function is available from parent/context
               className="text-xs sm:text-sm text-violet-700 dark:text-violet-400 hover:underline font-medium mt-2 inline-block"
             >
               Show all deadlines →
-            </a>
+            </button>
           </SpotlightCard>
 
           {/* Top 3 CTC */}
