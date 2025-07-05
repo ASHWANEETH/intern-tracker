@@ -12,7 +12,7 @@ import {
   subMonths,
   differenceInCalendarDays,
 } from "date-fns";
-import { FiChevronLeft, FiChevronRight, FiCheck  } from "react-icons/fi";
+import { FiChevronLeft, FiChevronRight, FiCheck, FiChevronDown } from "react-icons/fi";
 import { BsBook} from "react-icons/bs";
 import AnimatedList from "@/components/reactbits/AnimatedList";
 import { ConfirmModal } from "@/components/ConfirmModal";
@@ -277,8 +277,8 @@ export default function DeadlinesTab({
 
       {/* Deadline List */}
       <div className="w-full max-w-full overflow-hidden">
-        <h3 className="text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
-          All Upcoming Deadlines
+        <h3 className="text-sm font-semibold my-2 text-gray-700 dark:text-gray-300 text-center">
+          All Deadlines to Apply <FiChevronDown size={16} className="inline" />
         </h3>
         <AnimatedList
           items={[...jobList]
