@@ -14,7 +14,6 @@ import confetti from "canvas-confetti";
 import { Sun, Moon } from "lucide-react";
 import { Menu } from "lucide-react"; // Add hamburger icon
 
-import { useIsMobile } from "@/hooks/use-mobile";
 import { createClient } from "@/lib/supabaseClient";
 import { ConfirmModal } from "@/components/ConfirmModal";
 
@@ -27,8 +26,6 @@ const supabase = createClient();
 
 export default function Dashboard() {
   const router = useRouter();
-  const isMobile = useIsMobile();
-
   const [activeTab, setActiveTab] = useState("overview");
   const [logoutModalOpen, setLogoutModalOpen] = useState(false);
   const [user, setUser] = useState<{
@@ -208,11 +205,11 @@ export default function Dashboard() {
     <div className="min-h-screen w-full bg-white dark:bg-[#0d0d0d] text-gray-900 dark:text-gray-100 transition-colors">
       <div className="w-full max-w-7xl mx-auto px-4 flex-1 flex flex-col">
         <header className="sticky z-50 top-0 bg-white/90 dark:bg-[#0d0d0d]/90 backdrop-blur-md w-full transition-all mb-2">
-          <div className="w-full max-w-7xl mx-auto px-4 py-3 flex flex-col gap-2">
+          <div className="w-full sm:px-4 md:px-4 space-y-2 sm:space-y-2.5 mt-2 sm:mt-2">
             {/* Logo, Name, and Greeting */}
             <div className="flex flex-row items-center justify-between gap-2 w-full">
               {/* Logo + Name: left side */}
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 sm:gap-3">
                 <Image
                   src={darkMode ? "/logod.svg" : "/logo.svg"}
                   alt="Intern Tracker Logo"
@@ -222,34 +219,35 @@ export default function Dashboard() {
                   className="w-7 h-7 sm:w-10 sm:h-10"
                 />
                 <div className="flex flex-col">
-                  <h1 className="text-base sm:text-xl font-semibold tracking-tight text-left">
+                  <h1 className="text-l md:text-l font-semibold tracking-tight text-left">
                     Intern Tracker
                   </h1>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 leading-tight mt-1 hidden sm:block text-left">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 leading-tight text-left">
                     Track applications with ease...
                   </p>
                 </div>
               </div>
               {/* User Greeting: right side */}
               <div className="flex flex-col items-end">
-                <span className="text-sm text-gray-600 dark:text-gray-400">
-                  Hello
+                <span className="text-xs text-gray-600 dark:text-gray-400">
+                  Hello!
                 </span>
-                <span className="text-xl md:text-2xl font-bold text-right break-words">
+                <span className="text-l md:text-xl font-semibold text-right break-words">
                   {name}
                 </span>
               </div>
             </div>
+            <div className="w-full h-[1px] bg-gray-200 dark:bg-neutral-800" />
 
             {/* Sleek Horizontal Tab Bar */}
-            <div className="w-full mt-4 flex items-center justify-between px-1 py-1">
+            <div className="w-full flex items-center justify-between px-1">
               <nav className="flex items-center gap-1 flex-1">
                 {tabItems.map((item) => (
                   <button
                     key={item.key}
                     type="button"
                     onClick={() => setActiveTab(item.key)}
-                    className={`flex items-center px-3 py-2 rounded-lg transition-all duration-200
+                    className={`flex items-center px-2.5 py-1.5 rounded-lg transition-all duration-300
                       ${
                         activeTab === item.key
                           ? "bg-violet-100 dark:bg-violet-900 shadow text-violet-700 dark:text-violet-100"
@@ -258,27 +256,12 @@ export default function Dashboard() {
                     `}
                   >
                     <span>{item.icon}</span>
-                    {/* Mobile: show label to right of icon, Desktop: always show */}
+                    {/* Always show label next to icon */}
                     <span
-                      className={`ml-2 text-sm font-medium transition-all duration-300
-                        ${
-                          isMobile
-                            ? activeTab === item.key
-                              ? "opacity-100 ml-2"
-                              : "opacity-0 ml-0 w-0"
-                            : "opacity-100 ml-2"
-                        }
-                      `}
+                      className={`ml-2 text-xs sm:text-sm font-medium transition-all duration-300`}
                       style={{
-                        minWidth: isMobile
-                          ? activeTab === item.key
-                            ? "60px"
-                            : "0"
-                          : "60px",
-                        display:
-                          isMobile && activeTab !== item.key
-                            ? "none"
-                            : "inline-block",
+                        minWidth: "60px",
+                        display: "inline-block",
                         transitionProperty: "opacity, min-width, margin-left",
                       }}
                     >
@@ -294,7 +277,7 @@ export default function Dashboard() {
                   className="flex items-center justify-center px-2 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-neutral-800 transition"
                   aria-label="Open menu"
                 >
-                  <Menu size={22} />
+                  <Menu size={20} />
                 </button>
                 {menuOpen && (
                   <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-neutral-900 rounded-lg shadow-lg border border-gray-100 dark:border-neutral-800 z-50">
@@ -305,7 +288,7 @@ export default function Dashboard() {
                           item.action();
                           setMenuOpen(false);
                         }}
-                        className="w-full flex items-center px-3 py-2 gap-2 text-left hover:bg-gray-50 dark:hover:bg-neutral-800 rounded-lg transition"
+                        className="w-full flex items-center px-3 py-1.5 gap-2 hover:bg-gray-50 dark:hover:bg-neutral-800 rounded-lg transition"
                       >
                         {item.icon}
                         <span className="text-sm">{item.label}</span>
@@ -316,7 +299,7 @@ export default function Dashboard() {
               </div>
             </div>
             {/* Horizontal line below nav bar */}
-            <div className="w-full h-[1px] bg-gray-200 dark:bg-neutral-800 mt-2 mb-1" />
+            <div className="w-full h-[1px] bg-gray-200 dark:bg-neutral-800 mb-1" />
           </div>
         </header>
 
