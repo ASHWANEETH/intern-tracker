@@ -70,8 +70,7 @@ const AnimatedList: React.FC<AnimatedListProps> = ({
     useState<number>(initialSelectedIndex);
   const [keyboardNav, setKeyboardNav] = useState<boolean>(false);
   const [topGradientOpacity, setTopGradientOpacity] = useState<number>(0);
-  const [bottomGradientOpacity, setBottomGradientOpacity] =
-    useState<number>(1);
+  const [bottomGradientOpacity, setBottomGradientOpacity] = useState<number>(1);
 
   const handleScroll = (e: UIEvent<HTMLDivElement>) => {
     const { scrollTop, scrollHeight, clientHeight } =
@@ -139,7 +138,7 @@ const AnimatedList: React.FC<AnimatedListProps> = ({
     <div className={`relative w-full ${className}`}>
       <div
         ref={listRef}
-        className={`max-h-[400px] overflow-y-auto p-2 sm:p-4 transition-all duration-300 rounded-lg ${
+        className={`overflow-y-auto transition-all duration-300 rounded-lg ${
           displayScrollbar
             ? "[&::-webkit-scrollbar]:w-[6px] [&::-webkit-scrollbar-thumb]:bg-gray-400 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-600 [&::-webkit-scrollbar-thumb]:rounded-full"
             : "scrollbar-hide"

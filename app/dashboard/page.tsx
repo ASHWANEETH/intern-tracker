@@ -204,8 +204,8 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen w-full bg-white dark:bg-[#0d0d0d] text-gray-900 dark:text-gray-100 transition-colors">
       <div className="w-full max-w-7xl mx-auto px-4 flex-1 flex flex-col">
-        <header className="sticky z-50 top-0 bg-white/90 dark:bg-[#0d0d0d]/90 backdrop-blur-md w-full transition-all mb-2">
-          <div className="w-full sm:px-4 md:px-4 space-y-2 sm:space-y-2.5 mt-2 sm:mt-2">
+        <header className="sticky z-10 top-0 bg-white/90 dark:bg-[#0d0d0d]/90 backdrop-blur-md w-full transition-all">
+          <div className="w-full sm:px-4 md:px-4 space-y-2.5 sm:space-y-3 mt-2 sm:mt-2">
             {/* Logo, Name, and Greeting */}
             <div className="flex flex-row items-center justify-between gap-2 w-full">
               {/* Logo + Name: left side */}
@@ -304,7 +304,7 @@ export default function Dashboard() {
         </header>
 
         {/* Tab content with smooth animation */}
-        <main className="flex-1 w-full transition-all duration-300 relative">
+        <main className="flex-1 w-full transition-all duration-300 relative z-0 pt-2 sm:pt-4">
           <div
             key={activeTab}
             className="tab-content-animate"
@@ -361,4 +361,3 @@ export default function Dashboard() {
     </div>
   );
 }
-
