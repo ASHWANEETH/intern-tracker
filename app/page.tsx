@@ -54,6 +54,7 @@ export default function Home() {
   } | null>(null);
   const [isDark, setIsDark] = useState(false);
   const [hasMounted, setHasMounted] = useState(false);
+  const [themeVersion, setThemeVersion] = useState(0); // force re-render
 
   useEffect(() => {
     // Only run on client
@@ -70,11 +71,20 @@ export default function Home() {
     loadAOS();
   }, []);
 
+  // Add CSS transition for theme change (move inside component)
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      document.documentElement.style.transition = "background 0.3s, color 0.3s";
+      document.body.style.transition = "background 0.3s, color 0.3s";
+    }
+  }, []);
+
   const handleThemeToggle = useCallback(() => {
     setIsDark((prev) => {
       const newMode = !prev;
       document.documentElement.classList.toggle("dark", newMode);
       localStorage.setItem("theme", newMode ? "dark" : "light");
+      setThemeVersion((v) => v + 1); // force re-render for all components
       return newMode;
     });
   }, []);
@@ -117,6 +127,7 @@ export default function Home() {
 
   if (!hasMounted) return null;
 
+  // Add themeVersion as key to force re-render of all children
   return (
     <ClickSpark
       sparkColor={isDark ? "#fff" : "#000"}
@@ -124,8 +135,12 @@ export default function Home() {
       sparkRadius={10}
       sparkCount={7}
       duration={400}
+      key={themeVersion}
     >
-      <div className="min-h-screen bg-white dark:bg-[#0d0d0d] text-gray-900 dark:text-gray-100 flex flex-col items-center justify-between px-4 sm:px-6 lg:px-8 select-none">
+      <div
+        className="min-h-screen bg-white dark:bg-[#0d0d0d] text-gray-900 dark:text-gray-100 flex flex-col items-center justify-between px-4 sm:px-6 lg:px-8 select-none"
+        key={themeVersion}
+      >
         {/* Header */}
         <header className="sticky top-0 z-50 bg-white/90 dark:bg-[#0d0d0d]/80 backdrop-blur-md py-3 px-4 w-full max-w-6xl mx-auto flex flex-col sm:flex-row items-center sm:justify-between gap-2 transition-all">
           <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3">
@@ -253,7 +268,7 @@ export default function Home() {
             </a>
           </p>
         </section>
-        <FooterWithModals />
+        <FooterWithModals key={themeVersion} />
       </div>
     </ClickSpark>
   );
