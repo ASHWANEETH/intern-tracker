@@ -7,14 +7,12 @@ import AuthModal from "@/components/AuthModal";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import FooterWithModals from "@/components/Footer";
-// import dynamic from "next/dynamic";
 import { Moon, Sun } from "lucide-react";
 import ScrambledText from "@/components/reactbits/ScrambledText";
 import SplitText from "@/components/reactbits/SplitText";
 import SpotlightCard from "@/components/reactbits/SpotlightCard";
 import ClickSpark from "@/components/reactbits/ClickSpark";
 
-// Dynamically import AOS only on client side
 const loadAOS = async () => {
   const AOS = (await import("aos")).default;
   import("aos/dist/aos.css");
@@ -22,7 +20,30 @@ const loadAOS = async () => {
 };
 
 const supabase = createClient();
-const handleAnimationComplete = () => console.log("All letters have animated!");
+const handleAnimationComplete = () => {};
+
+const features = [
+  {
+    title: "Effortless Tracking",
+    desc: "Keep all your internship applications organized in one place and never miss a deadline.",
+    img: "/easytrack.svg",
+  },
+  {
+    title: "Stay on Top of Deadlines",
+    desc: "Manage upcoming interviews, exams, and application dates with ease.",
+    img: "/deadline.svg",
+  },
+  {
+    title: "Analytics & Insights",
+    desc: "Get helpful trends and insights on your application journey.",
+    img: "/analytics.svg",
+  },
+  {
+    title: "Friendly Reminders",
+    desc: "Stay motivated with helpful reminders and an easy-to-use dashboard.",
+    img: "/notify.svg",
+  },
+];
 
 export default function Home() {
   const router = useRouter();
@@ -31,32 +52,33 @@ export default function Home() {
     email: string;
     full_name?: string;
   } | null>(null);
-
   const [isDark, setIsDark] = useState(false);
-  const [hasMounted, setHasMounted] = useState(false); // to avoid hydration mismatch
+  const [hasMounted, setHasMounted] = useState(false);
 
-  // Theme Initialization
   useEffect(() => {
-    const theme = localStorage.getItem("theme");
-    const prefersDark = window.matchMedia(
-      "(prefers-color-scheme: dark)"
-    ).matches;
+    // Only run on client
+    let prefersDark = false;
+    if (typeof window !== "undefined") {
+      prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    }
+    const theme =
+      typeof window !== "undefined" ? localStorage.getItem("theme") : null;
     const shouldUseDark = theme === "dark" || (!theme && prefersDark);
     document.documentElement.classList.toggle("dark", shouldUseDark);
     setIsDark(shouldUseDark);
-    setHasMounted(true); // mark that client rendered
-    loadAOS(); // lazy load AOS only on client
+    setHasMounted(true);
+    loadAOS();
   }, []);
 
-  // Theme Toggle Handler
   const handleThemeToggle = useCallback(() => {
-    const newMode = !isDark;
-    setIsDark(newMode);
-    document.documentElement.classList.toggle("dark", newMode);
-    localStorage.setItem("theme", newMode ? "dark" : "light");
-  }, [isDark]);
+    setIsDark((prev) => {
+      const newMode = !prev;
+      document.documentElement.classList.toggle("dark", newMode);
+      localStorage.setItem("theme", newMode ? "dark" : "light");
+      return newMode;
+    });
+  }, []);
 
-  // Auth Listener
   useEffect(() => {
     const getSession = async () => {
       const {
@@ -70,9 +92,7 @@ export default function Home() {
         });
       }
     };
-
     getSession();
-
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_, session) => {
@@ -86,7 +106,6 @@ export default function Home() {
           : null
       );
     });
-
     return () => subscription.unsubscribe();
   }, []);
 
@@ -96,7 +115,6 @@ export default function Home() {
     router.refresh();
   };
 
-  // Prevent hydration mismatch
   if (!hasMounted) return null;
 
   return (
@@ -123,7 +141,6 @@ export default function Home() {
               Intern Tracker
             </h1>
           </div>
-
           <div className="flex items-center gap-2 sm:gap-4 mt-2 sm:mt-0">
             <button
               className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800"
@@ -149,13 +166,11 @@ export default function Home() {
                 <span className="font-medium text-sm sm:text-base">
                   Hey Buddy!
                 </span>
-
                 <AuthModal />
               </>
             )}
           </div>
         </header>
-
         {/* Hero Section */}
         <main className="flex flex-col md:flex-row items-center justify-center gap-10 py-12 md:px-2 sm:py-14 md:py-16 w-full max-w-6xl mx-auto">
           <div className="flex flex-col items-center md:items-start text-center md:text-left gap-6 max-w-lg">
@@ -177,7 +192,6 @@ export default function Home() {
             />
           </div>
         </main>
-
         {/* Features */}
         <section className="w-full py-8 px-4 text-center">
           <h3 className="text-3xl font-bold mb-8">
@@ -195,7 +209,7 @@ export default function Home() {
             />
           </h3>
           <div className="grid grid-cols-1 gap-8 max-w-4xl mx-auto">
-            {features.map((item, idx) => (
+            {features.map(({ title, desc, img }, idx) => (
               <SpotlightCard
                 key={idx}
                 className="rounded-xl py-6 sm:py-8 md:py-10 flex flex-col md:flex-row items-center md:text-left shadow-xl dark:shadow-gray-900 hover:scale-[1.01] transition"
@@ -203,8 +217,8 @@ export default function Home() {
               >
                 <div className="w-[140px] h-[140px] mb-6 md:mb-0 md:mx-8 flex items-center justify-center">
                   <Image
-                    src={item.img}
-                    alt={item.title}
+                    src={img}
+                    alt={title}
                     width={120}
                     height={120}
                     className="object-contain"
@@ -212,17 +226,16 @@ export default function Home() {
                 </div>
                 <div className="flex-1 flex flex-col justify-center">
                   <h4 className="text-2xl font-semibold mb-3 dark:text-white">
-                    {item.title}
+                    {title}
                   </h4>
                   <p className="text-base text-black dark:text-gray-300">
-                    {item.desc}
+                    {desc}
                   </p>
                 </div>
               </SpotlightCard>
             ))}
           </div>
         </section>
-
         {/* Contact */}
         <section className="w-full max-w-xl text-center my-12 px-4">
           <h3 className="text-xl font-semibold mb-3">Ping Us Anytime!</h3>
@@ -240,32 +253,8 @@ export default function Home() {
             </a>
           </p>
         </section>
-
         <FooterWithModals />
       </div>
     </ClickSpark>
   );
 }
-
-const features = [
-  {
-    title: "Effortless Tracking",
-    desc: "Keep all your internship applications organized in one place and never miss a deadline.",
-    img: "/easytrack.svg",
-  },
-  {
-    title: "Stay on Top of Deadlines",
-    desc: "Manage upcoming interviews, exams, and application dates with ease.",
-    img: "/deadline.svg",
-  },
-  {
-    title: "Analytics & Insights",
-    desc: "Get helpful trends and insights on your application journey.",
-    img: "/analytics.svg",
-  },
-  {
-    title: "Friendly Reminders",
-    desc: "Stay motivated with helpful reminders and an easy-to-use dashboard.",
-    img: "/notify.svg",
-  },
-];
