@@ -264,6 +264,42 @@ export default function OverviewTab({ jobs, setActiveTab }: Props) {
                   Description!
                 </p>
               </SpotlightCard>,
+
+              // Current Offers Tile (NEW)
+              <SpotlightCard
+                key="offers"
+                spotlightColor="rgba(34,197,94,0.10)" // light green
+                className="px-4 py-5 sm:p-5 bg-green-50 dark:bg-green-900/10 shadow rounded-xl"
+              >
+                <h3 className="text-sm sm:text-base font-medium mb-3">
+                  Current Offers 🎉
+                </h3>
+                <div className="grid md:grid-cols-3 gap-3">
+                  {jobs.filter((job) => job.status === "approved").length >
+                  0 ? (
+                    jobs
+                      .filter((job) => job.status === "approved")
+                      .map((job) => (
+                        <div
+                          key={job.id}
+                          className="px-3 py-2 sm:p-3 rounded-xl bg-white/80 dark:bg-zinc-800 shadow text-xs sm:text-sm flex flex-col"
+                        >
+                          <span className="font-semibold">
+                            {job.role} at {job.company_name}
+                          </span>
+                          <span className="text-green-600 font-bold">
+                            ₹ {job.ctc}
+                          </span>
+                        </div>
+                      ))
+                  ) : (
+                    <div className="italic text-gray-500 px-3 py-2.5 sm:p-4 rounded-xl bg-white/80 dark:bg-zinc-800 shadow text-xs sm:text-sm">
+                      Hustle more !! the only limit is you.
+                    </div>
+                  )}
+                </div>
+              </SpotlightCard>,
+
               // Upcoming Deadlines
               <SpotlightCard
                 key="deadlines"
@@ -292,16 +328,16 @@ export default function OverviewTab({ jobs, setActiveTab }: Props) {
                   {upcomingDeadlines.filter((j) => j.status === "to-apply")
                     .length === 0 && (
                     <div className="italic text-gray-500 px-3 py-2.5 sm:p-4 rounded-xl bg-white/80 dark:bg-zinc-800 shadow text-xs sm:text-sm">
-                      No upcoming deadlines.
+                      Yeahh! No upcoming deadlines.
                     </div>
                   )}
-                </div>
                 <button
                   onClick={() => setActiveTab("deadlines")}
                   className="text-xs sm:text-sm text-violet-700 dark:text-violet-400 hover:underline font-medium mt-3 inline-block"
                 >
                   &nbsp;Show all deadlines →
                 </button>
+                </div>
               </SpotlightCard>,
 
               // Top 3 CTC
@@ -360,7 +396,7 @@ export default function OverviewTab({ jobs, setActiveTab }: Props) {
                   ))}
                   {latestJobs.length === 0 && (
                     <li className="italic text-gray-500">
-                      No recent activity.
+                      Oops! No recent activity.
                     </li>
                   )}
                 </ul>
