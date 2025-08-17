@@ -56,6 +56,13 @@ export default function OverviewTab({ jobs, setActiveTab }: Props) {
   }));
 
   const getCTCValue = (ctc: string) => {
+    // Handles ranges like "10-20" or "10-20 LPA"
+    const match = ctc.match(/(\d+)\s*-\s*(\d+)/);
+    if (match) {
+      // Use the lower bound for sorting
+      return parseFloat(match[1]);
+    }
+    // Handles single values like "30", "30 LPA", "30000/month"
     const numeric = parseFloat(ctc.replace(/[^\d.]/g, ""));
     return isNaN(numeric) ? 0 : numeric;
   };
@@ -138,7 +145,7 @@ export default function OverviewTab({ jobs, setActiveTab }: Props) {
           spotlightColor="rgba(196, 181, 253, 0.18)" // lighter violet gradient
           className="px-4 py-4 sm:p-5 bg-gradient-to-r from-violet-100 via-pink-100 to-indigo-100 dark:from-violet-900/20 dark:via-pink-900/20 dark:to-indigo-900/20 shadow rounded-xl flex flex-col items-center justify-center"
         >
-          <p className="text-sm sm:text-base text-gray-500">
+          <p className="text-sm sm:text-base text-gray-500 mb-2">
             No job applications yet. Start adding!
           </p>
           <button
@@ -147,9 +154,11 @@ export default function OverviewTab({ jobs, setActiveTab }: Props) {
           >
             <span>Add with AI✨</span>
           </button>
-          <p className="mt-2 text-xs text-gray-700 dark:text-gray-300 text-center">
-            Use AI✨ to quickly add a new internship application from a Job
-            Description!
+          <p className="my-2 text-xs text-gray-700 dark:text-gray-300 text-center">
+            Use AI✨ to quickly add a new application from a Job Description
+          </p>
+          <p className="mb-7 text-xs text-gray-700 dark:text-gray-300 text-center">
+            or Fill Manually!
           </p>
           <Image
             src="/adddash.svg"
@@ -246,11 +255,13 @@ export default function OverviewTab({ jobs, setActiveTab }: Props) {
                   onClick={() => setJobModalOpen(true)}
                   className="px-5 py-2 rounded font-semibold bg-gradient-to-r from-pink-300 via-purple-300 to-indigo-300 text-violet-900 animate-gradient-x dark:text-white shadow hover:scale-105 transition flex items-center gap-2"
                 >
-                  <span>Add with AI✨</span>
+                  <span className="text-gray-700 dark:text-black">
+                    Add with AI✨
+                  </span>
                 </button>
                 <p className="mt-2 text-xs text-gray-700 dark:text-gray-300 text-center">
-                  Use AI✨ to quickly add a new internship application from a
-                  Job Description!
+                  Use AI✨ to quickly add a new application from a Job
+                  Description!
                 </p>
               </SpotlightCard>,
               // Upcoming Deadlines
@@ -259,34 +270,37 @@ export default function OverviewTab({ jobs, setActiveTab }: Props) {
                 spotlightColor="rgba(236, 72, 153, 0.15)"
                 className="px-4 py-5 sm:p-5 bg-pink-50 dark:bg-pink-900/10 shadow rounded-xl"
               >
-                <h3 className="text-sm sm:text-base font-medium mb-2">
+                <h3 className="text-sm sm:text-base font-medium mb-3">
                   Upcoming Deadlines
                 </h3>
-                <ul className="space-y-1 text-xs sm:text-sm">
+                <div className="grid md:grid-cols-3 gap-3">
                   {upcomingDeadlines
                     .filter((job) => job.status === "to-apply")
                     .map((job) => (
-                      <li key={job.id} className="flex justify-between">
-                        <span>
-                          📅 {job.role} at {job.company_name}
+                      <div
+                        key={job.id}
+                        className="px-3 py-2 sm:p-3 rounded-xl bg-white/80 dark:bg-zinc-800 shadow text-xs sm:text-sm flex flex-col"
+                      >
+                        <span className="font-semibold">
+                          {job.role} at {job.company_name}
                         </span>
-                        <span className="text-gray-500 text-xs">
+                        <span className="text-pink-600 font-bold">
                           {dayjs(job.last_date_to_apply).format("MMM D")}
                         </span>
-                      </li>
+                      </div>
                     ))}
                   {upcomingDeadlines.filter((j) => j.status === "to-apply")
                     .length === 0 && (
-                    <li className="italic text-gray-500">
+                    <div className="italic text-gray-500 px-3 py-2.5 sm:p-4 rounded-xl bg-white/80 dark:bg-zinc-800 shadow text-xs sm:text-sm">
                       No upcoming deadlines.
-                    </li>
+                    </div>
                   )}
-                </ul>
+                </div>
                 <button
                   onClick={() => setActiveTab("deadlines")}
-                  className="text-xs sm:text-sm text-violet-700 dark:text-violet-400 hover:underline font-medium mt-2 inline-block"
+                  className="text-xs sm:text-sm text-violet-700 dark:text-violet-400 hover:underline font-medium mt-3 inline-block"
                 >
-                  Show all deadlines →
+                  &nbsp;Show all deadlines →
                 </button>
               </SpotlightCard>,
 
@@ -303,7 +317,7 @@ export default function OverviewTab({ jobs, setActiveTab }: Props) {
                   {top3.map((job, idx) => (
                     <div
                       key={job.id}
-                      className="px-3 py-2.5 sm:p-4 rounded-xl bg-white/80 dark:bg-zinc-800 shadow text-xs sm:text-sm"
+                      className="px-3 py-2 sm:p-3 rounded-xl bg-white/80 dark:bg-zinc-800 shadow text-xs sm:text-sm"
                     >
                       <h4 className="font-semibold">
                         #{idx + 1} {job.role} at {job.company_name}
