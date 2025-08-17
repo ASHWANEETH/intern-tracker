@@ -12,6 +12,7 @@ import ScrambledText from "@/components/reactbits/ScrambledText";
 import SplitText from "@/components/reactbits/SplitText";
 import SpotlightCard from "@/components/reactbits/SpotlightCard";
 import ClickSpark from "@/components/reactbits/ClickSpark";
+import AnimatedList from "@/components/reactbits/AnimatedList";
 
 const loadAOS = async () => {
   const AOS = (await import("aos")).default;
@@ -187,7 +188,7 @@ export default function Home() {
           </div>
         </header>
         {/* Hero Section */}
-        <main className="flex flex-col md:flex-row items-center justify-center gap-10 py-12 md:px-2 sm:py-14 md:py-16 w-full max-w-6xl mx-auto">
+        <main className="flex flex-col md:flex-row items-center justify-center gap-10 py-12 md:px-4 sm:py-10 md:py-12 w-full max-w-6xl mx-auto">
           <div className="flex flex-col items-center md:items-start text-center md:text-left gap-6 max-w-lg">
             <ScrambledText className="text-5xl font-bold leading-tight dark:text-white">
               Track your <br /> Applications <br /> with ease.
@@ -224,31 +225,36 @@ export default function Home() {
             />
           </h3>
           <div className="grid grid-cols-1 gap-8 max-w-4xl mx-auto">
-            {features.map(({ title, desc, img }, idx) => (
-              <SpotlightCard
-                key={idx}
-                className="rounded-xl py-6 sm:py-8 md:py-10 flex flex-col md:flex-row items-center md:text-left shadow-xl dark:shadow-gray-900 hover:scale-[1.01] transition"
-                spotlightColor="rgba(139, 92, 246, 0.2)"
-              >
-                <div className="w-[140px] h-[140px] mb-6 md:mb-0 md:mx-8 flex items-center justify-center">
-                  <Image
-                    src={img}
-                    alt={title}
-                    width={120}
-                    height={120}
-                    className="object-contain"
-                  />
-                </div>
-                <div className="flex-1 flex flex-col justify-center">
-                  <h4 className="text-2xl font-semibold mb-3 dark:text-white">
-                    {title}
-                  </h4>
-                  <p className="text-base text-black dark:text-gray-300">
-                    {desc}
-                  </p>
-                </div>
-              </SpotlightCard>
-            ))}
+            <AnimatedList
+              items={features.map(({ title, desc, img }, idx) => (
+                <SpotlightCard
+                  key={idx}
+                  className="rounded-xl py-6 sm:py-4 md:py-10 flex flex-col md:flex-row items-center md:text-left shadow-xl dark:shadow-gray-900 hover:scale-[1.01] transition"
+                  spotlightColor="rgba(139, 92, 246, 0.2)"
+                >
+                  <div className="w-[140px] h-[140px] mb-6 md:mb-0 md:mx-8 flex items-center justify-center">
+                    <Image
+                      src={img}
+                      alt={title}
+                      width={120}
+                      height={120}
+                      className="object-contain"
+                    />
+                  </div>
+                  <div className="flex-1 flex flex-col justify-center">
+                    <h4 className="text-2xl font-semibold mb-3 dark:text-white">
+                      {title}
+                    </h4>
+                    <p className="text-base text-black dark:text-gray-300">
+                      {desc}
+                    </p>
+                  </div>
+                </SpotlightCard>
+              ))}
+              showGradients={false}
+              enableArrowNavigation={false}
+              displayScrollbar={false}
+            />
           </div>
         </section>
         {/* Contact */}
