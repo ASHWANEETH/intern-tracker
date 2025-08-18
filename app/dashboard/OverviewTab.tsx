@@ -178,7 +178,7 @@ export default function OverviewTab({ jobs, setActiveTab }: Props) {
               <SpotlightCard
                 key="chart"
                 spotlightColor="rgba(139, 92, 246, 0.2)"
-                className="px-4 py-5 sm:p-5 bg-violet-50 dark:bg-violet-900/10 shadow rounded-xl"
+                className="px-4 py-5 sm:p-5 shadow rounded-xl"
               >
                 <div className="flex justify-around items-center mb-4 md:mb-1">
                   <p className="text-xs sm:text-sm flex items-center gap-1">
@@ -269,7 +269,7 @@ export default function OverviewTab({ jobs, setActiveTab }: Props) {
               <SpotlightCard
                 key="offers"
                 spotlightColor="rgba(34,197,94,0.10)" // light green
-                className="px-4 py-5 sm:p-5 bg-green-50 dark:bg-green-900/10 shadow rounded-xl"
+                className="px-4 py-5 sm:p-5 bg-gradient-to-r from-green-100 to-white dark:from-green-900/20 dark:to-black shadow rounded-xl"
               >
                 <h3 className="text-sm sm:text-base font-medium mb-3">
                   Current Offers 🎉
@@ -304,7 +304,7 @@ export default function OverviewTab({ jobs, setActiveTab }: Props) {
               <SpotlightCard
                 key="deadlines"
                 spotlightColor="rgba(236, 72, 153, 0.15)"
-                className="px-4 py-5 sm:p-5 bg-pink-50 dark:bg-pink-900/10 shadow rounded-xl"
+                className="px-4 py-5 sm:p-5 bg-gradient-to-r from-red-100 to-white dark:from-red-900/20 dark:to-black shadow rounded-xl"
               >
                 <h3 className="text-sm sm:text-base font-medium mb-3">
                   Upcoming Deadlines
@@ -331,20 +331,20 @@ export default function OverviewTab({ jobs, setActiveTab }: Props) {
                       Yeahh! No upcoming deadlines.
                     </div>
                   )}
+                </div>
                 <button
                   onClick={() => setActiveTab("deadlines")}
                   className="text-xs sm:text-sm text-violet-700 dark:text-violet-400 hover:underline font-medium mt-3 inline-block"
                 >
                   &nbsp;Show all deadlines →
                 </button>
-                </div>
               </SpotlightCard>,
 
               // Top 3 CTC
               <SpotlightCard
                 key="top3"
-                spotlightColor="rgba(34, 197, 94, 0.15)"
-                className="px-4 py-5 sm:p-5 bg-green-50 dark:bg-green-900/10 shadow rounded-xl"
+                spotlightColor="rgba(234, 179, 8, 0.15)"
+                className="px-4 py-5 sm:p-5 bg-gradient-to-r from-yellow-50 to-white dark:from-yellow-900/20 dark:to-black shadow rounded-xl"
               >
                 <h3 className="text-sm sm:text-base font-medium mb-3">
                   Top 3 Highest Packages
@@ -368,7 +368,7 @@ export default function OverviewTab({ jobs, setActiveTab }: Props) {
               <SpotlightCard
                 key="latest"
                 spotlightColor="rgba(59, 130, 246, 0.12)"
-                className="px-4 py-5 sm:p-5 bg-blue-50 dark:bg-blue-900/10 shadow rounded-xl"
+                className="px-4 py-5 sm:p-5 shadow rounded-xl"
               >
                 <h3 className="text-sm sm:text-base font-medium mb-2">
                   Latest Activity

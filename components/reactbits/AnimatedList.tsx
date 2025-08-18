@@ -26,7 +26,7 @@ const AnimatedItem: React.FC<AnimatedItemProps> = ({
   onClick,
 }) => {
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { amount: 0.1, once: false });
+  const inView = useInView(ref, { amount: 0.3, once: false });
 
   return (
     <motion.div

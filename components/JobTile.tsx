@@ -19,7 +19,6 @@ import {
 import Notes from "@/components/Notes";
 import { useState, useCallback, useMemo } from "react";
 import { Job } from "@/app/types/job";
-import { AnimatePresence, motion } from "framer-motion";
 
 // Status background gradients and badges
 const statusGradients: Record<string, string> = {
@@ -94,12 +93,7 @@ export default function JobTile({
   }, [job.exam_date]);
 
   return (
-    <motion.div
-      layout
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.2, ease: "easeInOut" }}
+    <div
       className={`rounded-2xl px-4 py-3 sm:py-3 shadow-xl ${gradientClasses} backdrop-blur-md transition cursor-pointer relative`}
     >
       {/* Header Row */}
@@ -141,15 +135,9 @@ export default function JobTile({
       </p>
 
       {/* Expandable Section */}
-      <AnimatePresence initial={false}>
-        {isExpanded && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.2, ease: "easeInOut" }}
-            className="overflow-hidden mt-2 text-sm text-gray-600 dark:text-gray-300 space-y-1"
-          >
+      {isExpanded && (
+        <div className="overflow-hidden mt-2 text-sm text-gray-600 dark:text-gray-300 space-y-1">
+          <div key="details">
             {job.status === "to-apply" ? (
               <p>
                 Last Date to Apply:{" "}
@@ -183,25 +171,16 @@ export default function JobTile({
                 >
                   Notes {showNotes ? <FiChevronUp /> : <FiChevronDown />}
                 </button>
-
-                <AnimatePresence initial={false}>
-                  {showNotes && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.3, ease: "easeInOut" }}
-                      className="w-[75%]"
-                    >
-                      <Notes requirements={job.requirements} />
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                {showNotes && (
+                  <div className="w-[75%]">
+                    <Notes requirements={job.requirements} />
+                  </div>
+                )}
               </>
             )}
-          </motion.div>
-        )}
-      </AnimatePresence>
+          </div>
+        </div>
+      )}
 
       {/* Action Buttons */}
       <div className="flex gap-2 mt-3">
@@ -227,6 +206,6 @@ export default function JobTile({
       >
         {isExpanded ? <FiChevronUp size={20} /> : <FiChevronDown size={20} />}
       </div>
-    </motion.div>
+    </div>
   );
 }

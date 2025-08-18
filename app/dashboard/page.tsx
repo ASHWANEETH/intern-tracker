@@ -304,7 +304,7 @@ export default function Dashboard() {
         </header>
 
         {/* Tab content with smooth animation */}
-        <main className="flex-1 w-full transition-all duration-300 relative z-0 pt-2 sm:pt-4">
+        <main className="flex-1 w-full transition-all duration-300 relative z-0">
           <div
             key={activeTab}
             className="tab-content-animate"

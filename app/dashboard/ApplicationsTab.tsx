@@ -9,6 +9,7 @@ import JobTile from "@/components/JobTile";
 import { ConfirmModal } from "@/components/ConfirmModal";
 import confetti from "canvas-confetti";
 import Image from "next/image";
+import AnimatedList from "@/components/reactbits/AnimatedList";
 
 export default function ApplicationsTab() {
   const supabase = createClient();
@@ -222,7 +223,7 @@ export default function ApplicationsTab() {
   }
 
   return (
-    <div className="w-full sm:px-4 md:px-4 space-y-3 sm:space-y-4 mt-0 sm:mt-0 text-gray-800 dark:text-gray-100">
+    <div className="w-full sm:px-4 md:px-4 md:mt-0 mt-0 sm:mt-0 text-gray-800 dark:text-gray-100">
       <ConfirmModal
         open={!!confirmModal.action}
         title={
@@ -245,7 +246,7 @@ export default function ApplicationsTab() {
         onCancel={closeModal}
       />
 
-      <div className="sticky md:top-38 sm:top-35 top-45 z-10 pt-3 sm:pt-4 pb-3 sm:pb-4 bg-white/90 dark:bg-[#0d0d0d]/90 backdrop-blur-md">
+      <div className="sticky md:top-32.3 md:pt-1 sm:top-31.5 top-30 z-10 pb-3 sm:pb-4 bg-white/90 dark:bg-[#0d0d0d]/90 backdrop-blur-md">
         <div className="flex items-center justify-between flex-wrap gap-3 mb-3 px-1">
           <h2 className="text-xl sm:text-xl font-semibold">Applications</h2>
           <JobFormDialog
@@ -283,26 +284,32 @@ export default function ApplicationsTab() {
         />
       </div>
 
-      {/* Scrollable Job List */}
+      {/* Animated Job List */}
       <div className="flex-1 overflow-y-auto mt-2 space-y-4">
         {filteredJobs.length > 0 ? (
-          filteredJobs.map((job) => (
-            <JobTile
-              key={job.id}
-              job={job}
-              expandedJobId={expandedJobId}
-              onToggleExpand={toggleExpand}
-              onEditClick={handleEditClick}
-              onStatusChange={handleStatusChange}
-              onConfirmDelete={(job) =>
-                setConfirmModal({ action: "delete", job })
-              }
-              onConfirmDuplicate={(job) =>
-                setConfirmModal({ action: "duplicate", job })
-              }
-              logoRefreshKey={logoRefreshKey}
-            />
-          ))
+          <AnimatedList
+            items={filteredJobs.map((job) => (
+              <JobTile
+                key={job.id}
+                job={job}
+                expandedJobId={expandedJobId}
+                onToggleExpand={toggleExpand}
+                onEditClick={handleEditClick}
+                onStatusChange={handleStatusChange}
+                onConfirmDelete={(job) =>
+                  setConfirmModal({ action: "delete", job })
+                }
+                onConfirmDuplicate={(job) =>
+                  setConfirmModal({ action: "duplicate", job })
+                }
+                logoRefreshKey={logoRefreshKey}
+              />
+            ))}
+            className="min-h-[600px]"
+            showGradients={false}
+            enableArrowNavigation={false}
+            displayScrollbar={false}
+          />
         ) : (
           <div className="flex flex-col items-center justify-center text-center py-20 space-y-6">
             <Image
