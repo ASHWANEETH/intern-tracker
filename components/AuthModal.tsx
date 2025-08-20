@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 
 export default function AuthModal() {
   const supabase = createClient();
@@ -33,6 +34,8 @@ export default function AuthModal() {
   const [forgotLoading, setForgotLoading] = useState(false);
   const [forgotMessage, setForgotMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   async function handleSignup() {
     if (password !== confirmPassword) {
@@ -153,9 +156,12 @@ export default function AuthModal() {
             />
 
             {error && <p className="text-sm ml-2 text-red-500">{error} !</p>}
-            {forgotMessage && (<>
-              <p className="text-sm ml-2 text-green-600">{forgotMessage}</p>
-              <p className="text-sm ml-2 text-red-600">Not Found ? Check Spam Folder !</p>
+            {forgotMessage && (
+              <>
+                <p className="text-sm ml-2 text-green-600">{forgotMessage}</p>
+                <p className="text-sm ml-2 text-red-600">
+                  Not Found ? Check Spam Folder !
+                </p>
               </>
             )}
 
@@ -211,24 +217,54 @@ export default function AuthModal() {
               autoComplete="email"
             />
 
-            <Input
-              type="password"
-              placeholder="*Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              autoComplete={isSignup ? "new-password" : "current-password"}
-            />
+            <div className="relative">
+              <Input
+                type={showPassword ? "text" : "password"}
+                placeholder="*Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                autoComplete={isSignup ? "new-password" : "current-password"}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? (
+                  <EyeSlashIcon className="h-5 w-5" />
+                ) : (
+                  <EyeIcon className="h-5 w-5" />
+                )}
+              </button>
+            </div>
 
             {isSignup && (
-              <Input
-                type="password"
-                placeholder="*Confirm Password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-                autoComplete="new-password"
-              />
+              <div className="relative">
+                <Input
+                  type={showConfirmPassword ? "text" : "password"}
+                  placeholder="*Confirm Password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                  autoComplete="new-password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  aria-label={
+                    showConfirmPassword ? "Hide password" : "Show password"
+                  }
+                >
+                  {showConfirmPassword ? (
+                    <EyeSlashIcon className="h-5 w-5" />
+                  ) : (
+                    <EyeIcon className="h-5 w-5" />
+                  )}
+                </button>
+              </div>
             )}
 
             {error && <p className="text-sm ml-2 text-red-500">{error} !</p>}
